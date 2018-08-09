@@ -31,6 +31,9 @@ sysinfo.txt
 *.apk
 *.unitypackage
 
+# Local environment files
+install.sh
+
 # Visual Studio
 .vs/
 
