@@ -14,8 +14,4 @@ public class VersionText : MonoBehaviour {
 		                                           : ""));
 	}
 	
-	void Update () {
-		
-	}
-	
 }
