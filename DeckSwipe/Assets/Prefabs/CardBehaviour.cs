@@ -1,17 +1,17 @@
 ﻿using UnityEngine;
 
-public class Draggable : MonoBehaviour {
+public class CardBehaviour : MonoBehaviour {
+
+	public float SwipeThreshold = 1.0f;
+
+	private Card card;
 	
 	private Vector3 snapPosition;
 	private Vector3 dragStartPosition;
 	private Vector3 dragStartPointerPosition;
 	
-	public void SetSnapPosition(Vector3 pos) {
-		snapPosition = pos;
-	}
-	
 	private void Start() {
-		SetSnapPosition(transform.position);
+		snapPosition = transform.position;
 	}
 	
 	private void OnMouseDown() {
@@ -26,7 +26,17 @@ public class Draggable : MonoBehaviour {
 	}
 	
 	private void OnMouseUp() {
-		transform.position = snapPosition;
+		if (transform.position.x < snapPosition.x - SwipeThreshold) {
+			//card.PerformLeftDecision();
+			Destroy(gameObject);
+		}
+		else if (transform.position.x > snapPosition.x + SwipeThreshold) {
+			//card.PerformRightDecision();
+			Destroy(gameObject);
+		}
+		else {
+			transform.position = snapPosition;
+		}
 	}
 	
 }
