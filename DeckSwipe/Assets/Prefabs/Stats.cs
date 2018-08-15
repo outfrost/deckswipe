@@ -3,11 +3,6 @@ using UnityEngine;
 
 public class Stats : MonoBehaviour {
 	
-	public RectTransform HeatBar;
-	public RectTransform FoodBar;
-	public RectTransform HopeBar;
-	public RectTransform MaterialsBar;
-	
 	private const int maxStatValue = 32;
 	private const int startingHeat = 16;
 	private const int startingFood = 16;
@@ -19,8 +14,20 @@ public class Stats : MonoBehaviour {
 	public static int Hope { get; private set; }
 	public static int Materials { get; private set; }
 	
-	private static LinkedList<Stats> changeListeners = new LinkedList<Stats>();
+	private static readonly List<Stats> changeListeners = new List<Stats>();
 	
+	public RectTransform HeatBar;
+	public RectTransform FoodBar;
+	public RectTransform HopeBar;
+	public RectTransform MaterialsBar;
+
+	static Stats() {
+		Heat = startingHeat;
+		Food = startingFood;
+		Hope = startingHope;
+		Materials = startingMaterials;
+	}
+
 	public static void ApplyModification(StatsModification mod) {
 		Heat += mod.Heat;
 		Food += mod.Food;
@@ -36,25 +43,24 @@ public class Stats : MonoBehaviour {
 		Materials = startingMaterials;
 		UpdateAllStatBars();
 	}
-
+	
 	private static void UpdateAllStatBars() {
-		foreach (Stats listener in changeListeners) {
-			listener.UpdateStatBars();
+		for (int i = 0; i < changeListeners.Count; i++) {
+			if (changeListeners[i] == null) {
+				changeListeners.RemoveAt(i);
+			}
+			else {
+				changeListeners[i].UpdateStatBars();
+			}
 		}
-	}
-
-	public Stats() {
-		changeListeners.AddLast(this);
 	}
 	
 	void Awake() {
-		ResetStats();
+		if (gameObject.scene.rootCount != 0) { // Check if this isn't a prefab
+			changeListeners.Add(this);
+		}
 	}
-	/*
-	void Start() {
-		UpdateStatBars();
-	}
-	*/
+	
 	void UpdateStatBars() {
 		HeatBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
 				(float) Heat / maxStatValue * 100.0f);
