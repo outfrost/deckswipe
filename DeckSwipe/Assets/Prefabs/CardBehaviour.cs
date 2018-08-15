@@ -4,7 +4,7 @@ public class CardBehaviour : MonoBehaviour {
 
 	public float SwipeThreshold = 1.0f;
 
-	private Card card;
+	public CardModel Card { private get; set; }
 	
 	private Vector3 snapPosition;
 	private Vector3 dragStartPosition;
@@ -27,11 +27,11 @@ public class CardBehaviour : MonoBehaviour {
 	
 	private void OnMouseUp() {
 		if (transform.position.x < snapPosition.x - SwipeThreshold) {
-			//card.PerformLeftDecision();
+			Card.PerformLeftDecision();
 			Destroy(gameObject);
 		}
 		else if (transform.position.x > snapPosition.x + SwipeThreshold) {
-			//card.PerformRightDecision();
+			Card.PerformRightDecision();
 			Destroy(gameObject);
 		}
 		else {
