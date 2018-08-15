@@ -26,9 +26,7 @@ public class Stats : MonoBehaviour {
 		Food += mod.Food;
 		Hope += mod.Hope;
 		Materials += mod.Materials;
-		foreach (Stats listener in changeListeners) {
-			listener.UpdateStatBars();
-		}
+		UpdateAllStatBars();
 	}
 	
 	public static void ResetStats() {
@@ -36,6 +34,13 @@ public class Stats : MonoBehaviour {
 		Food = startingFood;
 		Hope = startingHope;
 		Materials = startingMaterials;
+		UpdateAllStatBars();
+	}
+
+	private static void UpdateAllStatBars() {
+		foreach (Stats listener in changeListeners) {
+			listener.UpdateStatBars();
+		}
 	}
 
 	public Stats() {
@@ -45,11 +50,11 @@ public class Stats : MonoBehaviour {
 	void Awake() {
 		ResetStats();
 	}
-	
+	/*
 	void Start() {
 		UpdateStatBars();
 	}
-	
+	*/
 	void UpdateStatBars() {
 		HeatBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
 				(float) Heat / maxStatValue * 100.0f);
