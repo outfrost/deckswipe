@@ -56,7 +56,7 @@ public class Stats : MonoBehaviour {
 	}
 	
 	void Awake() {
-		if (gameObject.scene.rootCount != 0) { // Check if this isn't a prefab
+		if (!Util.IsPrefab(gameObject)) {
 			changeListeners.Add(this);
 		}
 	}
