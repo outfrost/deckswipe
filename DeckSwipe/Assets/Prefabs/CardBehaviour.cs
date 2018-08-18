@@ -2,7 +2,15 @@
 using UnityEngine;
 
 public class CardBehaviour : MonoBehaviour {
+	
+	private enum AnimationState {
 
+		Idle,
+		Converging,
+		FlyingAway
+
+	}
+	
 	private const float animationDuration = 1.0f;
 	
 	public float SwipeThreshold = 1.0f;
@@ -68,14 +76,6 @@ public class CardBehaviour : MonoBehaviour {
 		else {
 			animationState = AnimationState.Converging;
 		}
-	}
-
-	private enum AnimationState {
-
-		Idle,
-		Converging,
-		FlyingAway
-
 	}
 	
 }
