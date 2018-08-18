@@ -1,4 +1,6 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using UnityEditor;
 using UnityEngine;
 
 public class Stats : MonoBehaviour {
@@ -20,28 +22,39 @@ public class Stats : MonoBehaviour {
 	public RectTransform FoodBar;
 	public RectTransform HopeBar;
 	public RectTransform MaterialsBar;
-
+	
 	static Stats() {
-		Heat = startingHeat;
-		Food = startingFood;
-		Hope = startingHope;
-		Materials = startingMaterials;
+		ApplyStartingValues();
 	}
 
+	private void Awake() {
+		if (!Util.IsPrefab(gameObject)) {
+			changeListeners.Add(this);
+		}
+	}
+	
 	public static void ApplyModification(StatsModification mod) {
-		Heat += mod.Heat;
-		Food += mod.Food;
-		Hope += mod.Hope;
-		Materials += mod.Materials;
+		Heat = ClampValue(Heat + mod.Heat);
+		Food = ClampValue(Food + mod.Food);
+		Hope = ClampValue(Hope + mod.Hope);
+		Materials = ClampValue(Materials + mod.Materials);
 		UpdateAllStatBars();
 	}
 	
 	public static void ResetStats() {
-		Heat = startingHeat;
-		Food = startingFood;
-		Hope = startingHope;
-		Materials = startingMaterials;
+		ApplyStartingValues();
 		UpdateAllStatBars();
+	}
+
+	private static void ApplyStartingValues() {
+		Heat = ClampValue(startingHeat);
+		Food = ClampValue(startingFood);
+		Hope = ClampValue(startingHope);
+		Materials = ClampValue(startingMaterials);
+	}
+	
+	private static int ClampValue(int value) {
+		return Mathf.Clamp(value, 0, maxStatValue);
 	}
 	
 	private static void UpdateAllStatBars() {
@@ -55,13 +68,7 @@ public class Stats : MonoBehaviour {
 		}
 	}
 	
-	void Awake() {
-		if (!Util.IsPrefab(gameObject)) {
-			changeListeners.Add(this);
-		}
-	}
-	
-	void UpdateStatBars() {
+	private void UpdateStatBars() {
 		HeatBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
 				(float) Heat / maxStatValue * 100.0f);
 		FoodBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
