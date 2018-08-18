@@ -29,7 +29,8 @@ public class CardBehaviour : MonoBehaviour {
 	}
 	
 	private void Update() {
-		if (animationState != AnimationState.Idle) { // Animate card snap
+		// Animate card snap
+		if (animationState != AnimationState.Idle) {
 			float animationProgress = (Time.time - dragStopTime) / animationDuration;
 			float scaledProgress = 0.0f;
 			if (animationState == AnimationState.Converging) {
@@ -56,7 +57,7 @@ public class CardBehaviour : MonoBehaviour {
 	
 	private void OnMouseDrag() {
 		Vector3 displacement = Camera.main.ScreenToWorldPoint(Input.mousePosition) - dragStartPointerPosition;
-		displacement.z = dragStartPosition.z;
+		displacement.z = 0.0f;
 		transform.position = dragStartPosition + displacement;
 	}
 	
