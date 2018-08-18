@@ -1,2 +1,2 @@
 # Exclude dependency assets from language statistics
-**/[Aa]ssets/[Dd]ependencies/ linguist-vendored
+[Aa]ssets/[Dd]ependencies/ linguist-vendored
