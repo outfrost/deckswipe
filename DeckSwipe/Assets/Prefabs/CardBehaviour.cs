@@ -11,7 +11,7 @@ public class CardBehaviour : MonoBehaviour {
 
 	}
 	
-	private const float animationDuration = 1.0f;
+	private const float animationDuration = 0.4f;
 	
 	public float SwipeThreshold = 1.0f;
 	
