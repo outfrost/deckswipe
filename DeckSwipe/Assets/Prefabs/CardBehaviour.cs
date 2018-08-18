@@ -29,18 +29,29 @@ public class CardBehaviour : MonoBehaviour {
 	}
 	
 	private void Update() {
-		// Animate card snap
+		// Animate card snap and destroy swiped away cards
 		if (animationState != AnimationState.Idle) {
 			float animationProgress = (Time.time - dragStopTime) / animationDuration;
 			float scaledProgress = 0.0f;
-			if (animationState == AnimationState.Converging) {
-				scaledProgress = 0.15f * Mathf.Pow(animationProgress, 3.0f)
-				                 - 1.5f * Mathf.Pow(animationProgress, 2.0f)
-				                 + 2.38f * animationProgress;
+			switch (animationState) {
+				case AnimationState.Converging:
+					scaledProgress = 0.15f * Mathf.Pow(animationProgress, 3.0f)
+					                 - 1.5f * Mathf.Pow(animationProgress, 2.0f)
+					                 + 2.38f * animationProgress;
+					break;
+				case AnimationState.FlyingAway:
+					scaledProgress = 1.5f * Mathf.Pow(animationProgress, 3.0f)
+					                 + 0.55f * animationProgress;
+					break;
 			}
 			if (scaledProgress > 1.0f || animationProgress > 1.0f) {
-				animationState = AnimationState.Idle;
 				transform.position = snapPosition;
+				if (animationState == AnimationState.FlyingAway) {
+					Destroy(gameObject);
+				}
+				else {
+					animationState = AnimationState.Idle;
+				}
 			}
 			else {
 				Vector3 totalDisplacement = snapPosition - lastDragPosition;
@@ -66,13 +77,19 @@ public class CardBehaviour : MonoBehaviour {
 		dragStopTime = Time.time;
 		if (transform.position.x < snapPosition.x - SwipeThreshold) {
 			Card.PerformLeftDecision();
-			//Destroy(gameObject);
-			animationState = AnimationState.Converging;
+			Vector3 displacement = lastDragPosition - snapPosition;
+			snapPosition += displacement.normalized
+			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
+			                * 2.0f;
+			animationState = AnimationState.FlyingAway;
 		}
 		else if (transform.position.x > snapPosition.x + SwipeThreshold) {
 			Card.PerformRightDecision();
-			//Destroy(gameObject);
-			animationState = AnimationState.Converging;
+			Vector3 displacement = lastDragPosition - snapPosition;
+			snapPosition += displacement.normalized
+			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
+			                * 2.0f;
+			animationState = AnimationState.FlyingAway;
 		}
 		else {
 			animationState = AnimationState.Converging;
