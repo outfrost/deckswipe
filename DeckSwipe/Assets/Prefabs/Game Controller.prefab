@@ -53,4 +53,4 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   CardPrefab: {fileID: 114344410898400570, guid: 83a4759aa54354d2688335e1a33eb9d7,
     type: 2}
-  SpawnPosition: {x: 0, y: 0, z: 0}
+  SpawnPosition: {x: 0, y: 0, z: 10}
