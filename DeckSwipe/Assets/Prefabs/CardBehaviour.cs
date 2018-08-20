@@ -16,6 +16,7 @@ public class CardBehaviour : MonoBehaviour {
 	public float SwipeThreshold = 1.0f;
 	
 	public CardModel Card { private get; set; }
+	public Game Controller { private get; set;  }
 	
 	private Vector3 snapPosition;
 	private Vector3 dragStartPosition;
@@ -77,6 +78,7 @@ public class CardBehaviour : MonoBehaviour {
 		dragStopTime = Time.time;
 		if (transform.position.x < snapPosition.x - SwipeThreshold) {
 			Card.PerformLeftDecision();
+			Controller.SpawnCard();
 			Vector3 displacement = lastDragPosition - snapPosition;
 			snapPosition += displacement.normalized
 			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
@@ -85,6 +87,7 @@ public class CardBehaviour : MonoBehaviour {
 		}
 		else if (transform.position.x > snapPosition.x + SwipeThreshold) {
 			Card.PerformRightDecision();
+			Controller.SpawnCard();
 			Vector3 displacement = lastDragPosition - snapPosition;
 			snapPosition += displacement.normalized
 			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
