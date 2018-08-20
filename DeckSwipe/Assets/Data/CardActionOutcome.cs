@@ -1,8 +1,8 @@
-﻿public class CardDecisionOutcome {
+﻿public class CardActionOutcome {
 
 	private readonly StatsModification statsModification;
 
-	public CardDecisionOutcome(int heatMod, int foodMod, int hopeMod, int materialsMod) {
+	public CardActionOutcome(int heatMod, int foodMod, int hopeMod, int materialsMod) {
 		statsModification = new StatsModification(heatMod, foodMod, hopeMod, materialsMod);
 	}
 

@@ -1,19 +1,19 @@
 ﻿public class CardModel {
-
-	private CardDecisionOutcome leftDecisionOutcome;
-	private CardDecisionOutcome rightDecisionOutcome;
-
-	public CardModel(CardDecisionOutcome leftOutcome, CardDecisionOutcome rightOutcome) {
-		leftDecisionOutcome = leftOutcome;
-		rightDecisionOutcome = rightOutcome;
+	
+	private CardActionOutcome leftSwipeOutcome;
+	private CardActionOutcome rightSwipeOutcome;
+	
+	public CardModel(CardActionOutcome leftOutcome, CardActionOutcome rightOutcome) {
+		leftSwipeOutcome = leftOutcome;
+		rightSwipeOutcome = rightOutcome;
 	}
 	
 	public void PerformLeftDecision() {
-		leftDecisionOutcome.Perform();
+		leftSwipeOutcome.Perform();
 	}
 	
 	public void PerformRightDecision() {
-		rightDecisionOutcome.Perform();
+		rightSwipeOutcome.Perform();
 	}
 	
 }
