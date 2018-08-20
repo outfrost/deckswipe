@@ -71,6 +71,7 @@ public class CardBehaviour : MonoBehaviour {
 	
 	private void OnMouseUp() {
 		animationStartPosition = transform.position;
+		animationStartRotationAngles = transform.eulerAngles;
 		animationStartTime = Time.time;
 		if (transform.position.x < SnapPosition.x - SwipeThreshold) {
 			Card.PerformLeftDecision();
