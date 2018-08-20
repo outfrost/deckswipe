@@ -14,6 +14,7 @@ public class Game : MonoBehaviour {
 		cardInstance.Card = new CardModel(
 				new CardDecisionOutcome(-4, 4, -2, 2),
 				new CardDecisionOutcome(2, 0, 4, -2));
+		cardInstance.SnapPosition.y = -0.5f;
 		cardInstance.Controller = this;
 	}
 	

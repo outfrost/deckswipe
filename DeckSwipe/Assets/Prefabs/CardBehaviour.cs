@@ -7,46 +7,42 @@ public class CardBehaviour : MonoBehaviour {
 
 		Idle,
 		Converging,
-		FlyingAway
+		FlyingAway,
+		Revealing
 
 	}
 	
 	private const float animationDuration = 0.4f;
 	
 	public float SwipeThreshold = 1.0f;
+	public Vector3 SnapPosition;
+	public Vector3 SnapRotationAngles;
 	
 	public CardModel Card { private get; set; }
 	public Game Controller { private get; set;  }
 	
-	private Vector3 snapPosition;
 	private Vector3 dragStartPosition;
 	private Vector3 dragStartPointerPosition;
-	private Vector3 lastDragPosition;
-	private float dragStopTime;
-	private AnimationState animationState;
-	
+	private Vector3 animationStartPosition;
+	private Vector3 animationStartRotationAngles;
+	private float animationStartTime;
+	private AnimationState animationState = AnimationState.Idle;
+
 	private void Start() {
-		snapPosition = transform.position;
+		animationStartPosition = transform.position;
+		animationStartRotationAngles = transform.eulerAngles;
+		animationStartTime = Time.time;
+		animationState = AnimationState.Revealing;
 	}
 	
 	private void Update() {
-		// Animate card snap and destroy swiped away cards
+		// Animate card by interpolating translation and rotation, destroy swiped cards
 		if (animationState != AnimationState.Idle) {
-			float animationProgress = (Time.time - dragStopTime) / animationDuration;
-			float scaledProgress = 0.0f;
-			switch (animationState) {
-				case AnimationState.Converging:
-					scaledProgress = 0.15f * Mathf.Pow(animationProgress, 3.0f)
-					                 - 1.5f * Mathf.Pow(animationProgress, 2.0f)
-					                 + 2.38f * animationProgress;
-					break;
-				case AnimationState.FlyingAway:
-					scaledProgress = 1.5f * Mathf.Pow(animationProgress, 3.0f)
-					                 + 0.55f * animationProgress;
-					break;
-			}
+			float animationProgress = (Time.time - animationStartTime) / animationDuration;
+			float scaledProgress = ScaleProgress(animationProgress);
 			if (scaledProgress > 1.0f || animationProgress > 1.0f) {
-				transform.position = snapPosition;
+				transform.position = SnapPosition;
+				transform.eulerAngles = SnapRotationAngles;
 				if (animationState == AnimationState.FlyingAway) {
 					Destroy(gameObject);
 				}
@@ -55,8 +51,8 @@ public class CardBehaviour : MonoBehaviour {
 				}
 			}
 			else {
-				Vector3 totalDisplacement = snapPosition - lastDragPosition;
-				transform.position = lastDragPosition + totalDisplacement * scaledProgress;
+				transform.position = Vector3.Lerp(animationStartPosition, SnapPosition, scaledProgress);
+				transform.eulerAngles = Vector3.Lerp(animationStartRotationAngles, SnapRotationAngles, scaledProgress);
 			}
 		}
 	}
@@ -74,28 +70,44 @@ public class CardBehaviour : MonoBehaviour {
 	}
 	
 	private void OnMouseUp() {
-		lastDragPosition = transform.position;
-		dragStopTime = Time.time;
-		if (transform.position.x < snapPosition.x - SwipeThreshold) {
+		animationStartPosition = transform.position;
+		animationStartTime = Time.time;
+		if (transform.position.x < SnapPosition.x - SwipeThreshold) {
 			Card.PerformLeftDecision();
 			Controller.SpawnCard();
-			Vector3 displacement = lastDragPosition - snapPosition;
-			snapPosition += displacement.normalized
+			Vector3 displacement = animationStartPosition - SnapPosition;
+			SnapPosition += displacement.normalized
 			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
 			                * 2.0f;
+			SnapRotationAngles = transform.eulerAngles;
 			animationState = AnimationState.FlyingAway;
 		}
-		else if (transform.position.x > snapPosition.x + SwipeThreshold) {
+		else if (transform.position.x > SnapPosition.x + SwipeThreshold) {
 			Card.PerformRightDecision();
 			Controller.SpawnCard();
-			Vector3 displacement = lastDragPosition - snapPosition;
-			snapPosition += displacement.normalized
+			Vector3 displacement = animationStartPosition - SnapPosition;
+			SnapPosition += displacement.normalized
 			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
 			                * 2.0f;
+			SnapRotationAngles = transform.eulerAngles;
 			animationState = AnimationState.FlyingAway;
 		}
 		else {
 			animationState = AnimationState.Converging;
+		}
+	}
+
+	private float ScaleProgress(float animationProgress) {
+		switch (animationState) {
+			case AnimationState.Converging:
+				return 0.15f * Mathf.Pow(animationProgress, 3.0f)
+				       - 1.5f * Mathf.Pow(animationProgress, 2.0f)
+				       + 2.38f * animationProgress;
+			case AnimationState.FlyingAway:
+				return 1.5f * Mathf.Pow(animationProgress, 3.0f)
+				      + 0.55f * animationProgress;
+			default:
+				return animationProgress;
 		}
 	}
 	
