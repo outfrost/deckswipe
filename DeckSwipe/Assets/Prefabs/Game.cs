@@ -2,8 +2,14 @@
 
 public class Game : MonoBehaviour {
 	
+	public InputDispatcher InputDispatcher;
 	public CardBehaviour CardPrefab;
 	public Vector3 SpawnPosition;
+	
+	private void Awake() {
+		// Listen for Escape key ('Back' on Android) to quit the game
+		InputDispatcher.AddKeyDownHandler(KeyCode.Escape, keyCode => Application.Quit());
+	}
 	
 	private void Start() {
 		DrawNextCard();
