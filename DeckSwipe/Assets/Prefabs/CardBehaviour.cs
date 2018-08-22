@@ -74,8 +74,7 @@ public class CardBehaviour : MonoBehaviour {
 		animationStartRotationAngles = transform.eulerAngles;
 		animationStartTime = Time.time;
 		if (transform.position.x < SnapPosition.x - SwipeThreshold) {
-			Card.PerformLeftDecision();
-			Controller.SpawnCard();
+			Card.PerformLeftDecision(Controller);
 			Vector3 displacement = animationStartPosition - SnapPosition;
 			SnapPosition += displacement.normalized
 			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
@@ -84,8 +83,7 @@ public class CardBehaviour : MonoBehaviour {
 			animationState = AnimationState.FlyingAway;
 		}
 		else if (transform.position.x > SnapPosition.x + SwipeThreshold) {
-			Card.PerformRightDecision();
-			Controller.SpawnCard();
+			Card.PerformRightDecision(Controller);
 			Vector3 displacement = animationStartPosition - SnapPosition;
 			SnapPosition += displacement.normalized
 			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)

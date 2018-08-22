@@ -8,12 +8,12 @@
 		rightSwipeOutcome = rightOutcome;
 	}
 	
-	public void PerformLeftDecision() {
-		leftSwipeOutcome.Perform();
+	public void PerformLeftDecision(Game controller) {
+		leftSwipeOutcome.Perform(controller);
 	}
 	
-	public void PerformRightDecision() {
-		rightSwipeOutcome.Perform();
+	public void PerformRightDecision(Game controller) {
+		rightSwipeOutcome.Perform(controller);
 	}
 	
 }
