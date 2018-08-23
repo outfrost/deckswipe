@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using TMPro;
+using UnityEngine;
 
 public static class Util {
 
@@ -10,6 +11,12 @@ public static class Util {
 		float height = camera.orthographicSize * 2.0f;
 		float width = height * camera.aspect;
 		return Mathf.Sqrt(width * width + height * height);
+	}
+
+	public static void SetTextAlpha(TextMeshPro text, float alpha) {
+		Color textColor = text.color;
+		textColor.a = Mathf.Clamp01(alpha);
+		text.color = textColor;
 	}
 	
 }

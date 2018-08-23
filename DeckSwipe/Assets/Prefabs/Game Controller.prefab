@@ -53,7 +53,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   InputDispatcher: {fileID: 114844643638476450}
-  CardPrefab: {fileID: 114344410898400570, guid: 83a4759aa54354d2688335e1a33eb9d7,
+  CardPrefab: {fileID: 114329104408167028, guid: 83a4759aa54354d2688335e1a33eb9d7,
     type: 2}
   SpawnPosition: {x: 0, y: 0, z: 10}
 --- !u!114 &114844643638476450

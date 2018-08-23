@@ -1,4 +1,5 @@
 ﻿using System;
+using TMPro;
 using UnityEngine;
 
 public class CardBehaviour : MonoBehaviour {
@@ -17,6 +18,8 @@ public class CardBehaviour : MonoBehaviour {
 	public float SwipeThreshold = 1.0f;
 	public Vector3 SnapPosition;
 	public Vector3 SnapRotationAngles;
+	public TextMeshPro LeftActionText;
+	public TextMeshPro RightActionText;
 	
 	public CardModel Card { private get; set; }
 	public Game Controller { private get; set;  }
@@ -27,6 +30,11 @@ public class CardBehaviour : MonoBehaviour {
 	private Vector3 animationStartRotationAngles;
 	private float animationStartTime;
 	private AnimationState animationState = AnimationState.Idle;
+
+	private void Awake() {
+		Util.SetTextAlpha(LeftActionText, 0.0f);
+		Util.SetTextAlpha(RightActionText, 0.0f);
+	}
 
 	private void Start() {
 		animationStartPosition = transform.position;
@@ -54,6 +62,11 @@ public class CardBehaviour : MonoBehaviour {
 				transform.position = Vector3.Lerp(animationStartPosition, SnapPosition, scaledProgress);
 				transform.eulerAngles = Vector3.Lerp(animationStartRotationAngles, SnapRotationAngles, scaledProgress);
 			}
+			if (animationState != AnimationState.Revealing) {
+				float alphaCoord = (transform.position.x - SnapPosition.x) / (SwipeThreshold / 2);
+				Util.SetTextAlpha(LeftActionText, Mathf.Clamp01(-alphaCoord));
+				Util.SetTextAlpha(RightActionText, Mathf.Clamp01(alphaCoord));
+			}
 		}
 	}
 	
@@ -67,6 +80,10 @@ public class CardBehaviour : MonoBehaviour {
 		Vector3 displacement = Camera.main.ScreenToWorldPoint(Input.mousePosition) - dragStartPointerPosition;
 		displacement.z = 0.0f;
 		transform.position = dragStartPosition + displacement;
+		
+		float alphaCoord = (transform.position.x - SnapPosition.x) / (SwipeThreshold / 2);
+		Util.SetTextAlpha(LeftActionText, -alphaCoord);
+		Util.SetTextAlpha(RightActionText, alphaCoord);
 	}
 	
 	private void OnMouseUp() {
