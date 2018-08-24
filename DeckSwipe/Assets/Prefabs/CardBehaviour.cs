@@ -54,6 +54,11 @@ public class CardBehaviour : MonoBehaviour {
 			if (scaledProgress > 1.0f || animationProgress > 1.0f) {
 				transform.position = SnapPosition;
 				transform.eulerAngles = SnapRotationAngles;
+				
+				if (animationState == AnimationState.Revealing) {
+					SnapRotationAngles.y -= 360.0f;
+				}
+				
 				if (animationState == AnimationState.FlyingAway) {
 					Destroy(gameObject);
 				}
