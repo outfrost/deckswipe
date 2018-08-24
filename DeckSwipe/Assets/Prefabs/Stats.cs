@@ -30,7 +30,7 @@ public class Stats : MonoBehaviour {
 	private void Awake() {
 		if (!Util.IsPrefab(gameObject)) {
 			changeListeners.Add(this);
-			UpdateAllStatBars();
+			UpdateStatBars();
 		}
 	}
 	
