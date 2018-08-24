@@ -37,6 +37,9 @@ public class CardBehaviour : MonoBehaviour {
 	}
 
 	private void Start() {
+		// Rotate clockwise on reveal instead of anticlockwise 
+		SnapRotationAngles.y += 360.0f;
+		
 		animationStartPosition = transform.position;
 		animationStartRotationAngles = transform.eulerAngles;
 		animationStartTime = Time.time;
