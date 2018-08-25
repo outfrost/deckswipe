@@ -7,10 +7,13 @@ public class Game : MonoBehaviour {
 	public Vector3 SpawnPosition;
 
 	public Sprite TempCardSprite;
+
+	private CardStorage cardStorage;
 	
 	private void Awake() {
 		// Listen for Escape key ('Back' on Android) to quit the game
 		InputDispatcher.AddKeyDownHandler(KeyCode.Escape, keyCode => Application.Quit());
+		cardStorage = new CardStorage(TempCardSprite);
 	}
 	
 	private void Start() {
@@ -43,10 +46,7 @@ public class Game : MonoBehaviour {
 					new GameOverCardOutcome()));
 		}
 		else {
-			SpawnCard(new CardModel("This is a test card text that should appear on screen.", "Dr. Bartholomew Oobleck", "Here goes", "There goes",
-					TempCardSprite,
-					new CardActionOutcome(-4, 4, -2, 2),
-					new CardActionOutcome(2, 0, 4, -2)));
+			SpawnCard(cardStorage.Random());
 		}
 	}
 	
