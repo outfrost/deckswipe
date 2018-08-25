@@ -18,5 +18,13 @@ public static class Util {
 		textColor.a = Mathf.Clamp01(alpha);
 		text.color = textColor;
 	}
+
+	public static bool IsFacingCamera(GameObject gameObject, Camera camera) {
+		return Vector3.Dot(gameObject.transform.forward, camera.transform.forward) > 0.0f;
+	}
+
+	public static bool IsFacingCamera(GameObject gameObject) {
+		return IsFacingCamera(gameObject, Camera.main);
+	}
 	
 }

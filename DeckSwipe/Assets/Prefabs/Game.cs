@@ -5,6 +5,8 @@ public class Game : MonoBehaviour {
 	public InputDispatcher InputDispatcher;
 	public CardBehaviour CardPrefab;
 	public Vector3 SpawnPosition;
+
+	public Sprite TempCardSprite;
 	
 	private void Awake() {
 		// Listen for Escape key ('Back' on Android) to quit the game
@@ -17,27 +19,32 @@ public class Game : MonoBehaviour {
 	
 	public void DrawNextCard() {
 		if (Stats.Heat == 0) {
-			SpawnCard(new CardModel(
+			SpawnCard(new CardModel("The city runs out of heat and freezes over.", "", "", "",
+					null,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		else if (Stats.Food == 0) {
-			SpawnCard(new CardModel(
+			SpawnCard(new CardModel("Hunger consumes the city, as food reserves deplete.", "", "", "",
+					null,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		else if (Stats.Hope == 0) {
-			SpawnCard(new CardModel(
+			SpawnCard(new CardModel("All hope among the people is lost.", "", "", "",
+					null,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		else if (Stats.Materials == 0) {
-			SpawnCard(new CardModel(
+			SpawnCard(new CardModel("The city runs out of materials to sustain itself.", "", "", "",
+					null,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		else {
-			SpawnCard(new CardModel(
+			SpawnCard(new CardModel("This is a test card text that should appear on screen.", "Dr. Bartholomew Oobleck", "Here goes", "There goes",
+					TempCardSprite,
 					new CardActionOutcome(-4, 4, -2, 2),
 					new CardActionOutcome(2, 0, 4, -2)));
 		}

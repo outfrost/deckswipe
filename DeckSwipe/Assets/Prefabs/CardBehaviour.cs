@@ -20,10 +20,22 @@ public class CardBehaviour : MonoBehaviour {
 	public Vector3 SnapRotationAngles;
 	public TextMeshPro LeftActionText;
 	public TextMeshPro RightActionText;
-	
-	public CardModel Card { private get; set; }
+	public SpriteRenderer CardImageSpriteRenderer;
+
+	public CardModel Card {
+		set {
+			card = value;
+			LeftActionText.text = card.LeftSwipeText;
+			RightActionText.text = card.RightSwipeText;
+			if (card.CardImage != null) {
+				CardImageSpriteRenderer.sprite = card.CardImage;
+			}
+		}
+	}
+
 	public Game Controller { private get; set;  }
-	
+
+	private CardModel card;
 	private Vector3 dragStartPosition;
 	private Vector3 dragStartPointerPosition;
 	private Vector3 animationStartPosition;
@@ -56,6 +68,7 @@ public class CardBehaviour : MonoBehaviour {
 				transform.eulerAngles = SnapRotationAngles;
 				
 				if (animationState == AnimationState.Revealing) {
+					CardDescriptionDisplay.SetDescription(card.CardText, card.CharacterName);
 					SnapRotationAngles.y -= 360.0f;
 				}
 				
@@ -69,6 +82,12 @@ public class CardBehaviour : MonoBehaviour {
 			else {
 				transform.position = Vector3.Lerp(animationStartPosition, SnapPosition, scaledProgress);
 				transform.eulerAngles = Vector3.Lerp(animationStartRotationAngles, SnapRotationAngles, scaledProgress);
+				
+				// Hide card face elements unless it's facing the main camera
+				bool isFacingCamera = Util.IsFacingCamera(gameObject);
+				CardImageSpriteRenderer.enabled = isFacingCamera;
+				LeftActionText.enabled = isFacingCamera;
+				RightActionText.enabled = isFacingCamera;
 			}
 			if (animationState != AnimationState.Revealing) {
 				float alphaCoord = (transform.position.x - SnapPosition.x) / (SwipeThreshold / 2);
@@ -99,22 +118,24 @@ public class CardBehaviour : MonoBehaviour {
 		animationStartRotationAngles = transform.eulerAngles;
 		animationStartTime = Time.time;
 		if (transform.position.x < SnapPosition.x - SwipeThreshold) {
-			Card.PerformLeftDecision(Controller);
+			card.PerformLeftDecision(Controller);
 			Vector3 displacement = animationStartPosition - SnapPosition;
 			SnapPosition += displacement.normalized
 			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
 			                * 2.0f;
 			SnapRotationAngles = transform.eulerAngles;
 			animationState = AnimationState.FlyingAway;
+			CardDescriptionDisplay.ResetDescription();
 		}
 		else if (transform.position.x > SnapPosition.x + SwipeThreshold) {
-			Card.PerformRightDecision(Controller);
+			card.PerformRightDecision(Controller);
 			Vector3 displacement = animationStartPosition - SnapPosition;
 			SnapPosition += displacement.normalized
 			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
 			                * 2.0f;
 			SnapRotationAngles = transform.eulerAngles;
 			animationState = AnimationState.FlyingAway;
+			CardDescriptionDisplay.ResetDescription();
 		}
 		else {
 			animationState = AnimationState.Converging;
