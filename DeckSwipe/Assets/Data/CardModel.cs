@@ -1,28 +1,34 @@
 ﻿using UnityEngine;
 
 public class CardModel {
-
+	
 	public readonly string CardText;
-	public readonly string CharacterName;
 	public readonly string LeftSwipeText;
 	public readonly string RightSwipeText;
-	public readonly Sprite CardImage;
+	
+	public string CharacterName {
+		get { return character.Name; }
+	}
+	
+	public Sprite CardSprite {
+		get { return character.Sprite; }
+	}
+	
+	private CharacterModel character;
 	private CardActionOutcome leftSwipeOutcome;
 	private CardActionOutcome rightSwipeOutcome;
 	
 	public CardModel(
 			string cardText,
-			string characterName,
 			string leftSwipeText,
 			string rightSwipeText,
-			Sprite cardImage,
+			CharacterModel character,
 			CardActionOutcome leftOutcome,
 			CardActionOutcome rightOutcome) {
 		CardText = cardText;
-		CharacterName = characterName;
 		LeftSwipeText = leftSwipeText;
 		RightSwipeText = rightSwipeText;
-		CardImage = cardImage;
+		this.character = character;
 		leftSwipeOutcome = leftOutcome;
 		rightSwipeOutcome = rightOutcome;
 	}

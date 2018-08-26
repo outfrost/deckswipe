@@ -27,8 +27,8 @@ public class CardBehaviour : MonoBehaviour {
 			card = value;
 			LeftActionText.text = card.LeftSwipeText;
 			RightActionText.text = card.RightSwipeText;
-			if (card.CardImage != null) {
-				CardImageSpriteRenderer.sprite = card.CardImage;
+			if (card.CardSprite != null) {
+				CardImageSpriteRenderer.sprite = card.CardSprite;
 			}
 		}
 	}

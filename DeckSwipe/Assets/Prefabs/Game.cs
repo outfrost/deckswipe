@@ -5,9 +5,11 @@ public class Game : MonoBehaviour {
 	public InputDispatcher InputDispatcher;
 	public CardBehaviour CardPrefab;
 	public Vector3 SpawnPosition;
-
+	
 	public Sprite TempCardSprite;
-
+	
+	private static readonly CharacterModel gameOverCharacter = new CharacterModel("", null);
+	
 	private CardStorage cardStorage;
 	
 	private void Awake() {
@@ -22,26 +24,26 @@ public class Game : MonoBehaviour {
 	
 	public void DrawNextCard() {
 		if (Stats.Heat == 0) {
-			SpawnCard(new CardModel("The city runs out of heat and freezes over.", "", "", "",
-					null,
+			SpawnCard(new CardModel("The city runs out of heat and freezes over.", "", "",
+					gameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		else if (Stats.Food == 0) {
-			SpawnCard(new CardModel("Hunger consumes the city, as food reserves deplete.", "", "", "",
-					null,
+			SpawnCard(new CardModel("Hunger consumes the city, as food reserves deplete.", "", "",
+					gameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		else if (Stats.Hope == 0) {
-			SpawnCard(new CardModel("All hope among the people is lost.", "", "", "",
-					null,
+			SpawnCard(new CardModel("All hope among the people is lost.", "", "",
+					gameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		else if (Stats.Materials == 0) {
-			SpawnCard(new CardModel("The city runs out of materials to sustain itself.", "", "", "",
-					null,
+			SpawnCard(new CardModel("The city runs out of materials to sustain itself.", "", "",
+					gameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
