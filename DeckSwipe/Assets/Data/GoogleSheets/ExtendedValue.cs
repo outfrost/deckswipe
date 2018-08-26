@@ -1,12 +1,14 @@
-﻿namespace GoogleSheets {
+﻿using System;
+
+namespace GoogleSheets {
 	
+	[Serializable]
 	public struct ExtendedValue {
 		
 		public double numberValue;
 		public string stringValue;
 		public bool boolValue;
 		public string formulaValue;
-		public object errorValue;
 		
 	}
 	

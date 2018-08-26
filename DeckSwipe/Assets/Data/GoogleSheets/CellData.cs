@@ -1,5 +1,8 @@
-﻿namespace GoogleSheets {
+﻿using System;
+
+namespace GoogleSheets {
 	
+	[Serializable]
 	public struct CellData {
 		
 		public ExtendedValue userEnteredValue;
