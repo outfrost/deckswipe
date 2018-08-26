@@ -1,12 +1,15 @@
 ﻿using System.Collections.Generic;
+using GoogleSheets;
 using UnityEngine;
 
 public class CardStorage {
 	
 	private List<CardModel> cards = new List<CardModel>();
+	private GoogleSheetsImporter googleSheetsImporter = new GoogleSheetsImporter();
 	
 	public CardStorage(Sprite defaultSprite) {
 		Populate(defaultSprite);
+		googleSheetsImporter.FetchCardData();
 	}
 	
 	public void Populate(Sprite defaultSprite) {
