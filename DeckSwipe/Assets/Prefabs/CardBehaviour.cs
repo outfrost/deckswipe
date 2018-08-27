@@ -43,6 +43,7 @@ public class CardBehaviour : MonoBehaviour {
 	private Vector3 animationStartRotationAngles;
 	private float animationStartTime;
 	private AnimationState animationState = AnimationState.Idle;
+	private bool animationSuspended = false;
 
 	private void Awake() {
 		Util.SetTextAlpha(LeftActionText, 0.0f);
@@ -61,7 +62,7 @@ public class CardBehaviour : MonoBehaviour {
 	
 	private void Update() {
 		// Animate card by interpolating translation and rotation, destroy swiped cards
-		if (animationState != AnimationState.Idle) {
+		if (animationState != AnimationState.Idle && !animationSuspended) {
 			float animationProgress = (Time.time - animationStartTime) / animationDuration;
 			float scaledProgress = ScaleProgress(animationProgress);
 			if (scaledProgress > 1.0f || animationProgress > 1.0f) {
@@ -99,7 +100,7 @@ public class CardBehaviour : MonoBehaviour {
 	}
 	
 	private void OnMouseDown() {
-		animationState = AnimationState.Idle;
+		animationSuspended = true;
 		dragStartPosition = transform.position;
 		dragStartPointerPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 	}
@@ -118,29 +119,32 @@ public class CardBehaviour : MonoBehaviour {
 		animationStartPosition = transform.position;
 		animationStartRotationAngles = transform.eulerAngles;
 		animationStartTime = Time.time;
-		if (transform.position.x < SnapPosition.x - SwipeThreshold) {
-			card.PerformLeftDecision(Controller);
-			Vector3 displacement = animationStartPosition - SnapPosition;
-			SnapPosition += displacement.normalized
-			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
-			                * 2.0f;
-			SnapRotationAngles = transform.eulerAngles;
-			animationState = AnimationState.FlyingAway;
-			CardDescriptionDisplay.ResetDescription();
+		if (animationState != AnimationState.FlyingAway) {
+			if (transform.position.x < SnapPosition.x - SwipeThreshold) {
+				card.PerformLeftDecision(Controller);
+				Vector3 displacement = animationStartPosition - SnapPosition;
+				SnapPosition += displacement.normalized
+				                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
+				                * 2.0f;
+				SnapRotationAngles = transform.eulerAngles;
+				animationState = AnimationState.FlyingAway;
+				CardDescriptionDisplay.ResetDescription();
+			}
+			else if (transform.position.x > SnapPosition.x + SwipeThreshold) {
+				card.PerformRightDecision(Controller);
+				Vector3 displacement = animationStartPosition - SnapPosition;
+				SnapPosition += displacement.normalized
+				                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
+				                * 2.0f;
+				SnapRotationAngles = transform.eulerAngles;
+				animationState = AnimationState.FlyingAway;
+				CardDescriptionDisplay.ResetDescription();
+			}
+			else if (animationState == AnimationState.Idle) {
+				animationState = AnimationState.Converging;
+			}
 		}
-		else if (transform.position.x > SnapPosition.x + SwipeThreshold) {
-			card.PerformRightDecision(Controller);
-			Vector3 displacement = animationStartPosition - SnapPosition;
-			SnapPosition += displacement.normalized
-			                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
-			                * 2.0f;
-			SnapRotationAngles = transform.eulerAngles;
-			animationState = AnimationState.FlyingAway;
-			CardDescriptionDisplay.ResetDescription();
-		}
-		else {
-			animationState = AnimationState.Converging;
-		}
+		animationSuspended = false;
 	}
 
 	private float ScaleProgress(float animationProgress) {
