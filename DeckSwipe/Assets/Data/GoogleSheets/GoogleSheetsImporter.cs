@@ -20,14 +20,21 @@ namespace GoogleSheets {
 		
 		public async Task<IEnumerable<CardModel>> FetchCards() {
 			Debug.Log("[GoogleSheetsImporter] Fetching cards from Google Sheet " + spreadsheetId + " ...");
-			HttpWebRequest request = WebRequest.CreateHttp(
-					"https://sheets.googleapis.com/v4/spreadsheets/"
-					+ spreadsheetId
-					+ "?includeGridData=true&key="
-					+ apiKey);
-			// TODO Handle Web exceptions
-			WebResponse response = await request.GetResponseAsync();
-			Debug.Log("[GoogleSheetsImporter] " + (int)((HttpWebResponse)response).StatusCode + " " + ((HttpWebResponse)response).StatusDescription);
+			HttpWebResponse response;
+			try {
+				HttpWebRequest request = WebRequest.CreateHttp(
+						"https://sheets.googleapis.com/v4/spreadsheets/"
+						+ spreadsheetId
+						+ "?includeGridData=true&key="
+						+ apiKey);
+				// TODO Handle Web exceptions
+				response = (HttpWebResponse) await request.GetResponseAsync();
+			}
+			catch (WebException e) {
+				Debug.LogError("[GoogleSheetsImporter] Request failed: " + e.Message);
+				return null;
+			}
+			Debug.Log("[GoogleSheetsImporter] " + (int)response.StatusCode + " " + response.StatusDescription);
 			
 			if (!response.ContentType.Contains("application/json")) {
 				Debug.LogError("[GoogleSheetsImporter] Google Sheets API returned unrecognised data format");
@@ -68,8 +75,8 @@ namespace GoogleSheets {
 				else {
 					Debug.Log("[GoogleSheetsImporter] Fetching image from " + imageRowData[i].values[1].hyperlink + " ...");
 					HttpWebRequest imageRequest = WebRequest.CreateHttp(imageRowData[i].values[1].hyperlink);
-					WebResponse imageResponse = await imageRequest.GetResponseAsync();
-					Debug.Log("[GoogleSheetsImporter] " + (int)((HttpWebResponse)imageResponse).StatusCode + " " + ((HttpWebResponse)imageResponse).StatusDescription);
+					HttpWebResponse imageResponse = (HttpWebResponse) await imageRequest.GetResponseAsync();
+					Debug.Log("[GoogleSheetsImporter] " + (int)imageResponse.StatusCode + " " + imageResponse.StatusDescription);
 					
 					Stream imageStream;
 					if ((imageStream = imageResponse.GetResponseStream()) == null) {

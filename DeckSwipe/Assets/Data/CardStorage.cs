@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using GoogleSheets;
 using UnityEngine;
@@ -9,12 +10,12 @@ public class CardStorage {
 	private readonly Game controller;
 	private readonly Sprite defaultSprite;
 	
-	private Task<IEnumerable<CardModel>> cardImportTask;
+	private Task cardImportTask;
 	
 	public CardStorage(Game controller, Sprite defaultSprite) {
 		this.controller = controller;
 		this.defaultSprite = defaultSprite;
-		PopulateCollection();
+		cardImportTask = PopulateCollection();
 	}
 	
 	public CardModel Random() {
@@ -26,9 +27,8 @@ public class CardStorage {
 		controller.DrawNextCard();
 	}
 	
-	private async void PopulateCollection() {
-		cardImportTask = new GoogleSheetsImporter(defaultSprite).FetchCards();
-		IEnumerable<CardModel> importedCards = await cardImportTask;
+	private async Task PopulateCollection() {
+		IEnumerable<CardModel> importedCards = await new GoogleSheetsImporter(defaultSprite).FetchCards();
 		if (importedCards != null) {
 			cards.AddRange(importedCards);
 		}
