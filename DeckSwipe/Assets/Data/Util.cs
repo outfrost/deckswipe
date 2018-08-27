@@ -1,4 +1,5 @@
-﻿using TMPro;
+﻿using System.IO;
+using TMPro;
 using UnityEngine;
 
 public static class Util {
@@ -25,6 +26,20 @@ public static class Util {
 
 	public static bool IsFacingCamera(GameObject gameObject) {
 		return IsFacingCamera(gameObject, Camera.main);
+	}
+	
+	public static byte[] BytesFromStream(Stream input)
+	{
+		byte[] buffer = new byte[16 * 1024];
+		using (MemoryStream memoryStream = new MemoryStream())
+		{
+			int bytesRead;
+			while ((bytesRead = input.Read(buffer, 0, buffer.Length)) > 0)
+			{
+				memoryStream.Write(buffer, 0, bytesRead);
+			}
+			return memoryStream.ToArray();
+		}
 	}
 	
 }

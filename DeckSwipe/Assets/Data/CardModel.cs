@@ -5,16 +5,16 @@ public class CardModel {
 	public readonly string CardText;
 	public readonly string LeftSwipeText;
 	public readonly string RightSwipeText;
+	public CharacterModel Character;
 	
 	public string CharacterName {
-		get { return character.Name; }
+		get { return Character != null ? Character.Name : ""; }
 	}
 	
 	public Sprite CardSprite {
-		get { return character.Sprite; }
+		get { return Character?.Sprite; }
 	}
 	
-	private CharacterModel character;
 	private CardActionOutcome leftSwipeOutcome;
 	private CardActionOutcome rightSwipeOutcome;
 	
@@ -28,7 +28,7 @@ public class CardModel {
 		CardText = cardText;
 		LeftSwipeText = leftSwipeText;
 		RightSwipeText = rightSwipeText;
-		this.character = character;
+		Character = character;
 		leftSwipeOutcome = leftOutcome;
 		rightSwipeOutcome = rightOutcome;
 	}

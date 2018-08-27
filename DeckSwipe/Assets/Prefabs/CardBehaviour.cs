@@ -29,6 +29,7 @@ public class CardBehaviour : MonoBehaviour {
 			RightActionText.text = card.RightSwipeText;
 			if (card.CardSprite != null) {
 				CardImageSpriteRenderer.sprite = card.CardSprite;
+				// TODO Scale the renderer to the sprite
 			}
 		}
 	}

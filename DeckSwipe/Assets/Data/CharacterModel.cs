@@ -2,8 +2,8 @@
 
 public class CharacterModel {
 	
-	public readonly string Name;
-	public readonly Sprite Sprite;
+	public string Name;
+	public Sprite Sprite;
 	
 	public CharacterModel(string name, Sprite sprite) {
 		Name = name;

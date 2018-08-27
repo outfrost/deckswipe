@@ -1,18 +1,43 @@
 ﻿using System.Collections.Generic;
+using System.Threading.Tasks;
 using GoogleSheets;
 using UnityEngine;
 
 public class CardStorage {
 	
 	private List<CardModel> cards = new List<CardModel>();
-	private GoogleSheetsImporter googleSheetsImporter = new GoogleSheetsImporter();
+	private readonly Game controller;
+	private readonly Sprite defaultSprite;
 	
-	public CardStorage(Sprite defaultSprite) {
-		Populate(defaultSprite);
-		googleSheetsImporter.FetchCardData();
+	private Task<IEnumerable<CardModel>> cardImportTask;
+	
+	public CardStorage(Game controller, Sprite defaultSprite) {
+		this.controller = controller;
+		this.defaultSprite = defaultSprite;
+		PopulateCollection();
 	}
 	
-	public void Populate(Sprite defaultSprite) {
+	public CardModel Random() {
+		return cards[UnityEngine.Random.Range(0, cards.Count)];
+	}
+	
+	public async void DrawCardWhenAvailable() {
+		await cardImportTask;
+		controller.DrawNextCard();
+	}
+	
+	private async void PopulateCollection() {
+		cardImportTask = new GoogleSheetsImporter(defaultSprite).FetchCards();
+		IEnumerable<CardModel> importedCards = await cardImportTask;
+		if (importedCards != null) {
+			cards.AddRange(importedCards);
+		}
+		else {
+			PopulateFallback();
+		}
+	}
+	
+	private void PopulateFallback() {
 		CharacterModel leadExplorer = new CharacterModel("Lead explorer", defaultSprite);
 		cards.AddRange(new List<CardModel> {
 				new CardModel("This is a test card text that should appear on screen.",
@@ -58,10 +83,6 @@ public class CardStorage {
 						new CardActionOutcome(-2, -2, 0, -2),
 						new CardActionOutcome(+2, -4, 0, -2)),
 		});
-	}
-	
-	public CardModel Random() {
-		return cards[UnityEngine.Random.Range(0, cards.Count)];
 	}
 	
 }

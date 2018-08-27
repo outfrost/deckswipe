@@ -5,8 +5,7 @@ public class Game : MonoBehaviour {
 	public InputDispatcher InputDispatcher;
 	public CardBehaviour CardPrefab;
 	public Vector3 SpawnPosition;
-	
-	public Sprite TempCardSprite;
+	public Sprite DefaultCharacterSprite;
 	
 	private static readonly CharacterModel gameOverCharacter = new CharacterModel("", null);
 	
@@ -15,11 +14,11 @@ public class Game : MonoBehaviour {
 	private void Awake() {
 		// Listen for Escape key ('Back' on Android) to quit the game
 		InputDispatcher.AddKeyDownHandler(KeyCode.Escape, keyCode => Application.Quit());
-		cardStorage = new CardStorage(TempCardSprite);
+		cardStorage = new CardStorage(this, DefaultCharacterSprite);
 	}
 	
 	private void Start() {
-		DrawNextCard();
+		cardStorage.DrawCardWhenAvailable();
 	}
 	
 	public void DrawNextCard() {
