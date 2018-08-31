@@ -398,6 +398,7 @@ MonoBehaviour:
   SwipeThreshold: 2
   SnapPosition: {x: 0, y: 0, z: 10}
   SnapRotationAngles: {x: 0, y: 0, z: 0}
+  CardImageSpriteTargetSize: {x: 4, y: 4}
   LeftActionText: {fileID: 114622037674879222}
   RightActionText: {fileID: 114009916330253648}
   CardImageSpriteRenderer: {fileID: 212621907468470380}
