@@ -5,12 +5,12 @@ using UnityEngine;
 public class CardBehaviour : MonoBehaviour {
 	
 	private enum AnimationState {
-
+		
 		Idle,
 		Converging,
 		FlyingAway,
 		Revealing
-
+		
 	}
 	
 	private const float animationDuration = 0.4f;
@@ -18,24 +18,32 @@ public class CardBehaviour : MonoBehaviour {
 	public float SwipeThreshold = 1.0f;
 	public Vector3 SnapPosition;
 	public Vector3 SnapRotationAngles;
+	public Vector2 CardImageSpriteTargetSize;
 	public TextMeshPro LeftActionText;
 	public TextMeshPro RightActionText;
 	public SpriteRenderer CardImageSpriteRenderer;
-
+	
 	public CardModel Card {
 		set {
 			card = value;
 			LeftActionText.text = card.LeftSwipeText;
 			RightActionText.text = card.RightSwipeText;
 			if (card.CardSprite != null) {
+				Vector2 targetSizeRatio = CardImageSpriteTargetSize / card.CardSprite.bounds.size;
+				float scaleFactor = Mathf.Min(targetSizeRatio.x, targetSizeRatio.y);
+				
+				Vector3 scale = CardImageSpriteRenderer.transform.localScale;
+				scale.x = scaleFactor;
+				scale.y = scaleFactor;
+				CardImageSpriteRenderer.transform.localScale = scale;
+				
 				CardImageSpriteRenderer.sprite = card.CardSprite;
-				// TODO Scale the renderer to the sprite
 			}
 		}
 	}
-
+	
 	public Game Controller { private get; set;  }
-
+	
 	private CardModel card;
 	private Vector3 dragStartPosition;
 	private Vector3 dragStartPointerPosition;
@@ -44,12 +52,12 @@ public class CardBehaviour : MonoBehaviour {
 	private float animationStartTime;
 	private AnimationState animationState = AnimationState.Idle;
 	private bool animationSuspended = false;
-
+	
 	private void Awake() {
 		Util.SetTextAlpha(LeftActionText, 0.0f);
 		Util.SetTextAlpha(RightActionText, 0.0f);
 	}
-
+	
 	private void Start() {
 		// Rotate clockwise on reveal instead of anticlockwise 
 		SnapRotationAngles.y += 360.0f;
@@ -146,7 +154,7 @@ public class CardBehaviour : MonoBehaviour {
 		}
 		animationSuspended = false;
 	}
-
+	
 	private float ScaleProgress(float animationProgress) {
 		switch (animationState) {
 			case AnimationState.Converging:
