@@ -8,7 +8,7 @@ DeckSwipe is a codename; the game does not have a real name yet.
 
 Created with Unity on Linux, primarily for the Android platform.
 
-![Screen capture of the game running on Android](screencap_android.gif)
+![Screen capture of the game running on Android](screencap-android.gif)
 
 ## Builds
 
