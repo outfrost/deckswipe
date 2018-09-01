@@ -14,11 +14,11 @@ public class Game : MonoBehaviour {
 	private void Awake() {
 		// Listen for Escape key ('Back' on Android) to quit the game
 		InputDispatcher.AddKeyDownHandler(KeyCode.Escape, keyCode => Application.Quit());
-		cardStorage = new CardStorage(this, DefaultCharacterSprite);
+		cardStorage = new CardStorage(DefaultCharacterSprite);
 	}
 	
 	private void Start() {
-		cardStorage.DrawCardWhenAvailable();
+		cardStorage.CallbackWhenCardsAvailable(StartGame);
 	}
 	
 	public void DrawNextCard() {
@@ -53,7 +53,12 @@ public class Game : MonoBehaviour {
 	
 	public void RestartGame() {
 		Stats.ResetStats();
-		DrawNextCard();
+		GameStartOverlay.StartSequence();
+	}
+	
+	private void StartGame() {
+		GameStartOverlay.FadeOutCallback = DrawNextCard;
+		GameStartOverlay.StartSequence(false);
 	}
 	
 	private void SpawnCard(CardModel card) {

@@ -7,13 +7,11 @@ using UnityEngine;
 public class CardStorage {
 	
 	private List<CardModel> cards = new List<CardModel>();
-	private readonly Game controller;
 	private readonly Sprite defaultSprite;
 	
 	private Task cardImportTask;
 	
-	public CardStorage(Game controller, Sprite defaultSprite) {
-		this.controller = controller;
+	public CardStorage(Sprite defaultSprite) {
 		this.defaultSprite = defaultSprite;
 		cardImportTask = PopulateCollection();
 	}
@@ -22,9 +20,9 @@ public class CardStorage {
 		return cards[UnityEngine.Random.Range(0, cards.Count)];
 	}
 	
-	public async void DrawCardWhenAvailable() {
+	public async void CallbackWhenCardsAvailable(Callback callback) {
 		await cardImportTask;
-		controller.DrawNextCard();
+		callback();
 	}
 	
 	private async Task PopulateCollection() {

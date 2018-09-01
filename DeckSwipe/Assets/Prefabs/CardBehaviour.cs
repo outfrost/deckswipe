@@ -1,6 +1,7 @@
 ﻿using System;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class CardBehaviour : MonoBehaviour {
 	
@@ -107,13 +108,15 @@ public class CardBehaviour : MonoBehaviour {
 		}
 	}
 	
-	private void OnMouseDown() {
+	//private void OnMouseDown() {
+	public void BeginDrag() {
 		animationSuspended = true;
 		dragStartPosition = transform.position;
 		dragStartPointerPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 	}
 	
-	private void OnMouseDrag() {
+	//private void OnMouseDrag() {
+	public void Drag() {
 		Vector3 displacement = Camera.main.ScreenToWorldPoint(Input.mousePosition) - dragStartPointerPosition;
 		displacement.z = 0.0f;
 		transform.position = dragStartPosition + displacement;
@@ -123,7 +126,8 @@ public class CardBehaviour : MonoBehaviour {
 		Util.SetTextAlpha(RightActionText, alphaCoord);
 	}
 	
-	private void OnMouseUp() {
+	//private void OnMouseUp() {
+	public void EndDrag() {
 		animationStartPosition = transform.position;
 		animationStartRotationAngles = transform.eulerAngles;
 		animationStartTime = Time.time;
