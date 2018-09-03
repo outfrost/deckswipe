@@ -11,15 +11,15 @@ public class CardStorage {
 	public Dictionary<int, CardModel> Cards { get; private set; }
 	public Dictionary<string, CardModel> SpecialCards { get; private set; }
 	
+	public Task CardImportTask { get; }
+	
 	private static readonly CharacterModel defaultGameOverCharacter = new CharacterModel("", null);
 	
 	private readonly Sprite defaultSprite;
 	
-	private Task cardImportTask;
-	
 	public CardStorage(Sprite defaultSprite) {
 		this.defaultSprite = defaultSprite;
-		cardImportTask = PopulateCollection();
+		CardImportTask = PopulateCollection();
 	}
 	
 	public CardModel Random() {
@@ -39,7 +39,7 @@ public class CardStorage {
 	}
 	
 	public async void CallbackWhenCardsAvailable(Callback callback) {
-		await cardImportTask;
+		await CardImportTask;
 		callback();
 	}
 	

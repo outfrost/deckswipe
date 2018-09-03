@@ -34,6 +34,21 @@ namespace Persistence {
 			specialCardProgress = dummySpecialProgress.ToArray();
 		}
 		
+		public void AttachReferences(CardStorage cardStorage) {
+			foreach (CardProgress entry in cardProgress) {
+				CardModel card = cardStorage.ForId(entry.id); 
+				if (card != null) {
+					card.Progress = entry;
+				}
+			}
+			foreach (SpecialCardProgress entry in specialCardProgress) {
+				CardModel specialCard = cardStorage.SpecialCard(entry.id);
+				if (specialCard != null) {
+					specialCard.Progress = entry;
+				}
+			}
+		}
+		
 	}
 	
 }

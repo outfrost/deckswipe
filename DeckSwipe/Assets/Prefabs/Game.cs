@@ -9,7 +9,7 @@ public class Game : MonoBehaviour {
 	public Sprite DefaultCharacterSprite;
 	
 	private CardStorage cardStorage;
-	private GameProgress gameProgress;
+	private ProgressStorage progressStorage;
 	private float daysPassedPreviously;
 	
 	private void Awake() {
@@ -19,7 +19,7 @@ public class Game : MonoBehaviour {
 	}
 	
 	private void Start() {
-		cardStorage.CallbackWhenCardsAvailable(StartGame);
+		cardStorage.CallbackWhenCardsAvailable(InitProgressStorage);
 	}
 	
 	public void DrawNextCard() {
@@ -38,23 +38,34 @@ public class Game : MonoBehaviour {
 		else {
 			SpawnCard(cardStorage.Random());
 		}
-		gameProgress.daysPassed += Random.Range(0.5f, 1.5f);
-		float daysPassedThisRun = gameProgress.daysPassed - daysPassedPreviously;
-		if (daysPassedThisRun > gameProgress.longestRunDays) {
-			gameProgress.longestRunDays = daysPassedThisRun;
+		progressStorage.Progress.daysPassed += Random.Range(0.5f, 1.5f);
+		float daysPassedThisRun = progressStorage.Progress.daysPassed - daysPassedPreviously;
+		if (daysPassedThisRun > progressStorage.Progress.longestRunDays) {
+			progressStorage.Progress.longestRunDays = daysPassedThisRun;
 		}
+		progressStorage.SaveLocally();
 	}
 	
 	public void RestartGame() {
 		Stats.ResetStats();
-		GameStartOverlay.StartSequence(gameProgress.daysPassed);
+		daysPassedPreviously = progressStorage.Progress.daysPassed;
+		GameStartOverlay.StartSequence(progressStorage.Progress.daysPassed);
 	}
 	
 	private void StartGame() {
-		gameProgress = new GameProgress(cardStorage);
-		daysPassedPreviously = gameProgress.daysPassed;
+		daysPassedPreviously = progressStorage.Progress.daysPassed;
 		GameStartOverlay.FadeOutCallback = DrawNextCard;
-		GameStartOverlay.StartSequence(gameProgress.daysPassed, false);
+		GameStartOverlay.StartSequence(progressStorage.Progress.daysPassed, false);
+	}
+	
+	private void InitProgressStorage() {
+		progressStorage = new ProgressStorage(cardStorage);
+		CallbackWhenDoneLoading(StartGame);
+	}
+	
+	private async void CallbackWhenDoneLoading(Callback callback) {
+		await progressStorage.ProgressLoadTask;
+		callback();
 	}
 	
 	private void SpawnCard(CardModel card) {
