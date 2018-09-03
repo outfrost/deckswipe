@@ -18,7 +18,7 @@ namespace GoogleSheets {
 			this.defaultSprite = defaultSprite;
 		}
 		
-		public async Task<IEnumerable<CardModel>> FetchCards() {
+		public async Task<ImportedCards> FetchCards() {
 			Debug.Log("[GoogleSheetsImporter] Fetching cards from Google Sheet " + spreadsheetId + " ...");
 			HttpWebResponse response;
 			try {
@@ -32,38 +32,43 @@ namespace GoogleSheets {
 			}
 			catch (WebException e) {
 				Debug.LogError("[GoogleSheetsImporter] Request failed: " + e.Message);
-				return null;
+				return new ImportedCards();
 			}
 			Debug.Log("[GoogleSheetsImporter] " + (int)response.StatusCode + " " + response.StatusDescription);
 			
 			if (!response.ContentType.Contains("application/json")) {
 				Debug.LogError("[GoogleSheetsImporter] Google Sheets API returned unrecognised data format");
-				return null;
+				return new ImportedCards();
 			}
 			
 			Stream responseStream;
 			if ((responseStream = response.GetResponseStream()) == null) {
 				Debug.LogError("[GoogleSheetsImporter] Google Sheets API returned empty response");
-				return null;
+				return new ImportedCards();
 			}
 			
 			Spreadsheet spreadsheet = JsonUtility.FromJson<Spreadsheet>(
 					new StreamReader(responseStream).ReadToEnd());
 			
 			RowData[] cardRowData = spreadsheet.sheets[0].data[0].rowData;
-			if (!ValidateSheetCardFormat(cardRowData[0])) {
+			if (!ValidateCardSheetFormat(cardRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid card format encountered in the spreadsheet");
-				return null;
+				return new ImportedCards();
 			}
-			RowData[] characterRowData = spreadsheet.sheets[1].data[0].rowData;
+			RowData[] specialCardRowData = spreadsheet.sheets[1].data[0].rowData;
+			if (!ValidateCardSheetFormat(specialCardRowData[0])) {
+				Debug.LogError("[GoogleSheetsImporter] Invalid special card format encountered in the spreadsheet");
+				return new ImportedCards();
+			}
+			RowData[] characterRowData = spreadsheet.sheets[2].data[0].rowData;
 			if (!ValidateCharacterSheetFormat(characterRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in the spreadsheet");
-				return null;
+				return new ImportedCards();
 			}
-			RowData[] imageRowData = spreadsheet.sheets[2].data[0].rowData;
+			RowData[] imageRowData = spreadsheet.sheets[3].data[0].rowData;
 			if (!ValidateImageSheetFormat(imageRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in the spreadsheet");
-				return null;
+				return new ImportedCards();
 			}
 			
 			Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
@@ -140,11 +145,31 @@ namespace GoogleSheets {
 				}
 			}
 			
+			Dictionary<string, CardModel> specialCards = new Dictionary<string, CardModel>();
+			for (int i = 1; i < specialCardRowData.Length; i++) {
+				string id = specialCardRowData[i].values[0].formattedValue;
+				if (specialCards.ContainsKey(id)) {
+					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in SpecialCards sheet");
+				}
+				else {
+					CardModel card = new CardModel(
+							specialCardRowData[i].values[2].formattedValue,
+							specialCardRowData[i].values[3].formattedValue,
+							specialCardRowData[i].values[8].formattedValue,
+							null,
+							new GameOverCardOutcome(),
+							new GameOverCardOutcome());
+					characters.TryGetValue((int) specialCardRowData[i].values[1].effectiveValue.numberValue,
+							out card.Character);
+					specialCards.Add(id, card);
+				}
+			}
+			
 			Debug.Log("[GoogleSheetsImporter] Cards imported successfully");
-			return cards.Values;
+			return new ImportedCards(cards, specialCards);
 		}
 		
-		private static bool ValidateSheetCardFormat(RowData headerRow) {
+		private static bool ValidateCardSheetFormat(RowData headerRow) {
 			return headerRow.values[0].formattedValue == "id"
 			       && headerRow.values[1].formattedValue == "character_id"
 			       && headerRow.values[2].formattedValue == "card_text"

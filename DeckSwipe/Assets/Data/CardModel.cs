@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using Persistence;
+using UnityEngine;
 
 public class CardModel {
 	
@@ -6,6 +7,7 @@ public class CardModel {
 	public readonly string LeftSwipeText;
 	public readonly string RightSwipeText;
 	public CharacterModel Character;
+	public ICardProgress Progress;
 	
 	public string CharacterName {
 		get { return Character != null ? Character.Name : ""; }
@@ -33,12 +35,18 @@ public class CardModel {
 		rightSwipeOutcome = rightOutcome;
 	}
 	
+	public void CardShown() {
+		Progress.Status |= CardStatus.CardShown;
+	}
+	
 	public void PerformLeftDecision(Game controller) {
 		leftSwipeOutcome.Perform(controller);
+		Progress.Status |= CardStatus.LeftActionTaken;
 	}
 	
 	public void PerformRightDecision(Game controller) {
 		rightSwipeOutcome.Perform(controller);
+		Progress.Status |= CardStatus.RightActionTaken;
 	}
 	
 }

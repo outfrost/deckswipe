@@ -16,6 +16,13 @@ public class Stats : MonoBehaviour {
 	public static int Hope { get; private set; }
 	public static int Materials { get; private set; }
 	
+	/* TODO Refactor stats
+	public static int Coal;
+	public static int Food;
+	public static int Health;
+	public static int Hope;
+	*/
+	
 	private static readonly List<Stats> changeListeners = new List<Stats>();
 	
 	public RectTransform HeatBar;
@@ -26,7 +33,7 @@ public class Stats : MonoBehaviour {
 	static Stats() {
 		ApplyStartingValues();
 	}
-
+	
 	private void Awake() {
 		if (!Util.IsPrefab(gameObject)) {
 			changeListeners.Add(this);
@@ -46,7 +53,7 @@ public class Stats : MonoBehaviour {
 		ApplyStartingValues();
 		UpdateAllStatBars();
 	}
-
+	
 	private static void ApplyStartingValues() {
 		Heat = ClampValue(startingHeat);
 		Food = ClampValue(startingFood);

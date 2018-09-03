@@ -67,6 +67,8 @@ public class CardBehaviour : MonoBehaviour {
 		animationStartRotationAngles = transform.eulerAngles;
 		animationStartTime = Time.time;
 		animationState = AnimationState.Revealing;
+		
+		card.CardShown();
 	}
 	
 	private void Update() {

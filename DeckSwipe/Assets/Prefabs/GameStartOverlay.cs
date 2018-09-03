@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -17,14 +18,15 @@ public class GameStartOverlay : MonoBehaviour {
 	}
 	
 	private const float fadeDuration = 0.5f;
-
+	
 	public static Callback FadeOutCallback { private get; set; }
-
+	
 	private static readonly List<GameStartOverlay> controlListeners = new List<GameStartOverlay>();
 	
 	public float OverlayTimeout = 2.0f;
 	public Image BackgroundImage;
 	public Image BlackSlate;
+	public TextMeshProUGUI CurrentTimeText;
 	
 	private float fadeStartTime;
 	private OverlayState overlayState = OverlayState.Hidden;
@@ -36,8 +38,9 @@ public class GameStartOverlay : MonoBehaviour {
 	}
 	
 	private void Start() {
-		SetImageVisible(BackgroundImage, false);
-		SetImageVisible(BlackSlate, true);
+		SetGraphicVisible(BackgroundImage, false);
+		SetGraphicVisible(CurrentTimeText, false);
+		SetGraphicVisible(BlackSlate, true);
 		overlayState = OverlayState.Black;
 	}
 	
@@ -47,58 +50,61 @@ public class GameStartOverlay : MonoBehaviour {
 			case OverlayState.FadingHiddenToBlack:
 				fadeProgress = (Time.time - fadeStartTime) / fadeDuration;
 				if (fadeProgress > 1.0f) {
-					SetImageAlpha(BlackSlate, 1.0f);
+					SetColorAlpha(BlackSlate, 1.0f);
 					overlayState = OverlayState.Black;
 					FadeToVisible();
 				}
 				else {
-					SetImageAlpha(BlackSlate, Mathf.Clamp01(fadeProgress));
+					SetColorAlpha(BlackSlate, Mathf.Clamp01(fadeProgress));
 				}
 				break;
 			case OverlayState.FadingBlackToVisible:
 				fadeProgress = (Time.time - fadeStartTime) / fadeDuration;
 				if (fadeProgress > 1.0f) {
-					SetImageVisible(BlackSlate, false);
+					SetGraphicVisible(BlackSlate, false);
 					overlayState = OverlayState.Visible;
 					DelayForSeconds(FadeOut, OverlayTimeout);
 				}
 				else {
-					SetImageAlpha(BlackSlate, Mathf.Clamp01(1.0f - fadeProgress));
+					SetColorAlpha(BlackSlate, Mathf.Clamp01(1.0f - fadeProgress));
 				}
 				break;
 			case OverlayState.FadingVisibleToHidden:
 				fadeProgress = (Time.time - fadeStartTime) / fadeDuration;
 				if (fadeProgress > 1.0f) {
-					SetImageVisible(BackgroundImage, false);
+					SetGraphicVisible(BackgroundImage, false);
+					SetGraphicVisible(CurrentTimeText, false);
 					overlayState = OverlayState.Hidden;
 				}
 				else {
-					SetImageAlpha(BackgroundImage, Mathf.Clamp01(1.0f - fadeProgress));
+					SetColorAlpha(BackgroundImage, Mathf.Clamp01(1.0f - fadeProgress));
+					SetColorAlpha(CurrentTimeText, Mathf.Clamp01(1.0f - fadeProgress));
 				}
 				break;
 		}
 	}
 	
-	public static void StartSequence(bool fadeToBlack = true) {
+	public static void StartSequence(float daysPassed, bool fadeToBlack = true) {
 		for (int i = 0; i < controlListeners.Count; i++) {
 			if (controlListeners[i] == null) {
 				controlListeners.RemoveAt(i);
 			}
 			else {
+				controlListeners[i].SetCurrentTimeText(daysPassed);
 				controlListeners[i].FadeIn(fadeToBlack);
 			}
 		}
 	}
 	
-	private static void SetImageAlpha(Image image, float alpha) {
+	private static void SetColorAlpha(Graphic image, float alpha) {
 		Color color = image.color;
 		color.a = alpha;
 		image.color = color;
 	}
 	
-	private static void SetImageVisible(Image image, bool visible) {
+	private static void SetGraphicVisible(Graphic image, bool visible) {
 		image.enabled = visible;
-		SetImageAlpha(image, visible ? 1.0f : 0.0f);
+		SetColorAlpha(image, visible ? 1.0f : 0.0f);
 	}
 	
 	private void FadeIn(bool fadeToBlack = true) {
@@ -109,8 +115,9 @@ public class GameStartOverlay : MonoBehaviour {
 			FadeToVisible();
 		}
 		else if (!fadeToBlack && overlayState != OverlayState.Black) {
-            SetImageVisible(BackgroundImage, true);
-            SetImageVisible(BlackSlate, false);
+            SetGraphicVisible(BackgroundImage, true);
+			SetGraphicVisible(CurrentTimeText, true);
+            SetGraphicVisible(BlackSlate, false);
             overlayState = OverlayState.Visible;
             DelayForSeconds(FadeOut, OverlayTimeout);
         }
@@ -124,7 +131,8 @@ public class GameStartOverlay : MonoBehaviour {
 	
 	private void FadeToVisible() {
 		fadeStartTime = Time.time;
-		SetImageVisible(BackgroundImage, true);
+		SetGraphicVisible(BackgroundImage, true);
+		SetGraphicVisible(CurrentTimeText, true);
 		overlayState = OverlayState.FadingBlackToVisible;
 	}
 	
@@ -132,6 +140,47 @@ public class GameStartOverlay : MonoBehaviour {
 		fadeStartTime = Time.time;
 		overlayState = OverlayState.FadingVisibleToHidden;
 		FadeOutCallback?.Invoke();
+	}
+	
+	private void SetCurrentTimeText(float daysPassed) {
+		CurrentTimeText.text = ApproximateDate(daysPassed);
+	}
+	
+	private string ApproximateDate(float daysPassed) {
+		int year = 1887 + (int)(daysPassed / 365.25f);
+		int month = (int)((daysPassed % 365.25f) / 30.4375f);
+		return MonthName(month) + " " + year;
+	}
+	
+	private string MonthName(int monthIndex) {
+		switch (monthIndex) {
+			case 0:
+				return "January";
+			case 1:
+				return "February";
+			case 2:
+				return "March";
+			case 3:
+				return "April";
+			case 4:
+				return "May";
+			case 5:
+				return "June";
+			case 6:
+				return "July";
+			case 7:
+				return "August";
+			case 8:
+				return "September";
+			case 9:
+				return "October";
+			case 10:
+				return "November";
+			case 11:
+				return "December";
+			default:
+				return "";
+		}
 	}
 	
 	private IEnumerator DelayCoroutine(Callback callback, float seconds) {
