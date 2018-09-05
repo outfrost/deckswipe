@@ -84,14 +84,14 @@ public class GameStartOverlay : MonoBehaviour {
 		}
 	}
 	
-	public static void StartSequence(float daysPassed, bool fadeToBlack = true) {
+	public static void StartSequence(float daysPassed) {
 		for (int i = 0; i < controlListeners.Count; i++) {
 			if (controlListeners[i] == null) {
 				controlListeners.RemoveAt(i);
 			}
 			else {
 				controlListeners[i].SetCurrentTimeText(daysPassed);
-				controlListeners[i].FadeIn(fadeToBlack);
+				controlListeners[i].FadeIn();
 			}
 		}
 	}
@@ -107,20 +107,18 @@ public class GameStartOverlay : MonoBehaviour {
 		SetColorAlpha(image, visible ? 1.0f : 0.0f);
 	}
 	
-	private void FadeIn(bool fadeToBlack = true) {
-		if (fadeToBlack && overlayState != OverlayState.Black) {
-            FadeToBlack();
-        }
-		else if (!fadeToBlack && overlayState == OverlayState.Black) {
-			FadeToVisible();
+	private void FadeIn() {
+		switch (overlayState) {
+			case OverlayState.Hidden:
+				FadeToBlack();
+				break;
+			case OverlayState.Black:
+				FadeToVisible();
+				break;
+			case OverlayState.FadingVisibleToHidden:
+				FadeToBlack();
+				break;
 		}
-		else if (!fadeToBlack && overlayState != OverlayState.Black) {
-            SetGraphicVisible(BackgroundImage, true);
-			SetGraphicVisible(CurrentTimeText, true);
-            SetGraphicVisible(BlackSlate, false);
-            overlayState = OverlayState.Visible;
-            DelayForSeconds(FadeOut, OverlayTimeout);
-        }
 	}
 	
 	private void FadeToBlack() {

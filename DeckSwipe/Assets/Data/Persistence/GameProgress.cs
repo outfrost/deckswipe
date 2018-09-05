@@ -8,30 +8,15 @@ namespace Persistence {
 		
 		public float daysPassed;
 		public float longestRunDays;
-		public CardProgress[] cardProgress;
-		public SpecialCardProgress[] specialCardProgress;
+		public List<CardProgress> cardProgress;
+		public List<SpecialCardProgress> specialCardProgress;
 		
-		public GameProgress(CardStorage cardStorage) {
-			daysPassed = 0.0f;
-			longestRunDays = 0.0f;
-			
-			List<CardProgress> dummyProgress = new List<CardProgress>();
-			foreach (KeyValuePair<int, CardModel> entry in cardStorage.Cards) {
-				CardProgress progress = new CardProgress(entry.Key,
-						CardStatus.None); 
-				dummyProgress.Add(progress);
-				entry.Value.Progress = progress;
+		public void AddDays(float days, float daysPassedPreviously) {
+			daysPassed += days;
+			float daysPassedThisRun = daysPassed - daysPassedPreviously;
+			if (daysPassedThisRun > longestRunDays) {
+				longestRunDays = daysPassedThisRun;
 			}
-			cardProgress = dummyProgress.ToArray();
-			
-			List<SpecialCardProgress> dummySpecialProgress = new List<SpecialCardProgress>();
-			foreach (KeyValuePair<string, CardModel> entry in cardStorage.SpecialCards) {
-				SpecialCardProgress progress = new SpecialCardProgress(entry.Key,
-						CardStatus.None); 
-				dummySpecialProgress.Add(progress);
-				entry.Value.Progress = progress;
-			}
-			specialCardProgress = dummySpecialProgress.ToArray();
 		}
 		
 		public void AttachReferences(CardStorage cardStorage) {
@@ -45,6 +30,24 @@ namespace Persistence {
 				CardModel specialCard = cardStorage.SpecialCard(entry.id);
 				if (specialCard != null) {
 					specialCard.Progress = entry;
+				}
+			}
+			
+			// Fill in the missing card progress entries
+			foreach (KeyValuePair<int, CardModel> entry in cardStorage.Cards) {
+				if (entry.Value.Progress == null) {
+					CardProgress progress = new CardProgress(
+							entry.Key, CardStatus.None);
+					cardProgress.Add(progress);
+					entry.Value.Progress = progress;
+				}
+			}
+			foreach (KeyValuePair<string, CardModel> entry in cardStorage.SpecialCards) {
+				if (entry.Value.Progress == null) {
+					SpecialCardProgress progress = new SpecialCardProgress(
+							entry.Key, CardStatus.None);
+					specialCardProgress.Add(progress);
+					entry.Value.Progress = progress;
 				}
 			}
 		}

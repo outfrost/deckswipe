@@ -7,25 +7,42 @@ namespace Persistence {
 	public class ProgressStorage {
 		
 		public GameProgress Progress { get; private set; }
-		public Task ProgressLoadTask { get; }
+		public Task ProgressStorageInit { get; }
 		
 		private static readonly string gameProgressPath = Application.persistentDataPath + "/progress.json";
 		
+		private readonly CardStorage cardStorage;
+		
 		public ProgressStorage(CardStorage cardStorage) {
-			ProgressLoadTask = Load(cardStorage);
+			this.cardStorage = cardStorage;
+			ProgressStorageInit = Load();
 		}
 		
-		public async Task Load(CardStorage cardStorage) {
+		public void Save() {
+			SaveLocally();
+		}
+		
+		private async void SaveLocally() {
+			string progressJson = JsonUtility.ToJson(Progress);
+			using (FileStream fileStream = File.Create(gameProgressPath)) {
+				StreamWriter writer = new StreamWriter(fileStream);
+				await writer.WriteAsync(progressJson);
+				await writer.WriteAsync('\n');
+				await writer.FlushAsync();
+			}
+		}
+		
+		private async Task Load() {
 			Progress = await LoadLocally();
-			if (Progress != null) {
-				Progress.AttachReferences(cardStorage);
+			await cardStorage.CardCollectionImport;
+
+			if (Progress == null) {
+				Progress = new GameProgress();
 			}
-			else {
-				Progress = new GameProgress(cardStorage);
-			}
+			Progress.AttachReferences(cardStorage);
 		}
 		
-		public async Task<GameProgress> LoadLocally() {
+		private async Task<GameProgress> LoadLocally() {
 			if (File.Exists(gameProgressPath)) {
 				string progressJson;
 				using (FileStream fileStream = File.OpenRead(gameProgressPath)) {
@@ -34,19 +51,7 @@ namespace Persistence {
 				}
 				return JsonUtility.FromJson<GameProgress>(progressJson);
 			}
-			else {
-				return null;
-			}
-		}
-		
-		public async void SaveLocally() {
-			string progressJson = JsonUtility.ToJson(Progress);
-			using (FileStream fileStream = File.Create(gameProgressPath)) {
-				StreamWriter writer = new StreamWriter(fileStream);
-				await writer.WriteAsync(progressJson);
-				await writer.WriteAsync('\n');
-				await writer.FlushAsync();
-			}
+			return null;
 		}
 		
 	}

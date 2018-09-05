@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
 using GoogleSheets;
 using UnityEngine;
@@ -11,7 +9,7 @@ public class CardStorage {
 	public Dictionary<int, CardModel> Cards { get; private set; }
 	public Dictionary<string, CardModel> SpecialCards { get; private set; }
 	
-	public Task CardImportTask { get; }
+	public Task CardCollectionImport { get; }
 	
 	private static readonly CharacterModel defaultGameOverCharacter = new CharacterModel("", null);
 	
@@ -19,7 +17,7 @@ public class CardStorage {
 	
 	public CardStorage(Sprite defaultSprite) {
 		this.defaultSprite = defaultSprite;
-		CardImportTask = PopulateCollection();
+		CardCollectionImport = PopulateCollection();
 	}
 	
 	public CardModel Random() {
@@ -36,11 +34,6 @@ public class CardStorage {
 		CardModel card;
 		SpecialCards.TryGetValue(id, out card);
 		return card;
-	}
-	
-	public async void CallbackWhenCardsAvailable(Callback callback) {
-		await CardImportTask;
-		callback();
 	}
 	
 	private async Task PopulateCollection() {

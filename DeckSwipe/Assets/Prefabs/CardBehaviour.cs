@@ -1,7 +1,5 @@
-﻿using System;
-using TMPro;
+﻿using TMPro;
 using UnityEngine;
-using UnityEngine.EventSystems;
 
 public class CardBehaviour : MonoBehaviour {
 	

@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class Game : MonoBehaviour {
 	
+	private const int saveInterval = 8;
+	
 	public InputDispatcher InputDispatcher;
 	public CardBehaviour CardPrefab;
 	public Vector3 SpawnPosition;
@@ -11,15 +13,21 @@ public class Game : MonoBehaviour {
 	private CardStorage cardStorage;
 	private ProgressStorage progressStorage;
 	private float daysPassedPreviously;
+	private int saveIntervalCounter;
 	
 	private void Awake() {
 		// Listen for Escape key ('Back' on Android) to quit the game
-		InputDispatcher.AddKeyDownHandler(KeyCode.Escape, keyCode => Application.Quit());
+		InputDispatcher.AddKeyDownHandler(KeyCode.Escape,
+				keyCode => Application.Quit());
+		
 		cardStorage = new CardStorage(DefaultCharacterSprite);
+		progressStorage = new ProgressStorage(cardStorage);
+		
+		GameStartOverlay.FadeOutCallback = StartGameplayLoop;
 	}
 	
 	private void Start() {
-		cardStorage.CallbackWhenCardsAvailable(InitProgressStorage);
+		CallbackWhenDoneLoading(StartGame);
 	}
 	
 	public void DrawNextCard() {
@@ -38,38 +46,37 @@ public class Game : MonoBehaviour {
 		else {
 			SpawnCard(cardStorage.Random());
 		}
-		progressStorage.Progress.daysPassed += Random.Range(0.5f, 1.5f);
-		float daysPassedThisRun = progressStorage.Progress.daysPassed - daysPassedPreviously;
-		if (daysPassedThisRun > progressStorage.Progress.longestRunDays) {
-			progressStorage.Progress.longestRunDays = daysPassedThisRun;
+		progressStorage.Progress.AddDays(Random.Range(0.5f, 1.5f),
+				daysPassedPreviously);
+		saveIntervalCounter = (saveIntervalCounter - 1) % saveInterval;
+		if (saveIntervalCounter == 0) {
+			progressStorage.Save();
 		}
-		progressStorage.SaveLocally();
 	}
 	
 	public void RestartGame() {
-		Stats.ResetStats();
-		daysPassedPreviously = progressStorage.Progress.daysPassed;
-		GameStartOverlay.StartSequence(progressStorage.Progress.daysPassed);
+		progressStorage.Save();
+		StartGame();
 	}
 	
 	private void StartGame() {
 		daysPassedPreviously = progressStorage.Progress.daysPassed;
-		GameStartOverlay.FadeOutCallback = DrawNextCard;
-		GameStartOverlay.StartSequence(progressStorage.Progress.daysPassed, false);
+		GameStartOverlay.StartSequence(progressStorage.Progress.daysPassed);
 	}
 	
-	private void InitProgressStorage() {
-		progressStorage = new ProgressStorage(cardStorage);
-		CallbackWhenDoneLoading(StartGame);
+	private void StartGameplayLoop() {
+		Stats.ResetStats();
+		DrawNextCard();
 	}
 	
 	private async void CallbackWhenDoneLoading(Callback callback) {
-		await progressStorage.ProgressLoadTask;
+		await progressStorage.ProgressStorageInit;
 		callback();
 	}
 	
 	private void SpawnCard(CardModel card) {
-		CardBehaviour cardInstance = Instantiate(CardPrefab, SpawnPosition, Quaternion.Euler(0.0f, -180.0f, 0.0f));
+		CardBehaviour cardInstance = Instantiate(CardPrefab, SpawnPosition,
+				Quaternion.Euler(0.0f, -180.0f, 0.0f));
 		cardInstance.Card = card;
 		cardInstance.SnapPosition.y = SpawnPosition.y;
 		cardInstance.Controller = this;

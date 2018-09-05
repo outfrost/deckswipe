@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using UnityEditor;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 public class Stats : MonoBehaviour {
@@ -30,9 +28,9 @@ public class Stats : MonoBehaviour {
 	public RectTransform HopeBar;
 	public RectTransform MaterialsBar;
 	
-	static Stats() {
+	/*static Stats() {
 		ApplyStartingValues();
-	}
+	}*/
 	
 	private void Awake() {
 		if (!Util.IsPrefab(gameObject)) {
