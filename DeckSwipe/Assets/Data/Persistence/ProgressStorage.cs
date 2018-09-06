@@ -6,12 +6,12 @@ namespace Persistence {
 	
 	public class ProgressStorage {
 		
-		public GameProgress Progress { get; private set; }
-		public Task ProgressStorageInit { get; }
-		
-		private static readonly string gameProgressPath = Application.persistentDataPath + "/progress.json";
+		private static readonly string _gameProgressPath = Application.persistentDataPath + "/progress.json";
 		
 		private readonly CardStorage cardStorage;
+		
+		public GameProgress Progress { get; private set; }
+		public Task ProgressStorageInit { get; }
 		
 		public ProgressStorage(CardStorage cardStorage) {
 			this.cardStorage = cardStorage;
@@ -24,7 +24,7 @@ namespace Persistence {
 		
 		private async void SaveLocally() {
 			string progressJson = JsonUtility.ToJson(Progress);
-			using (FileStream fileStream = File.Create(gameProgressPath)) {
+			using (FileStream fileStream = File.Create(_gameProgressPath)) {
 				StreamWriter writer = new StreamWriter(fileStream);
 				await writer.WriteAsync(progressJson);
 				await writer.WriteAsync('\n');
@@ -43,9 +43,9 @@ namespace Persistence {
 		}
 		
 		private async Task<GameProgress> LoadLocally() {
-			if (File.Exists(gameProgressPath)) {
+			if (File.Exists(_gameProgressPath)) {
 				string progressJson;
-				using (FileStream fileStream = File.OpenRead(gameProgressPath)) {
+				using (FileStream fileStream = File.OpenRead(_gameProgressPath)) {
 					StreamReader reader = new StreamReader(fileStream);
 					progressJson = await reader.ReadToEndAsync();
 				}

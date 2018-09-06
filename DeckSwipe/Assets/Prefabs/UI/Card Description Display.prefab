@@ -298,8 +298,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e8794bd51084cd8ace5ced565c3064e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  CardText: {fileID: 114556573488879792}
-  CharacterNameText: {fileID: 114734040910170750}
+  cardText: {fileID: 114556573488879792}
+  characterNameText: {fileID: 114734040910170750}
 --- !u!222 &222180726877975714
 CanvasRenderer:
   m_ObjectHideFlags: 1

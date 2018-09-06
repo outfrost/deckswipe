@@ -460,13 +460,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7ce55787e3b564ecea7de56a83068c46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SwipeThreshold: 2
-  SnapPosition: {x: 0, y: 0, z: 10}
-  SnapRotationAngles: {x: 0, y: 0, z: 0}
-  CardImageSpriteTargetSize: {x: 4, y: 4}
-  LeftActionText: {fileID: 114622037674879222}
-  RightActionText: {fileID: 114009916330253648}
-  CardImageSpriteRenderer: {fileID: 212621907468470380}
+  swipeThreshold: 2
+  snapPosition: {x: 0, y: 0, z: 10}
+  snapRotationAngles: {x: 0, y: 0, z: 0}
+  cardImageSpriteTargetSize: {x: 4, y: 4}
+  leftActionText: {fileID: 114622037674879222}
+  rightActionText: {fileID: 114009916330253648}
+  cardImageSpriteRenderer: {fileID: 212621907468470380}
 --- !u!114 &114622037674879222
 MonoBehaviour:
   m_ObjectHideFlags: 1

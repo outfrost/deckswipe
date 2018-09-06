@@ -133,10 +133,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20cf2e3fa3f64718a8744478d42b19b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HeatBar: {fileID: 224395286946666664}
-  FoodBar: {fileID: 224960045823884886}
-  HopeBar: {fileID: 224001070210838586}
-  MaterialsBar: {fileID: 224334821988674536}
+  heatBar: {fileID: 224395286946666664}
+  foodBar: {fileID: 224960045823884886}
+  hopeBar: {fileID: 224001070210838586}
+  materialsBar: {fileID: 224334821988674536}
 --- !u!114 &114460946447177082
 MonoBehaviour:
   m_ObjectHideFlags: 1

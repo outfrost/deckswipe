@@ -12,36 +12,15 @@ public class CardBehaviour : MonoBehaviour {
 		
 	}
 	
-	private const float animationDuration = 0.4f;
+	private const float _animationDuration = 0.4f;
 	
-	public float SwipeThreshold = 1.0f;
-	public Vector3 SnapPosition;
-	public Vector3 SnapRotationAngles;
-	public Vector2 CardImageSpriteTargetSize;
-	public TextMeshPro LeftActionText;
-	public TextMeshPro RightActionText;
-	public SpriteRenderer CardImageSpriteRenderer;
-	
-	public CardModel Card {
-		set {
-			card = value;
-			LeftActionText.text = card.LeftSwipeText;
-			RightActionText.text = card.RightSwipeText;
-			if (card.CardSprite != null) {
-				Vector2 targetSizeRatio = CardImageSpriteTargetSize / card.CardSprite.bounds.size;
-				float scaleFactor = Mathf.Min(targetSizeRatio.x, targetSizeRatio.y);
-				
-				Vector3 scale = CardImageSpriteRenderer.transform.localScale;
-				scale.x = scaleFactor;
-				scale.y = scaleFactor;
-				CardImageSpriteRenderer.transform.localScale = scale;
-				
-				CardImageSpriteRenderer.sprite = card.CardSprite;
-			}
-		}
-	}
-	
-	public Game Controller { private get; set; }
+	public float swipeThreshold = 1.0f;
+	public Vector3 snapPosition;
+	public Vector3 snapRotationAngles;
+	public Vector2 cardImageSpriteTargetSize;
+	public TextMeshPro leftActionText;
+	public TextMeshPro rightActionText;
+	public SpriteRenderer cardImageSpriteRenderer;
 	
 	private CardModel card;
 	private Vector3 dragStartPosition;
@@ -52,14 +31,35 @@ public class CardBehaviour : MonoBehaviour {
 	private AnimationState animationState = AnimationState.Idle;
 	private bool animationSuspended;
 	
+	public CardModel Card {
+		set {
+			card = value;
+			leftActionText.text = card.leftSwipeText;
+			rightActionText.text = card.rightSwipeText;
+			if (card.CardSprite != null) {
+				Vector2 targetSizeRatio = cardImageSpriteTargetSize / card.CardSprite.bounds.size;
+				float scaleFactor = Mathf.Min(targetSizeRatio.x, targetSizeRatio.y);
+				
+				Vector3 scale = cardImageSpriteRenderer.transform.localScale;
+				scale.x = scaleFactor;
+				scale.y = scaleFactor;
+				cardImageSpriteRenderer.transform.localScale = scale;
+				
+				cardImageSpriteRenderer.sprite = card.CardSprite;
+			}
+		}
+	}
+	
+	public Game Controller { private get; set; }
+	
 	private void Awake() {
-		Util.SetTextAlpha(LeftActionText, 0.0f);
-		Util.SetTextAlpha(RightActionText, 0.0f);
+		Util.SetTextAlpha(leftActionText, 0.0f);
+		Util.SetTextAlpha(rightActionText, 0.0f);
 	}
 	
 	private void Start() {
 		// Rotate clockwise on reveal instead of anticlockwise 
-		SnapRotationAngles.y += 360.0f;
+		snapRotationAngles.y += 360.0f;
 		
 		animationStartPosition = transform.position;
 		animationStartRotationAngles = transform.eulerAngles;
@@ -72,15 +72,15 @@ public class CardBehaviour : MonoBehaviour {
 	private void Update() {
 		// Animate card by interpolating translation and rotation, destroy swiped cards
 		if (animationState != AnimationState.Idle && !animationSuspended) {
-			float animationProgress = (Time.time - animationStartTime) / animationDuration;
+			float animationProgress = (Time.time - animationStartTime) / _animationDuration;
 			float scaledProgress = ScaleProgress(animationProgress);
 			if (scaledProgress > 1.0f || animationProgress > 1.0f) {
-				transform.position = SnapPosition;
-				transform.eulerAngles = SnapRotationAngles;
+				transform.position = snapPosition;
+				transform.eulerAngles = snapRotationAngles;
 				
 				if (animationState == AnimationState.Revealing) {
-					CardDescriptionDisplay.SetDescription(card.CardText, card.CharacterName);
-					SnapRotationAngles.y -= 360.0f;
+					CardDescriptionDisplay.SetDescription(card.cardText, card.CharacterName);
+					snapRotationAngles.y -= 360.0f;
 				}
 				
 				if (animationState == AnimationState.FlyingAway) {
@@ -91,64 +91,61 @@ public class CardBehaviour : MonoBehaviour {
 				}
 			}
 			else {
-				transform.position = Vector3.Lerp(animationStartPosition, SnapPosition, scaledProgress);
-				transform.eulerAngles = Vector3.Lerp(animationStartRotationAngles, SnapRotationAngles, scaledProgress);
+				transform.position = Vector3.Lerp(animationStartPosition, snapPosition, scaledProgress);
+				transform.eulerAngles = Vector3.Lerp(animationStartRotationAngles, snapRotationAngles, scaledProgress);
 				
 				// Hide card face elements unless it's facing the main camera
 				bool isFacingCamera = Util.IsFacingCamera(gameObject);
-				CardImageSpriteRenderer.enabled = isFacingCamera;
-				LeftActionText.enabled = isFacingCamera;
-				RightActionText.enabled = isFacingCamera;
+				cardImageSpriteRenderer.enabled = isFacingCamera;
+				leftActionText.enabled = isFacingCamera;
+				rightActionText.enabled = isFacingCamera;
 			}
 			if (animationState != AnimationState.Revealing) {
-				float alphaCoord = (transform.position.x - SnapPosition.x) / (SwipeThreshold / 2);
-				Util.SetTextAlpha(LeftActionText, Mathf.Clamp01(-alphaCoord));
-				Util.SetTextAlpha(RightActionText, Mathf.Clamp01(alphaCoord));
+				float alphaCoord = (transform.position.x - snapPosition.x) / (swipeThreshold / 2);
+				Util.SetTextAlpha(leftActionText, Mathf.Clamp01(-alphaCoord));
+				Util.SetTextAlpha(rightActionText, Mathf.Clamp01(alphaCoord));
 			}
 		}
 	}
 	
-	//private void OnMouseDown() {
 	public void BeginDrag() {
 		animationSuspended = true;
 		dragStartPosition = transform.position;
 		dragStartPointerPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 	}
 	
-	//private void OnMouseDrag() {
 	public void Drag() {
 		Vector3 displacement = Camera.main.ScreenToWorldPoint(Input.mousePosition) - dragStartPointerPosition;
 		displacement.z = 0.0f;
 		transform.position = dragStartPosition + displacement;
 		
-		float alphaCoord = (transform.position.x - SnapPosition.x) / (SwipeThreshold / 2);
-		Util.SetTextAlpha(LeftActionText, -alphaCoord);
-		Util.SetTextAlpha(RightActionText, alphaCoord);
+		float alphaCoord = (transform.position.x - snapPosition.x) / (swipeThreshold / 2);
+		Util.SetTextAlpha(leftActionText, -alphaCoord);
+		Util.SetTextAlpha(rightActionText, alphaCoord);
 	}
 	
-	//private void OnMouseUp() {
 	public void EndDrag() {
 		animationStartPosition = transform.position;
 		animationStartRotationAngles = transform.eulerAngles;
 		animationStartTime = Time.time;
 		if (animationState != AnimationState.FlyingAway) {
-			if (transform.position.x < SnapPosition.x - SwipeThreshold) {
+			if (transform.position.x < snapPosition.x - swipeThreshold) {
 				card.PerformLeftDecision(Controller);
-				Vector3 displacement = animationStartPosition - SnapPosition;
-				SnapPosition += displacement.normalized
+				Vector3 displacement = animationStartPosition - snapPosition;
+				snapPosition += displacement.normalized
 				                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
 				                * 2.0f;
-				SnapRotationAngles = transform.eulerAngles;
+				snapRotationAngles = transform.eulerAngles;
 				animationState = AnimationState.FlyingAway;
 				CardDescriptionDisplay.ResetDescription();
 			}
-			else if (transform.position.x > SnapPosition.x + SwipeThreshold) {
+			else if (transform.position.x > snapPosition.x + swipeThreshold) {
 				card.PerformRightDecision(Controller);
-				Vector3 displacement = animationStartPosition - SnapPosition;
-				SnapPosition += displacement.normalized
+				Vector3 displacement = animationStartPosition - snapPosition;
+				snapPosition += displacement.normalized
 				                * Util.OrthoCameraWorldDiagonalSize(Camera.main)
 				                * 2.0f;
-				SnapRotationAngles = transform.eulerAngles;
+				snapRotationAngles = transform.eulerAngles;
 				animationState = AnimationState.FlyingAway;
 				CardDescriptionDisplay.ResetDescription();
 			}

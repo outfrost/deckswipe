@@ -52,11 +52,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1376b462aa014bf9b139b46cda982539, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  InputDispatcher: {fileID: 114844643638476450}
-  CardPrefab: {fileID: 114329104408167028, guid: 83a4759aa54354d2688335e1a33eb9d7,
+  inputDispatcher: {fileID: 114844643638476450}
+  cardPrefab: {fileID: 114329104408167028, guid: 83a4759aa54354d2688335e1a33eb9d7,
     type: 2}
-  SpawnPosition: {x: 0, y: 0, z: 10}
-  DefaultCharacterSprite: {fileID: 21300000, guid: d83547b26352f4b33a64e8549ba2bb02,
+  spawnPosition: {x: 0, y: 0, z: 10}
+  defaultCharacterSprite: {fileID: 21300000, guid: d83547b26352f4b33a64e8549ba2bb02,
     type: 3}
 --- !u!114 &114844643638476450
 MonoBehaviour:

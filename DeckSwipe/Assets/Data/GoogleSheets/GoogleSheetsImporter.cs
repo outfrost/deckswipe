@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Threading.Tasks;
@@ -9,24 +8,24 @@ namespace GoogleSheets {
 	
 	public class GoogleSheetsImporter {
 		
-		private static string spreadsheetId = "1olhKo6JFItKpDU9Qd7X4cJgaAlFIChhB-P0rI48gNLs";
-		private static string apiKey = "AIzaSyAzWqJRSu7Q3p3EfuwFYdtzQql7ygu1pv4";
+		private const string _spreadsheetId = "1olhKo6JFItKpDU9Qd7X4cJgaAlFIChhB-P0rI48gNLs";
+		private const string _apiKey = "AIzaSyAzWqJRSu7Q3p3EfuwFYdtzQql7ygu1pv4";
 		
-		private Sprite defaultSprite;
+		private readonly Sprite defaultSprite;
 		
 		public GoogleSheetsImporter(Sprite defaultSprite) {
 			this.defaultSprite = defaultSprite;
 		}
 		
 		public async Task<ImportedCards> FetchCards() {
-			Debug.Log("[GoogleSheetsImporter] Fetching cards from Google Sheet " + spreadsheetId + " ...");
+			Debug.Log("[GoogleSheetsImporter] Fetching cards from Google Sheet " + _spreadsheetId + " ...");
 			HttpWebResponse response;
 			try {
 				HttpWebRequest request = WebRequest.CreateHttp(
 						"https://sheets.googleapis.com/v4/spreadsheets/"
-						+ spreadsheetId
+						+ _spreadsheetId
 						+ "?includeGridData=true&key="
-						+ apiKey);
+						+ _apiKey);
 				// TODO Handle Web exceptions
 				response = (HttpWebResponse) await request.GetResponseAsync();
 			}
@@ -112,7 +111,7 @@ namespace GoogleSheets {
 					CharacterModel character = new CharacterModel(characterRowData[i].values[1].formattedValue,
 							defaultSprite);
 					sprites.TryGetValue((int) characterRowData[i].values[2].effectiveValue.numberValue,
-							out character.Sprite);
+							out character.sprite);
 					characters.Add(id, character);
 				}
 			}
@@ -140,7 +139,7 @@ namespace GoogleSheets {
 									(int) cardRowData[i].values[11].effectiveValue.numberValue,
 									(int) cardRowData[i].values[12].effectiveValue.numberValue));
 					characters.TryGetValue((int) cardRowData[i].values[1].effectiveValue.numberValue,
-							out card.Character);
+							out card.character);
 					cards.Add(id, card);
 				}
 			}
@@ -160,7 +159,7 @@ namespace GoogleSheets {
 							new GameOverCardOutcome(),
 							new GameOverCardOutcome());
 					characters.TryGetValue((int) specialCardRowData[i].values[1].effectiveValue.numberValue,
-							out card.Character);
+							out card.character);
 					specialCards.Add(id, card);
 				}
 			}

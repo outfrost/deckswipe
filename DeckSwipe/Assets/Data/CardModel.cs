@@ -3,22 +3,22 @@ using UnityEngine;
 
 public class CardModel {
 	
-	public readonly string CardText;
-	public readonly string LeftSwipeText;
-	public readonly string RightSwipeText;
-	public CharacterModel Character;
-	public ICardProgress Progress;
+	public readonly string cardText;
+	public readonly string leftSwipeText;
+	public readonly string rightSwipeText;
+	public CharacterModel character;
+	public ICardProgress progress;
+	
+	private readonly CardActionOutcome leftSwipeOutcome;
+	private readonly CardActionOutcome rightSwipeOutcome;
 	
 	public string CharacterName {
-		get { return Character != null ? Character.Name : ""; }
+		get { return character != null ? character.name : ""; }
 	}
 	
 	public Sprite CardSprite {
-		get { return Character?.Sprite; }
+		get { return character?.sprite; }
 	}
-	
-	private CardActionOutcome leftSwipeOutcome;
-	private CardActionOutcome rightSwipeOutcome;
 	
 	public CardModel(
 			string cardText,
@@ -27,26 +27,26 @@ public class CardModel {
 			CharacterModel character,
 			CardActionOutcome leftOutcome,
 			CardActionOutcome rightOutcome) {
-		CardText = cardText;
-		LeftSwipeText = leftSwipeText;
-		RightSwipeText = rightSwipeText;
-		Character = character;
+		this.cardText = cardText;
+		this.leftSwipeText = leftSwipeText;
+		this.rightSwipeText = rightSwipeText;
+		this.character = character;
 		leftSwipeOutcome = leftOutcome;
 		rightSwipeOutcome = rightOutcome;
 	}
 	
 	public void CardShown() {
-		Progress.Status |= CardStatus.CardShown;
+		progress.Status |= CardStatus.CardShown;
 	}
 	
 	public void PerformLeftDecision(Game controller) {
 		leftSwipeOutcome.Perform(controller);
-		Progress.Status |= CardStatus.LeftActionTaken;
+		progress.Status |= CardStatus.LeftActionTaken;
 	}
 	
 	public void PerformRightDecision(Game controller) {
 		rightSwipeOutcome.Perform(controller);
-		Progress.Status |= CardStatus.RightActionTaken;
+		progress.Status |= CardStatus.RightActionTaken;
 	}
 	
 }

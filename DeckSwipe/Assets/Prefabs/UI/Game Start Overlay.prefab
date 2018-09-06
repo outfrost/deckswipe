@@ -203,10 +203,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f8440734b4a54144926f2f408507a8f0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  OverlayTimeout: 2
-  BackgroundImage: {fileID: 114824771527646878}
-  BlackSlate: {fileID: 114297623707451918}
-  CurrentTimeText: {fileID: 114108055129609698}
+  overlayTimeout: 2
+  backgroundImage: {fileID: 114824771527646878}
+  blackSlate: {fileID: 114297623707451918}
+  currentTimeText: {fileID: 114108055129609698}
 --- !u!114 &114297623707451918
 MonoBehaviour:
   m_ObjectHideFlags: 1

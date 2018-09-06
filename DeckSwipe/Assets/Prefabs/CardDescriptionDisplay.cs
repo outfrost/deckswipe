@@ -4,17 +4,17 @@ using UnityEngine;
 
 public class CardDescriptionDisplay : MonoBehaviour {
 	
-	public TextMeshProUGUI CardText;
-	public TextMeshProUGUI CharacterNameText;
+	private static readonly List<CardDescriptionDisplay> _changeListeners = new List<CardDescriptionDisplay>();
 	
 	private static string cardTextString = "";
 	private static string characterNameString = "";
 	
-	private static readonly List<CardDescriptionDisplay> changeListeners = new List<CardDescriptionDisplay>();
+	public TextMeshProUGUI cardText;
+	public TextMeshProUGUI characterNameText;
 	
 	private void Awake() {
 		if (!Util.IsPrefab(gameObject)) {
-			changeListeners.Add(this);
+			_changeListeners.Add(this);
 			UpdateTextDisplay();
 		}
 	}
@@ -30,19 +30,19 @@ public class CardDescriptionDisplay : MonoBehaviour {
 	}
 	
 	private static void UpdateAllTextDisplays() {
-		for (int i = 0; i < changeListeners.Count; i++) {
-			if (changeListeners[i] == null) {
-				changeListeners.RemoveAt(i);
+		for (int i = 0; i < _changeListeners.Count; i++) {
+			if (_changeListeners[i] == null) {
+				_changeListeners.RemoveAt(i);
 			}
 			else {
-				changeListeners[i].UpdateTextDisplay();
+				_changeListeners[i].UpdateTextDisplay();
 			}
 		}
 	}
 	
 	private void UpdateTextDisplay() {
-		CardText.text = cardTextString;
-		CharacterNameText.text = characterNameString;
+		cardText.text = cardTextString;
+		characterNameText.text = characterNameString;
 	}
 	
 }

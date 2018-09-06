@@ -2,12 +2,12 @@
 
 public class CharacterModel {
 	
-	public string Name;
-	public Sprite Sprite;
+	public string name;
+	public Sprite sprite;
 	
 	public CharacterModel(string name, Sprite sprite) {
-		Name = name;
-		Sprite = sprite;
+		this.name = name;
+		this.sprite = sprite;
 	}
 	
 }

@@ -185,7 +185,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c1b962af54f949c3baf1b9940b1c1606, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  DaysSurvivedText: {fileID: 114649372411728456}
+  daysSurvivedText: {fileID: 114649372411728456}
 --- !u!114 &114649372411728456
 MonoBehaviour:
   m_ObjectHideFlags: 1

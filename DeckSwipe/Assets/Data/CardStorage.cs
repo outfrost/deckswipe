@@ -6,14 +6,14 @@ using UnityEngine;
 
 public class CardStorage {
 	
+	private static readonly CharacterModel _defaultGameOverCharacter = new CharacterModel("", null);
+	
+	private readonly Sprite defaultSprite;
+	
 	public Dictionary<int, CardModel> Cards { get; private set; }
 	public Dictionary<string, CardModel> SpecialCards { get; private set; }
 	
 	public Task CardCollectionImport { get; }
-	
-	private static readonly CharacterModel defaultGameOverCharacter = new CharacterModel("", null);
-	
-	private readonly Sprite defaultSprite;
 	
 	public CardStorage(Sprite defaultSprite) {
 		this.defaultSprite = defaultSprite;
@@ -38,8 +38,8 @@ public class CardStorage {
 	
 	private async Task PopulateCollection() {
 		ImportedCards importedCards = await new GoogleSheetsImporter(defaultSprite).FetchCards();
-		Cards = importedCards.Cards;
-		SpecialCards = importedCards.SpecialCards;
+		Cards = importedCards.cards;
+		SpecialCards = importedCards.specialCards;
 		if (Cards == null || Cards.Count == 0) {
 			PopulateFallback();
 		}
@@ -100,25 +100,25 @@ public class CardStorage {
 		
 		if (!SpecialCards.ContainsKey("gameover_heat")) {
 			SpecialCards.Add("gameover_heat", new CardModel("The city runs out of heat and freezes over.", "", "",
-					defaultGameOverCharacter,
+					_defaultGameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		if (!SpecialCards.ContainsKey("gameover_food")) {
 			SpecialCards.Add("gameover_food", new CardModel("Hunger consumes the city, as food reserves deplete.", "", "",
-					defaultGameOverCharacter,
+					_defaultGameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		if (!SpecialCards.ContainsKey("gameover_hope")) {
 			SpecialCards.Add("gameover_hope", new CardModel("All hope among the people is lost.", "", "",
-					defaultGameOverCharacter,
+					_defaultGameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
 		if (!SpecialCards.ContainsKey("gameover_materials")) {
 			SpecialCards.Add("gameover_materials", new CardModel("The city runs out of materials to sustain itself.", "", "",
-					defaultGameOverCharacter,
+					_defaultGameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}

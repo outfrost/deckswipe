@@ -3,11 +3,13 @@ using UnityEngine;
 
 public class Stats : MonoBehaviour {
 	
-	private const int maxStatValue = 32;
-	private const int startingHeat = 16;
-	private const int startingFood = 16;
-	private const int startingHope = 16;
-	private const int startingMaterials = 16;
+	private const int _maxStatValue = 32;
+	private const int _startingHeat = 16;
+	private const int _startingFood = 16;
+	private const int _startingHope = 16;
+	private const int _startingMaterials = 16;
+	
+	private static readonly List<Stats> _changeListeners = new List<Stats>();
 	
 	public static int Heat { get; private set; }
 	public static int Food { get; private set; }
@@ -21,12 +23,10 @@ public class Stats : MonoBehaviour {
 	public static int Hope;
 	*/
 	
-	private static readonly List<Stats> changeListeners = new List<Stats>();
-	
-	public RectTransform HeatBar;
-	public RectTransform FoodBar;
-	public RectTransform HopeBar;
-	public RectTransform MaterialsBar;
+	public RectTransform heatBar;
+	public RectTransform foodBar;
+	public RectTransform hopeBar;
+	public RectTransform materialsBar;
 	
 	/*static Stats() {
 		ApplyStartingValues();
@@ -34,16 +34,16 @@ public class Stats : MonoBehaviour {
 	
 	private void Awake() {
 		if (!Util.IsPrefab(gameObject)) {
-			changeListeners.Add(this);
+			_changeListeners.Add(this);
 			UpdateStatBars();
 		}
 	}
 	
 	public static void ApplyModification(StatsModification mod) {
-		Heat = ClampValue(Heat + mod.Heat);
-		Food = ClampValue(Food + mod.Food);
-		Hope = ClampValue(Hope + mod.Hope);
-		Materials = ClampValue(Materials + mod.Materials);
+		Heat = ClampValue(Heat + mod.heat);
+		Food = ClampValue(Food + mod.food);
+		Hope = ClampValue(Hope + mod.hope);
+		Materials = ClampValue(Materials + mod.materials);
 		UpdateAllStatBars();
 	}
 	
@@ -53,36 +53,36 @@ public class Stats : MonoBehaviour {
 	}
 	
 	private static void ApplyStartingValues() {
-		Heat = ClampValue(startingHeat);
-		Food = ClampValue(startingFood);
-		Hope = ClampValue(startingHope);
-		Materials = ClampValue(startingMaterials);
-	}
-	
-	private static int ClampValue(int value) {
-		return Mathf.Clamp(value, 0, maxStatValue);
+		Heat = ClampValue(_startingHeat);
+		Food = ClampValue(_startingFood);
+		Hope = ClampValue(_startingHope);
+		Materials = ClampValue(_startingMaterials);
 	}
 	
 	private static void UpdateAllStatBars() {
-		for (int i = 0; i < changeListeners.Count; i++) {
-			if (changeListeners[i] == null) {
-				changeListeners.RemoveAt(i);
+		for (int i = 0; i < _changeListeners.Count; i++) {
+			if (_changeListeners[i] == null) {
+				_changeListeners.RemoveAt(i);
 			}
 			else {
-				changeListeners[i].UpdateStatBars();
+				_changeListeners[i].UpdateStatBars();
 			}
 		}
 	}
 	
 	private void UpdateStatBars() {
-		HeatBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Heat / maxStatValue * 100.0f);
-		FoodBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Food / maxStatValue * 100.0f);
-		HopeBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Hope / maxStatValue * 100.0f);
-		MaterialsBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Materials / maxStatValue * 100.0f);
+		heatBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+				(float) Heat / _maxStatValue * 100.0f);
+		foodBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+				(float) Food / _maxStatValue * 100.0f);
+		hopeBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+				(float) Hope / _maxStatValue * 100.0f);
+		materialsBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+				(float) Materials / _maxStatValue * 100.0f);
+	}
+	
+	private static int ClampValue(int value) {
+		return Mathf.Clamp(value, 0, _maxStatValue);
 	}
 	
 }

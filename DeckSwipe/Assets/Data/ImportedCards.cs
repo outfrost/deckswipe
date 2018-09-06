@@ -2,13 +2,13 @@ using System.Collections.Generic;
 
 public struct ImportedCards {
 	
-	public Dictionary<int, CardModel> Cards;
-	public Dictionary<string, CardModel> SpecialCards;
+	public readonly Dictionary<int, CardModel> cards;
+	public readonly Dictionary<string, CardModel> specialCards;
 	
 	public ImportedCards(Dictionary<int, CardModel> cards,
 			Dictionary<string, CardModel> specialCards) {
-		Cards = cards;
-		SpecialCards = specialCards;
+		this.cards = cards;
+		this.specialCards = specialCards;
 	}
 	
 }

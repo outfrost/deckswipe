@@ -4,15 +4,15 @@ using UnityEngine;
 
 public class ProgressDisplay : MonoBehaviour {
 	
-	public TextMeshProUGUI DaysSurvivedText;
+	private static readonly List<ProgressDisplay> _changeListeners = new List<ProgressDisplay>();
 	
 	private static int daysSurvived;
 	
-	private static readonly List<ProgressDisplay> changeListeners = new List<ProgressDisplay>();
+	public TextMeshProUGUI daysSurvivedText;
 	
 	private void Awake() {
 		if (!Util.IsPrefab(gameObject)) {
-			changeListeners.Add(this);
+			_changeListeners.Add(this);
 			UpdateProgressDisplay();
 		}
 	}
@@ -23,18 +23,18 @@ public class ProgressDisplay : MonoBehaviour {
 	}
 	
 	private static void UpdateAllProgressDisplays() {
-		for (int i = 0; i < changeListeners.Count; i++) {
-			if (changeListeners[i] == null) {
-				changeListeners.RemoveAt(i);
+		for (int i = 0; i < _changeListeners.Count; i++) {
+			if (_changeListeners[i] == null) {
+				_changeListeners.RemoveAt(i);
 			}
 			else {
-				changeListeners[i].UpdateProgressDisplay();
+				_changeListeners[i].UpdateProgressDisplay();
 			}
 		}
 	}
 	
 	private void UpdateProgressDisplay() {
-		DaysSurvivedText.text = daysSurvived.ToString();
+		daysSurvivedText.text = daysSurvived.ToString();
 	}
 	
 }

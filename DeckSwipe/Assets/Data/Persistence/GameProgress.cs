@@ -23,31 +23,31 @@ namespace Persistence {
 			foreach (CardProgress entry in cardProgress) {
 				CardModel card = cardStorage.ForId(entry.id); 
 				if (card != null) {
-					card.Progress = entry;
+					card.progress = entry;
 				}
 			}
 			foreach (SpecialCardProgress entry in specialCardProgress) {
 				CardModel specialCard = cardStorage.SpecialCard(entry.id);
 				if (specialCard != null) {
-					specialCard.Progress = entry;
+					specialCard.progress = entry;
 				}
 			}
 			
 			// Fill in the missing card progress entries
 			foreach (KeyValuePair<int, CardModel> entry in cardStorage.Cards) {
-				if (entry.Value.Progress == null) {
+				if (entry.Value.progress == null) {
 					CardProgress progress = new CardProgress(
 							entry.Key, CardStatus.None);
 					cardProgress.Add(progress);
-					entry.Value.Progress = progress;
+					entry.Value.progress = progress;
 				}
 			}
 			foreach (KeyValuePair<string, CardModel> entry in cardStorage.SpecialCards) {
-				if (entry.Value.Progress == null) {
+				if (entry.Value.progress == null) {
 					SpecialCardProgress progress = new SpecialCardProgress(
 							entry.Key, CardStatus.None);
 					specialCardProgress.Add(progress);
-					entry.Value.Progress = progress;
+					entry.Value.progress = progress;
 				}
 			}
 		}

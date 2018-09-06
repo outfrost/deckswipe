@@ -27,7 +27,7 @@ public class InputDispatcher : MonoBehaviour {
 		catch (ArgumentException) {
 			list = keyDownHandlers[keyCode];
 		}
-
+		
 		list.AddLast(handler);
 	}
 	
