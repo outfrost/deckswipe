@@ -46,12 +46,16 @@ public class Game : MonoBehaviour {
 		else {
 			SpawnCard(cardStorage.Random());
 		}
-		progressStorage.Progress.AddDays(Random.Range(0.5f, 1.5f),
-				daysPassedPreviously);
 		saveIntervalCounter = (saveIntervalCounter - 1) % saveInterval;
 		if (saveIntervalCounter == 0) {
 			progressStorage.Save();
 		}
+	}
+	
+	public void CardActionPerformed() {
+		progressStorage.Progress.AddDays(Random.Range(0.5f, 1.5f),
+				daysPassedPreviously);
+		DrawNextCard();
 	}
 	
 	public void RestartGame() {

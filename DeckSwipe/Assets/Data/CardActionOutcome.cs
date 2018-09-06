@@ -12,7 +12,7 @@
 	
 	public virtual void Perform(Game controller) {
 		statsModification.Perform();
-		controller.DrawNextCard();
+		controller.CardActionPerformed();
 	}
 	
 }

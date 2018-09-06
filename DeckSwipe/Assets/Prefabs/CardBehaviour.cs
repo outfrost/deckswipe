@@ -41,7 +41,7 @@ public class CardBehaviour : MonoBehaviour {
 		}
 	}
 	
-	public Game Controller { private get; set;  }
+	public Game Controller { private get; set; }
 	
 	private CardModel card;
 	private Vector3 dragStartPosition;
@@ -50,7 +50,7 @@ public class CardBehaviour : MonoBehaviour {
 	private Vector3 animationStartRotationAngles;
 	private float animationStartTime;
 	private AnimationState animationState = AnimationState.Idle;
-	private bool animationSuspended = false;
+	private bool animationSuspended;
 	
 	private void Awake() {
 		Util.SetTextAlpha(LeftActionText, 0.0f);
