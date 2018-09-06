@@ -55,6 +55,8 @@ public class Game : MonoBehaviour {
 	public void CardActionPerformed() {
 		progressStorage.Progress.AddDays(Random.Range(0.5f, 1.5f),
 				daysPassedPreviously);
+		ProgressDisplay.SetDaysSurvived(
+				(int)(progressStorage.Progress.daysPassed - daysPassedPreviously));
 		DrawNextCard();
 	}
 	
@@ -70,6 +72,7 @@ public class Game : MonoBehaviour {
 	
 	private void StartGameplayLoop() {
 		Stats.ResetStats();
+		ProgressDisplay.SetDaysSurvived(0);
 		DrawNextCard();
 	}
 	
