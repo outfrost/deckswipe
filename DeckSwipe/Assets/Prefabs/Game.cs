@@ -13,6 +13,7 @@ public class Game : MonoBehaviour {
 	private CardStorage cardStorage;
 	private ProgressStorage progressStorage;
 	private float daysPassedPreviously;
+	private float daysLastRun;
 	private int saveIntervalCounter;
 	
 	private void Awake() {
@@ -32,11 +33,12 @@ public class Game : MonoBehaviour {
 	
 	private void StartGame() {
 		daysPassedPreviously = progressStorage.Progress.daysPassed;
-		GameStartOverlay.StartSequence(progressStorage.Progress.daysPassed);
+		GameStartOverlay.StartSequence(progressStorage.Progress.daysPassed, daysLastRun);
 	}
 	
 	public void RestartGame() {
 		progressStorage.Save();
+		daysLastRun = progressStorage.Progress.daysPassed - daysPassedPreviously;
 		StartGame();
 	}
 	

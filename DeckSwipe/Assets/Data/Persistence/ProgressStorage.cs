@@ -35,7 +35,7 @@ namespace Persistence {
 		private async Task Load() {
 			Progress = await LoadLocally();
 			await cardStorage.CardCollectionImport;
-
+			
 			if (Progress == null) {
 				Progress = new GameProgress();
 			}
