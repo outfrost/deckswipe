@@ -4,29 +4,22 @@ using UnityEngine;
 public class Stats : MonoBehaviour {
 	
 	private const int _maxStatValue = 32;
-	private const int _startingHeat = 16;
+	private const int _startingCoal = 16;
 	private const int _startingFood = 16;
+	private const int _startingHealth = 16;
 	private const int _startingHope = 16;
-	private const int _startingMaterials = 16;
 	
 	private static readonly List<Stats> _changeListeners = new List<Stats>();
 	
-	public static int Heat { get; private set; }
+	public static int Coal { get; private set; }
 	public static int Food { get; private set; }
+	public static int Health { get; private set; }
 	public static int Hope { get; private set; }
-	public static int Materials { get; private set; }
 	
-	/* TODO Refactor stats
-	public static int Coal;
-	public static int Food;
-	public static int Health;
-	public static int Hope;
-	*/
-	
-	public RectTransform heatBar;
+	public RectTransform coalBar;
 	public RectTransform foodBar;
+	public RectTransform healthBar;
 	public RectTransform hopeBar;
-	public RectTransform materialsBar;
 	
 	/*static Stats() {
 		ApplyStartingValues();
@@ -40,10 +33,10 @@ public class Stats : MonoBehaviour {
 	}
 	
 	public static void ApplyModification(StatsModification mod) {
-		Heat = ClampValue(Heat + mod.heat);
+		Coal = ClampValue(Coal + mod.coal);
 		Food = ClampValue(Food + mod.food);
+		Health = ClampValue(Health + mod.health);
 		Hope = ClampValue(Hope + mod.hope);
-		Materials = ClampValue(Materials + mod.materials);
 		UpdateAllStatBars();
 	}
 	
@@ -53,10 +46,10 @@ public class Stats : MonoBehaviour {
 	}
 	
 	private static void ApplyStartingValues() {
-		Heat = ClampValue(_startingHeat);
+		Coal = ClampValue(_startingCoal);
 		Food = ClampValue(_startingFood);
+		Health = ClampValue(_startingHealth);
 		Hope = ClampValue(_startingHope);
-		Materials = ClampValue(_startingMaterials);
 	}
 	
 	private static void UpdateAllStatBars() {
@@ -71,14 +64,14 @@ public class Stats : MonoBehaviour {
 	}
 	
 	private void UpdateStatBars() {
-		heatBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Heat / _maxStatValue * 100.0f);
+		coalBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+				(float) Coal / _maxStatValue * 100.0f);
 		foodBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
 				(float) Food / _maxStatValue * 100.0f);
+		healthBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
+				(float) Health / _maxStatValue * 100.0f);
 		hopeBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
 				(float) Hope / _maxStatValue * 100.0f);
-		materialsBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Materials / _maxStatValue * 100.0f);
 	}
 	
 	private static int ClampValue(int value) {

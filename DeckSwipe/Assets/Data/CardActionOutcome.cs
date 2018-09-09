@@ -6,8 +6,8 @@
 		statsModification = new StatsModification(0, 0, 0, 0);
 	}
 	
-	public CardActionOutcome(int heatMod, int foodMod, int hopeMod, int materialsMod) {
-		statsModification = new StatsModification(heatMod, foodMod, hopeMod, materialsMod);
+	public CardActionOutcome(int coalMod, int foodMod, int healthMod, int hopeMod) {
+		statsModification = new StatsModification(coalMod, foodMod, healthMod, hopeMod);
 	}
 	
 	public virtual void Perform(Game controller) {

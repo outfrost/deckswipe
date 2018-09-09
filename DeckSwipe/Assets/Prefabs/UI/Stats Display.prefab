@@ -22,7 +22,7 @@ GameObject:
   - component: {fileID: 222572899005256466}
   - component: {fileID: 114460946447177082}
   m_Layer: 5
-  m_Name: Materials Bar
+  m_Name: Hope Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -56,7 +56,7 @@ GameObject:
   - component: {fileID: 222752172784970548}
   - component: {fileID: 114484521793973414}
   m_Layer: 5
-  m_Name: Heat Bar
+  m_Name: Coal Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -89,7 +89,7 @@ GameObject:
   - component: {fileID: 222722953428446150}
   - component: {fileID: 114042049099487296}
   m_Layer: 5
-  m_Name: Hope Bar
+  m_Name: Health Bar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -133,10 +133,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 20cf2e3fa3f64718a8744478d42b19b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  heatBar: {fileID: 224395286946666664}
+  coalBar: {fileID: 224395286946666664}
   foodBar: {fileID: 224960045823884886}
-  hopeBar: {fileID: 224001070210838586}
-  materialsBar: {fileID: 224334821988674536}
+  healthBar: {fileID: 224001070210838586}
+  hopeBar: {fileID: 224334821988674536}
 --- !u!114 &114460946447177082
 MonoBehaviour:
   m_ObjectHideFlags: 1

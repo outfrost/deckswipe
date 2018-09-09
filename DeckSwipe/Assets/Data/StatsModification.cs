@@ -1,15 +1,15 @@
 ﻿public class StatsModification {
 	
-	public int heat;
+	public int coal;
 	public int food;
+	public int health;
 	public int hope;
-	public int materials;
 	
-	public StatsModification(int heat, int food, int hope, int materials) {
-		this.heat = heat;
+	public StatsModification(int coal, int food, int health, int hope) {
+		this.coal = coal;
 		this.food = food;
+		this.health = health;
 		this.hope = hope;
-		this.materials = materials;
 	}
 	
 	public void Perform() {

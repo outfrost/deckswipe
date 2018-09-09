@@ -10,6 +10,8 @@ namespace GoogleSheets {
 		
 		private const string _spreadsheetId = "1olhKo6JFItKpDU9Qd7X4cJgaAlFIChhB-P0rI48gNLs";
 		private const string _apiKey = "AIzaSyAzWqJRSu7Q3p3EfuwFYdtzQql7ygu1pv4";
+		private const int _majorFormatVersion = 3;
+		private const int _minorFormatVersion = 0;
 		
 		private readonly Sprite defaultSprite;
 		
@@ -48,23 +50,68 @@ namespace GoogleSheets {
 			
 			Spreadsheet spreadsheet = JsonUtility.FromJson<Spreadsheet>(
 					new StreamReader(responseStream).ReadToEnd());
+
+			RowData[] metaRowData = spreadsheet.sheets[0].data[0].rowData;
+			Dictionary<string, CellData> metadata = new Dictionary<string, CellData>();
+			foreach (RowData row in metaRowData) {
+				if (metadata.ContainsKey(row.values[0].formattedValue)) {
+					Debug.LogWarning("[GoogleSheetsImporter] Duplicate key found in Metadata sheet");
+				}
+				else {
+					metadata.Add(row.values[0].formattedValue, row.values[1]);
+				}
+			}
+
+			if (!RequireMetadata("majorFormatVersion", metadata)) {
+				return new ImportedCards();
+			}
+			if (!RequireMetadata("minorFormatVersion", metadata)) {
+				return new ImportedCards();
+			}
+			int sheetMajorVersion = (int) metadata["majorFormatVersion"].effectiveValue.numberValue;
+			if (sheetMajorVersion != _majorFormatVersion) {
+				Debug.LogError("[GoogleSheetsImporter] Incompatible sheet format major version (required: " + _majorFormatVersion + ", found: " + sheetMajorVersion + ")");
+				return new ImportedCards();
+			}
+			int sheetMinorVersion = (int) metadata["minorFormatVersion"].effectiveValue.numberValue;
+			if (sheetMinorVersion < _minorFormatVersion) {
+				Debug.LogError("[GoogleSheetsImporter] Incompatible sheet format minor version (required min: " + _minorFormatVersion + ", found: " + sheetMinorVersion + ")");
+				return new ImportedCards();
+			}
+
+			if (!RequireMetadata("cardSheetIndex", metadata)) {
+				return new ImportedCards();
+			}
+			if (!RequireMetadata("specialCardSheetIndex", metadata)) {
+				return new ImportedCards();
+			}
+			if (!RequireMetadata("characterSheetIndex", metadata)) {
+				return new ImportedCards();
+			}
+			if (!RequireMetadata("imageSheetIndex", metadata)) {
+				return new ImportedCards();
+			}
+			int cardSheetIndex = (int) metadata["cardSheetIndex"].effectiveValue.numberValue;
+			int specialCardSheetIndex = (int) metadata["specialCardSheetIndex"].effectiveValue.numberValue;
+			int characterSheetIndex = (int) metadata["characterSheetIndex"].effectiveValue.numberValue;
+			int imageSheetIndex = (int) metadata["imageSheetIndex"].effectiveValue.numberValue;
 			
-			RowData[] cardRowData = spreadsheet.sheets[0].data[0].rowData;
+			RowData[] cardRowData = spreadsheet.sheets[cardSheetIndex].data[0].rowData;
 			if (!ValidateCardSheetFormat(cardRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid card format encountered in the spreadsheet");
 				return new ImportedCards();
 			}
-			RowData[] specialCardRowData = spreadsheet.sheets[1].data[0].rowData;
+			RowData[] specialCardRowData = spreadsheet.sheets[specialCardSheetIndex].data[0].rowData;
 			if (!ValidateCardSheetFormat(specialCardRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid special card format encountered in the spreadsheet");
 				return new ImportedCards();
 			}
-			RowData[] characterRowData = spreadsheet.sheets[2].data[0].rowData;
+			RowData[] characterRowData = spreadsheet.sheets[characterSheetIndex].data[0].rowData;
 			if (!ValidateCharacterSheetFormat(characterRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in the spreadsheet");
 				return new ImportedCards();
 			}
-			RowData[] imageRowData = spreadsheet.sheets[3].data[0].rowData;
+			RowData[] imageRowData = spreadsheet.sheets[imageSheetIndex].data[0].rowData;
 			if (!ValidateImageSheetFormat(imageRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in the spreadsheet");
 				return new ImportedCards();
@@ -170,29 +217,37 @@ namespace GoogleSheets {
 		
 		private static bool ValidateCardSheetFormat(RowData headerRow) {
 			return headerRow.values[0].formattedValue == "id"
-			       && headerRow.values[1].formattedValue == "character_id"
-			       && headerRow.values[2].formattedValue == "card_text"
-			       && headerRow.values[3].formattedValue == "left_swipe_text"
-			       && headerRow.values[4].formattedValue == "left_swipe_heat"
-			       && headerRow.values[5].formattedValue == "left_swipe_food"
-			       && headerRow.values[6].formattedValue == "left_swipe_hope"
-			       && headerRow.values[7].formattedValue == "left_swipe_materials"
-			       && headerRow.values[8].formattedValue == "right_swipe_text"
-			       && headerRow.values[9].formattedValue == "right_swipe_heat"
-			       && headerRow.values[10].formattedValue == "right_swipe_food"
-			       && headerRow.values[11].formattedValue == "right_swipe_hope"
-			       && headerRow.values[12].formattedValue == "right_swipe_materials";
+			       && headerRow.values[1].formattedValue == "characterId"
+			       && headerRow.values[2].formattedValue == "cardText"
+			       && headerRow.values[3].formattedValue == "leftActionText"
+			       && headerRow.values[4].formattedValue == "leftActionCoal"
+			       && headerRow.values[5].formattedValue == "leftActionFood"
+			       && headerRow.values[6].formattedValue == "leftActionHealth"
+			       && headerRow.values[7].formattedValue == "leftActionHope"
+			       && headerRow.values[8].formattedValue == "rightActionText"
+			       && headerRow.values[9].formattedValue == "rightActionCoal"
+			       && headerRow.values[10].formattedValue == "rightActionFood"
+			       && headerRow.values[11].formattedValue == "rightActionHealth"
+			       && headerRow.values[12].formattedValue == "rightActionHope";
 		}
 		
 		private static bool ValidateCharacterSheetFormat(RowData headerRow) {
 			return headerRow.values[0].formattedValue == "id"
 			       && headerRow.values[1].formattedValue == "name"
-			       && headerRow.values[2].formattedValue == "image_id";
+			       && headerRow.values[2].formattedValue == "imageId";
 		}
 		
 		private static bool ValidateImageSheetFormat(RowData headerRow) {
 			return headerRow.values[0].formattedValue == "id"
 			       && headerRow.values[1].formattedValue == "url";
+		}
+
+		private static bool RequireMetadata(string key, Dictionary<string, CellData> metadata) {
+			if (!metadata.ContainsKey(key)) {
+				Debug.LogError("[GoogleSheetsImporter] " + key + " not found in Metadata sheet");
+				return false;
+			}
+			return true;
 		}
 		
 	}

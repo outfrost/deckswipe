@@ -98,8 +98,8 @@ public class CardStorage {
 			SpecialCards = new Dictionary<string, CardModel>();
 		}
 		
-		if (!SpecialCards.ContainsKey("gameover_heat")) {
-			SpecialCards.Add("gameover_heat", new CardModel("The city runs out of heat and freezes over.", "", "",
+		if (!SpecialCards.ContainsKey("gameover_coal")) {
+			SpecialCards.Add("gameover_coal", new CardModel("The city runs out of coal to run the generator, and freezes over.", "", "",
 					_defaultGameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
@@ -110,14 +110,14 @@ public class CardStorage {
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
-		if (!SpecialCards.ContainsKey("gameover_hope")) {
-			SpecialCards.Add("gameover_hope", new CardModel("All hope among the people is lost.", "", "",
+		if (!SpecialCards.ContainsKey("gameover_health")) {
+			SpecialCards.Add("gameover_health", new CardModel("The city's population succumbs to wounds and spreading diseases.", "", "",
 					_defaultGameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));
 		}
-		if (!SpecialCards.ContainsKey("gameover_materials")) {
-			SpecialCards.Add("gameover_materials", new CardModel("The city runs out of materials to sustain itself.", "", "",
+		if (!SpecialCards.ContainsKey("gameover_hope")) {
+			SpecialCards.Add("gameover_hope", new CardModel("All hope among the people is lost.", "", "",
 					_defaultGameOverCharacter,
 					new GameOverCardOutcome(),
 					new GameOverCardOutcome()));

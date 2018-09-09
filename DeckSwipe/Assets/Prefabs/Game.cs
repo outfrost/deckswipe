@@ -47,17 +47,17 @@ public class Game : MonoBehaviour {
 	}
 	
 	public void DrawNextCard() {
-		if (Stats.Heat == 0) {
-			SpawnCard(cardStorage.SpecialCard("gameover_heat"));
+		if (Stats.Coal == 0) {
+			SpawnCard(cardStorage.SpecialCard("gameover_coal"));
 		}
 		else if (Stats.Food == 0) {
 			SpawnCard(cardStorage.SpecialCard("gameover_food"));
 		}
+		else if (Stats.Health == 0) {
+			SpawnCard(cardStorage.SpecialCard("gameover_health"));
+		}
 		else if (Stats.Hope == 0) {
 			SpawnCard(cardStorage.SpecialCard("gameover_hope"));
-		}
-		else if (Stats.Materials == 0) {
-			SpawnCard(cardStorage.SpecialCard("gameover_materials"));
 		}
 		else {
 			SpawnCard(cardStorage.Random());
