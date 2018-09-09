@@ -50,7 +50,7 @@ namespace GoogleSheets {
 			
 			Spreadsheet spreadsheet = JsonUtility.FromJson<Spreadsheet>(
 					new StreamReader(responseStream).ReadToEnd());
-
+			
 			RowData[] metaRowData = spreadsheet.sheets[0].data[0].rowData;
 			Dictionary<string, CellData> metadata = new Dictionary<string, CellData>();
 			foreach (RowData row in metaRowData) {
@@ -61,24 +61,24 @@ namespace GoogleSheets {
 					metadata.Add(row.values[0].formattedValue, row.values[1]);
 				}
 			}
-
+			
 			if (!RequireMetadata("majorFormatVersion", metadata)) {
 				return new ImportedCards();
 			}
 			if (!RequireMetadata("minorFormatVersion", metadata)) {
 				return new ImportedCards();
 			}
-			int sheetMajorVersion = (int) metadata["majorFormatVersion"].effectiveValue.numberValue;
+			int sheetMajorVersion = metadata["majorFormatVersion"].IntValue;
 			if (sheetMajorVersion != _majorFormatVersion) {
 				Debug.LogError("[GoogleSheetsImporter] Incompatible sheet format major version (required: " + _majorFormatVersion + ", found: " + sheetMajorVersion + ")");
 				return new ImportedCards();
 			}
-			int sheetMinorVersion = (int) metadata["minorFormatVersion"].effectiveValue.numberValue;
+			int sheetMinorVersion = metadata["minorFormatVersion"].IntValue;
 			if (sheetMinorVersion < _minorFormatVersion) {
 				Debug.LogError("[GoogleSheetsImporter] Incompatible sheet format minor version (required min: " + _minorFormatVersion + ", found: " + sheetMinorVersion + ")");
 				return new ImportedCards();
 			}
-
+			
 			if (!RequireMetadata("cardSheetIndex", metadata)) {
 				return new ImportedCards();
 			}
@@ -91,10 +91,10 @@ namespace GoogleSheets {
 			if (!RequireMetadata("imageSheetIndex", metadata)) {
 				return new ImportedCards();
 			}
-			int cardSheetIndex = (int) metadata["cardSheetIndex"].effectiveValue.numberValue;
-			int specialCardSheetIndex = (int) metadata["specialCardSheetIndex"].effectiveValue.numberValue;
-			int characterSheetIndex = (int) metadata["characterSheetIndex"].effectiveValue.numberValue;
-			int imageSheetIndex = (int) metadata["imageSheetIndex"].effectiveValue.numberValue;
+			int cardSheetIndex = metadata["cardSheetIndex"].IntValue;
+			int specialCardSheetIndex = metadata["specialCardSheetIndex"].IntValue;
+			int characterSheetIndex = metadata["characterSheetIndex"].IntValue;
+			int imageSheetIndex = metadata["imageSheetIndex"].IntValue;
 			
 			RowData[] cardRowData = spreadsheet.sheets[cardSheetIndex].data[0].rowData;
 			if (!ValidateCardSheetFormat(cardRowData[0])) {
@@ -119,7 +119,7 @@ namespace GoogleSheets {
 			
 			Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
 			for (int i = 1; i < imageRowData.Length; i++) {
-				int id = (int) imageRowData[i].values[0].effectiveValue.numberValue;
+				int id = imageRowData[i].values[0].IntValue;
 				if (sprites.ContainsKey(id)) {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Images sheet");
 				}
@@ -150,14 +150,14 @@ namespace GoogleSheets {
 			
 			Dictionary<int, CharacterModel> characters = new Dictionary<int, CharacterModel>();
 			for (int i = 1; i < characterRowData.Length; i++) {
-				int id = (int) characterRowData[i].values[0].effectiveValue.numberValue;
+				int id = characterRowData[i].values[0].IntValue;
 				if (characters.ContainsKey(id)) {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Images sheet");
 				}
 				else {
 					CharacterModel character = new CharacterModel(characterRowData[i].values[1].formattedValue,
 							defaultSprite);
-					sprites.TryGetValue((int) characterRowData[i].values[2].effectiveValue.numberValue,
+					sprites.TryGetValue(characterRowData[i].values[2].IntValue,
 							out character.sprite);
 					characters.Add(id, character);
 				}
@@ -165,7 +165,7 @@ namespace GoogleSheets {
 			
 			Dictionary<int, CardModel> cards = new Dictionary<int, CardModel>();
 			for (int i = 1; i < cardRowData.Length; i++) {
-				int id = (int) cardRowData[i].values[0].effectiveValue.numberValue;
+				int id = cardRowData[i].values[0].IntValue;
 				if (cards.ContainsKey(id)) {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Cards sheet");
 				}
@@ -176,16 +176,16 @@ namespace GoogleSheets {
 							cardRowData[i].values[8].formattedValue,
 							null,
 							new CardActionOutcome(
-									(int) cardRowData[i].values[4].effectiveValue.numberValue,
-									(int) cardRowData[i].values[5].effectiveValue.numberValue,
-									(int) cardRowData[i].values[6].effectiveValue.numberValue,
-									(int) cardRowData[i].values[7].effectiveValue.numberValue),
+									cardRowData[i].values[4].IntValue,
+									cardRowData[i].values[5].IntValue,
+									cardRowData[i].values[6].IntValue,
+									cardRowData[i].values[7].IntValue),
 							new CardActionOutcome(
-									(int) cardRowData[i].values[9].effectiveValue.numberValue,
-									(int) cardRowData[i].values[10].effectiveValue.numberValue,
-									(int) cardRowData[i].values[11].effectiveValue.numberValue,
-									(int) cardRowData[i].values[12].effectiveValue.numberValue));
-					characters.TryGetValue((int) cardRowData[i].values[1].effectiveValue.numberValue,
+									cardRowData[i].values[9].IntValue,
+									cardRowData[i].values[10].IntValue,
+									cardRowData[i].values[11].IntValue,
+									cardRowData[i].values[12].IntValue));
+					characters.TryGetValue(cardRowData[i].values[1].IntValue,
 							out card.character);
 					cards.Add(id, card);
 				}
@@ -205,7 +205,7 @@ namespace GoogleSheets {
 							null,
 							new GameOverCardOutcome(),
 							new GameOverCardOutcome());
-					characters.TryGetValue((int) specialCardRowData[i].values[1].effectiveValue.numberValue,
+					characters.TryGetValue(specialCardRowData[i].values[1].IntValue,
 							out card.character);
 					specialCards.Add(id, card);
 				}
@@ -241,7 +241,7 @@ namespace GoogleSheets {
 			return headerRow.values[0].formattedValue == "id"
 			       && headerRow.values[1].formattedValue == "url";
 		}
-
+		
 		private static bool RequireMetadata(string key, Dictionary<string, CellData> metadata) {
 			if (!metadata.ContainsKey(key)) {
 				Debug.LogError("[GoogleSheetsImporter] " + key + " not found in Metadata sheet");
