@@ -20,6 +20,7 @@ namespace GoogleSheets {
 		}
 		
 		public async Task<ImportedCards> FetchCards() {
+			// Fetch spreadsheet from Google Sheet API V4
 			Debug.Log("[GoogleSheetsImporter] Fetching cards from Google Sheet " + _spreadsheetId + " ...");
 			HttpWebResponse response;
 			try {
@@ -28,7 +29,6 @@ namespace GoogleSheets {
 						+ _spreadsheetId
 						+ "?includeGridData=true&key="
 						+ _apiKey);
-				// TODO Handle Web exceptions
 				response = (HttpWebResponse) await request.GetResponseAsync();
 			}
 			catch (WebException e) {
@@ -51,6 +51,7 @@ namespace GoogleSheets {
 			Spreadsheet spreadsheet = JsonUtility.FromJson<Spreadsheet>(
 					new StreamReader(responseStream).ReadToEnd());
 			
+			// Parse Metadata sheet
 			RowData[] metaRowData = spreadsheet.sheets[0].data[0].rowData;
 			Dictionary<string, CellData> metadata = new Dictionary<string, CellData>();
 			foreach (RowData row in metaRowData) {
@@ -64,6 +65,7 @@ namespace GoogleSheets {
 				}
 			}
 			
+			// Check sheet format version
 			if (!RequireMetadata("majorFormatVersion", metadata)) {
 				return new ImportedCards();
 			}
@@ -81,6 +83,7 @@ namespace GoogleSheets {
 				return new ImportedCards();
 			}
 			
+			// Get sheet indices from metadata
 			if (!RequireMetadata("cardSheetIndex", metadata)) {
 				return new ImportedCards();
 			}
@@ -98,28 +101,27 @@ namespace GoogleSheets {
 			int characterSheetIndex = metadata["characterSheetIndex"].IntValue;
 			int imageSheetIndex = metadata["imageSheetIndex"].IntValue;
 			
-			RowData[] cardRowData = spreadsheet.sheets[cardSheetIndex].data[0].rowData;
-			if (!CheckCardSheetFormat(cardRowData[0])) {
-				Debug.LogError("[GoogleSheetsImporter] Invalid card format encountered in the spreadsheet");
+			// Sanity-check sheet formats
+			Sheet cardSheet = spreadsheet.sheets[cardSheetIndex];
+			if (!CheckCardSheetFormat(cardSheet)) {
 				return new ImportedCards();
 			}
-			RowData[] specialCardRowData = spreadsheet.sheets[specialCardSheetIndex].data[0].rowData;
-			if (!CheckCardSheetFormat(specialCardRowData[0])) {
-				Debug.LogError("[GoogleSheetsImporter] Invalid special card format encountered in the spreadsheet");
+			Sheet specialCardSheet = spreadsheet.sheets[specialCardSheetIndex];
+			if (!CheckCardSheetFormat(specialCardSheet)) {
 				return new ImportedCards();
 			}
-			RowData[] characterRowData = spreadsheet.sheets[characterSheetIndex].data[0].rowData;
-			if (!CheckCharacterSheetFormat(characterRowData[0])) {
-				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in the spreadsheet");
+			Sheet characterSheet = spreadsheet.sheets[characterSheetIndex];
+			if (!CheckCharacterSheetFormat(characterSheet)) {
 				return new ImportedCards();
 			}
-			RowData[] imageRowData = spreadsheet.sheets[imageSheetIndex].data[0].rowData;
-			if (!CheckImageSheetFormat(imageRowData[0])) {
-				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in the spreadsheet");
+			Sheet imageSheet = spreadsheet.sheets[imageSheetIndex];
+			if (!CheckImageSheetFormat(imageSheet)) {
 				return new ImportedCards();
 			}
 			
+			// Parse Images sheet
 			Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
+			RowData[] imageRowData = imageSheet.data[0].rowData;
 			for (int i = 1; i < imageRowData.Length; i++) {
 				int id = imageRowData[i].values[0].IntValue;
 				string imageUrl = imageRowData[i].values[1].hyperlink;
@@ -154,7 +156,9 @@ namespace GoogleSheets {
 				}
 			}
 			
+			// Parse Characters sheet
 			Dictionary<int, CharacterModel> characters = new Dictionary<int, CharacterModel>();
+			RowData[] characterRowData = characterSheet.data[0].rowData;
 			for (int i = 1; i < characterRowData.Length; i++) {
 				int id = characterRowData[i].values[0].IntValue;
 				if (characters.ContainsKey(id)) {
@@ -169,7 +173,9 @@ namespace GoogleSheets {
 				}
 			}
 			
+			// Parse Cards sheet
 			Dictionary<int, CardModel> cards = new Dictionary<int, CardModel>();
+			RowData[] cardRowData = cardSheet.data[0].rowData;
 			for (int i = 1; i < cardRowData.Length; i++) {
 				int id = cardRowData[i].values[0].IntValue;
 				if (cards.ContainsKey(id)) {
@@ -197,7 +203,9 @@ namespace GoogleSheets {
 				}
 			}
 			
+			// Parse SpecialCards sheet
 			Dictionary<string, CardModel> specialCards = new Dictionary<string, CardModel>();
+			RowData[] specialCardRowData = specialCardSheet.data[0].rowData;
 			for (int i = 1; i < specialCardRowData.Length; i++) {
 				string id = specialCardRowData[i].values[0].StringValue;
 				if (id == null) {
@@ -224,31 +232,58 @@ namespace GoogleSheets {
 			return new ImportedCards(cards, specialCards);
 		}
 		
-		private static bool CheckCardSheetFormat(RowData headerRow) {
-			return headerRow.values[0].StringValue == "id"
-			       && headerRow.values[1].StringValue == "characterId"
-			       && headerRow.values[2].StringValue == "cardText"
-			       && headerRow.values[3].StringValue == "leftActionText"
-			       && headerRow.values[4].StringValue == "leftActionCoal"
-			       && headerRow.values[5].StringValue == "leftActionFood"
-			       && headerRow.values[6].StringValue == "leftActionHealth"
-			       && headerRow.values[7].StringValue == "leftActionHope"
-			       && headerRow.values[8].StringValue == "rightActionText"
-			       && headerRow.values[9].StringValue == "rightActionCoal"
-			       && headerRow.values[10].StringValue == "rightActionFood"
-			       && headerRow.values[11].StringValue == "rightActionHealth"
-			       && headerRow.values[12].StringValue == "rightActionHope";
+		private static bool CheckCardSheetFormat(Sheet sheet) {
+			RowData headerRow = sheet.data[0].rowData[0];
+			if (headerRow.values[0].StringValue == "id"
+					&& headerRow.values[1].StringValue == "characterId"
+					&& headerRow.values[2].StringValue == "cardText"
+					&& headerRow.values[3].StringValue == "leftActionText"
+					&& headerRow.values[4].StringValue == "leftActionCoal"
+					&& headerRow.values[5].StringValue == "leftActionFood"
+					&& headerRow.values[6].StringValue == "leftActionHealth"
+					&& headerRow.values[7].StringValue == "leftActionHope"
+					&& headerRow.values[8].StringValue == "rightActionText"
+					&& headerRow.values[9].StringValue == "rightActionCoal"
+					&& headerRow.values[10].StringValue == "rightActionFood"
+					&& headerRow.values[11].StringValue == "rightActionHealth"
+					&& headerRow.values[12].StringValue == "rightActionHope") {
+				return true;
+			}
+			else {
+				Debug.LogError("[GoogleSheetsImporter] Invalid card format encountered in "
+				               + sheet.properties.title
+				               + " sheet");
+				return false;
+			}
 		}
 		
-		private static bool CheckCharacterSheetFormat(RowData headerRow) {
-			return headerRow.values[0].StringValue == "id"
-			       && headerRow.values[1].StringValue == "name"
-			       && headerRow.values[2].StringValue == "imageId";
+		private static bool CheckCharacterSheetFormat(Sheet sheet) {
+			RowData headerRow = sheet.data[0].rowData[0];
+			if (headerRow.values[0].StringValue == "id"
+					&& headerRow.values[1].StringValue == "name"
+					&& headerRow.values[2].StringValue == "imageId") {
+				return true;
+			}
+			else {
+				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in "
+				               + sheet.properties.title
+				               + " sheet");
+				return false;
+			}
 		}
 		
-		private static bool CheckImageSheetFormat(RowData headerRow) {
-			return headerRow.values[0].StringValue == "id"
-			       && headerRow.values[1].StringValue == "url";
+		private static bool CheckImageSheetFormat(Sheet sheet) {
+			RowData headerRow = sheet.data[0].rowData[0];
+			if (headerRow.values[0].StringValue == "id"
+					&& headerRow.values[1].StringValue == "url") {
+				return true;
+			}
+			else {
+				Debug.LogError("[GoogleSheetsImporter] Invalid image format encountered in "
+				               + sheet.properties.title
+				               + " sheet");
+				return false;
+			}
 		}
 		
 		private static bool RequireMetadata(string key, Dictionary<string, CellData> metadata) {
