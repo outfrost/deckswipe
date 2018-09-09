@@ -14,6 +14,14 @@ namespace GoogleSheets {
 			get { return (int) effectiveValue.numberValue; }
 		}
 		
+		public string StringValue {
+			get { return effectiveValue.stringValue; }
+		}
+		
+		public string GetStringValue(string defaultValue) {
+			return StringValue ?? defaultValue;
+		}
+		
 	}
 	
 }

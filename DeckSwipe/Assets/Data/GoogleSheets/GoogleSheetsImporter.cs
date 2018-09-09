@@ -54,11 +54,13 @@ namespace GoogleSheets {
 			RowData[] metaRowData = spreadsheet.sheets[0].data[0].rowData;
 			Dictionary<string, CellData> metadata = new Dictionary<string, CellData>();
 			foreach (RowData row in metaRowData) {
-				if (metadata.ContainsKey(row.values[0].formattedValue)) {
-					Debug.LogWarning("[GoogleSheetsImporter] Duplicate key found in Metadata sheet");
-				}
-				else {
-					metadata.Add(row.values[0].formattedValue, row.values[1]);
+				if (row.values[0].StringValue != null) {
+					if (metadata.ContainsKey(row.values[0].StringValue)) {
+						Debug.LogWarning("[GoogleSheetsImporter] Duplicate key found in Metadata sheet");
+					}
+					else {
+						metadata.Add(row.values[0].StringValue, row.values[1]);
+					}
 				}
 			}
 			
@@ -97,22 +99,22 @@ namespace GoogleSheets {
 			int imageSheetIndex = metadata["imageSheetIndex"].IntValue;
 			
 			RowData[] cardRowData = spreadsheet.sheets[cardSheetIndex].data[0].rowData;
-			if (!ValidateCardSheetFormat(cardRowData[0])) {
+			if (!CheckCardSheetFormat(cardRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid card format encountered in the spreadsheet");
 				return new ImportedCards();
 			}
 			RowData[] specialCardRowData = spreadsheet.sheets[specialCardSheetIndex].data[0].rowData;
-			if (!ValidateCardSheetFormat(specialCardRowData[0])) {
+			if (!CheckCardSheetFormat(specialCardRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid special card format encountered in the spreadsheet");
 				return new ImportedCards();
 			}
 			RowData[] characterRowData = spreadsheet.sheets[characterSheetIndex].data[0].rowData;
-			if (!ValidateCharacterSheetFormat(characterRowData[0])) {
+			if (!CheckCharacterSheetFormat(characterRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in the spreadsheet");
 				return new ImportedCards();
 			}
 			RowData[] imageRowData = spreadsheet.sheets[imageSheetIndex].data[0].rowData;
-			if (!ValidateImageSheetFormat(imageRowData[0])) {
+			if (!CheckImageSheetFormat(imageRowData[0])) {
 				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in the spreadsheet");
 				return new ImportedCards();
 			}
@@ -120,12 +122,16 @@ namespace GoogleSheets {
 			Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
 			for (int i = 1; i < imageRowData.Length; i++) {
 				int id = imageRowData[i].values[0].IntValue;
+				string imageUrl = imageRowData[i].values[1].hyperlink;
 				if (sprites.ContainsKey(id)) {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Images sheet");
 				}
+				else if (imageUrl == null) {
+					Debug.LogWarning("[GoogleSheetsImporter] Image (id: " + id + ") has a null URL");
+				}
 				else {
-					Debug.Log("[GoogleSheetsImporter] Fetching image from " + imageRowData[i].values[1].hyperlink + " ...");
-					HttpWebRequest imageRequest = WebRequest.CreateHttp(imageRowData[i].values[1].hyperlink);
+					Debug.Log("[GoogleSheetsImporter] Fetching image from " + imageUrl + " ...");
+					HttpWebRequest imageRequest = WebRequest.CreateHttp(imageUrl);
 					HttpWebResponse imageResponse = (HttpWebResponse) await imageRequest.GetResponseAsync();
 					Debug.Log("[GoogleSheetsImporter] " + (int)imageResponse.StatusCode + " " + imageResponse.StatusDescription);
 					
@@ -155,7 +161,7 @@ namespace GoogleSheets {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Images sheet");
 				}
 				else {
-					CharacterModel character = new CharacterModel(characterRowData[i].values[1].formattedValue,
+					CharacterModel character = new CharacterModel(characterRowData[i].values[1].GetStringValue(""),
 							defaultSprite);
 					sprites.TryGetValue(characterRowData[i].values[2].IntValue,
 							out character.sprite);
@@ -171,9 +177,9 @@ namespace GoogleSheets {
 				}
 				else {
 					CardModel card = new CardModel(
-							cardRowData[i].values[2].formattedValue,
-							cardRowData[i].values[3].formattedValue,
-							cardRowData[i].values[8].formattedValue,
+							cardRowData[i].values[2].GetStringValue(""),
+							cardRowData[i].values[3].GetStringValue(""),
+							cardRowData[i].values[8].GetStringValue(""),
 							null,
 							new CardActionOutcome(
 									cardRowData[i].values[4].IntValue,
@@ -193,15 +199,18 @@ namespace GoogleSheets {
 			
 			Dictionary<string, CardModel> specialCards = new Dictionary<string, CardModel>();
 			for (int i = 1; i < specialCardRowData.Length; i++) {
-				string id = specialCardRowData[i].values[0].formattedValue;
-				if (specialCards.ContainsKey(id)) {
+				string id = specialCardRowData[i].values[0].StringValue;
+				if (id == null) {
+					Debug.LogWarning("[GoogleSheetsImporter] Null id found in SpecialCards sheet");
+				}
+				else if (specialCards.ContainsKey(id)) {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in SpecialCards sheet");
 				}
 				else {
 					CardModel card = new CardModel(
-							specialCardRowData[i].values[2].formattedValue,
-							specialCardRowData[i].values[3].formattedValue,
-							specialCardRowData[i].values[8].formattedValue,
+							specialCardRowData[i].values[2].GetStringValue(""),
+							specialCardRowData[i].values[3].GetStringValue(""),
+							specialCardRowData[i].values[8].GetStringValue(""),
 							null,
 							new GameOverCardOutcome(),
 							new GameOverCardOutcome());
@@ -215,31 +224,31 @@ namespace GoogleSheets {
 			return new ImportedCards(cards, specialCards);
 		}
 		
-		private static bool ValidateCardSheetFormat(RowData headerRow) {
-			return headerRow.values[0].formattedValue == "id"
-			       && headerRow.values[1].formattedValue == "characterId"
-			       && headerRow.values[2].formattedValue == "cardText"
-			       && headerRow.values[3].formattedValue == "leftActionText"
-			       && headerRow.values[4].formattedValue == "leftActionCoal"
-			       && headerRow.values[5].formattedValue == "leftActionFood"
-			       && headerRow.values[6].formattedValue == "leftActionHealth"
-			       && headerRow.values[7].formattedValue == "leftActionHope"
-			       && headerRow.values[8].formattedValue == "rightActionText"
-			       && headerRow.values[9].formattedValue == "rightActionCoal"
-			       && headerRow.values[10].formattedValue == "rightActionFood"
-			       && headerRow.values[11].formattedValue == "rightActionHealth"
-			       && headerRow.values[12].formattedValue == "rightActionHope";
+		private static bool CheckCardSheetFormat(RowData headerRow) {
+			return headerRow.values[0].StringValue == "id"
+			       && headerRow.values[1].StringValue == "characterId"
+			       && headerRow.values[2].StringValue == "cardText"
+			       && headerRow.values[3].StringValue == "leftActionText"
+			       && headerRow.values[4].StringValue == "leftActionCoal"
+			       && headerRow.values[5].StringValue == "leftActionFood"
+			       && headerRow.values[6].StringValue == "leftActionHealth"
+			       && headerRow.values[7].StringValue == "leftActionHope"
+			       && headerRow.values[8].StringValue == "rightActionText"
+			       && headerRow.values[9].StringValue == "rightActionCoal"
+			       && headerRow.values[10].StringValue == "rightActionFood"
+			       && headerRow.values[11].StringValue == "rightActionHealth"
+			       && headerRow.values[12].StringValue == "rightActionHope";
 		}
 		
-		private static bool ValidateCharacterSheetFormat(RowData headerRow) {
-			return headerRow.values[0].formattedValue == "id"
-			       && headerRow.values[1].formattedValue == "name"
-			       && headerRow.values[2].formattedValue == "imageId";
+		private static bool CheckCharacterSheetFormat(RowData headerRow) {
+			return headerRow.values[0].StringValue == "id"
+			       && headerRow.values[1].StringValue == "name"
+			       && headerRow.values[2].StringValue == "imageId";
 		}
 		
-		private static bool ValidateImageSheetFormat(RowData headerRow) {
-			return headerRow.values[0].formattedValue == "id"
-			       && headerRow.values[1].formattedValue == "url";
+		private static bool CheckImageSheetFormat(RowData headerRow) {
+			return headerRow.values[0].StringValue == "id"
+			       && headerRow.values[1].StringValue == "url";
 		}
 		
 		private static bool RequireMetadata(string key, Dictionary<string, CellData> metadata) {
