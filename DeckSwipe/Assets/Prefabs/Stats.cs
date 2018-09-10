@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Stats : MonoBehaviour {
 	
@@ -16,10 +17,14 @@ public class Stats : MonoBehaviour {
 	public static int Health { get; private set; }
 	public static int Hope { get; private set; }
 	
-	public RectTransform coalBar;
-	public RectTransform foodBar;
-	public RectTransform healthBar;
-	public RectTransform hopeBar;
+	public Image coalBar;
+	public Image foodBar;
+	public Image healthBar;
+	public Image hopeBar;
+	public float relativeMargin;
+
+	private float minFillAmount;
+	private float maxFillAmount;
 	
 	/*static Stats() {
 		ApplyStartingValues();
@@ -30,6 +35,8 @@ public class Stats : MonoBehaviour {
 			_changeListeners.Add(this);
 			UpdateStatBars();
 		}
+		minFillAmount = Mathf.Clamp01(relativeMargin);
+		maxFillAmount = Mathf.Clamp01(1.0f - relativeMargin);
 	}
 	
 	public static void ApplyModification(StatsModification mod) {
@@ -64,14 +71,10 @@ public class Stats : MonoBehaviour {
 	}
 	
 	private void UpdateStatBars() {
-		coalBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Coal / _maxStatValue * 100.0f);
-		foodBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Food / _maxStatValue * 100.0f);
-		healthBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Health / _maxStatValue * 100.0f);
-		hopeBar.SetSizeWithCurrentAnchors(RectTransform.Axis.Vertical,
-				(float) Hope / _maxStatValue * 100.0f);
+		coalBar.fillAmount = Mathf.Lerp(minFillAmount, maxFillAmount, (float) Coal / _maxStatValue);
+		foodBar.fillAmount = Mathf.Lerp(minFillAmount, maxFillAmount, (float) Food / _maxStatValue);
+		healthBar.fillAmount = Mathf.Lerp(minFillAmount, maxFillAmount, (float) Health / _maxStatValue);
+		hopeBar.fillAmount = Mathf.Lerp(minFillAmount, maxFillAmount, (float) Hope / _maxStatValue);
 	}
 	
 	private static int ClampValue(int value) {
