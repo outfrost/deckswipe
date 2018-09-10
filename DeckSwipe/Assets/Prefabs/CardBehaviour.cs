@@ -20,6 +20,8 @@ public class CardBehaviour : MonoBehaviour {
 	public Vector2 cardImageSpriteTargetSize;
 	public TextMeshPro leftActionText;
 	public TextMeshPro rightActionText;
+	public SpriteRenderer cardBackSpriteRenderer;
+	public SpriteRenderer cardFrontSpriteRenderer;
 	public SpriteRenderer cardImageSpriteRenderer;
 	
 	private CardModel card;
@@ -53,6 +55,13 @@ public class CardBehaviour : MonoBehaviour {
 	public Game Controller { private get; set; }
 	
 	private void Awake() {
+		bool isFacingCamera = Util.IsFacingCamera(gameObject);
+		cardBackSpriteRenderer.enabled = !isFacingCamera;
+		cardFrontSpriteRenderer.enabled = isFacingCamera;
+		cardImageSpriteRenderer.enabled = isFacingCamera;
+		leftActionText.enabled = isFacingCamera;
+		rightActionText.enabled = isFacingCamera;
+		
 		Util.SetTextAlpha(leftActionText, 0.0f);
 		Util.SetTextAlpha(rightActionText, 0.0f);
 	}
@@ -94,8 +103,10 @@ public class CardBehaviour : MonoBehaviour {
 				transform.position = Vector3.Lerp(animationStartPosition, snapPosition, scaledProgress);
 				transform.eulerAngles = Vector3.Lerp(animationStartRotationAngles, snapRotationAngles, scaledProgress);
 				
-				// Hide card face elements unless it's facing the main camera
+				// Display correct card elements based on whether it's facing the main camera
 				bool isFacingCamera = Util.IsFacingCamera(gameObject);
+				cardBackSpriteRenderer.enabled = !isFacingCamera;
+				cardFrontSpriteRenderer.enabled = isFacingCamera;
 				cardImageSpriteRenderer.enabled = isFacingCamera;
 				leftActionText.enabled = isFacingCamera;
 				rightActionText.enabled = isFacingCamera;
