@@ -262,8 +262,7 @@ namespace GoogleSheets {
 					&& headerRow.values[11].StringValue == "rightActionHealth"
 					&& headerRow.values[12].StringValue == "rightActionHope"
 					&& headerRow.values[13].StringValue == "cardPrerequisites"
-					&& headerRow.values[14].StringValue == "specialCardPrerequisites"
-					&& headerRow.values[15].StringValue == "GUARD") {
+					&& headerRow.values[14].StringValue == "specialCardPrerequisites") {
 				return true;
 			}
 			else {
@@ -278,8 +277,7 @@ namespace GoogleSheets {
 			RowData headerRow = sheet.data[0].rowData[0];
 			if (headerRow.values[0].StringValue == "id"
 					&& headerRow.values[1].StringValue == "name"
-					&& headerRow.values[2].StringValue == "imageId"
-					&& headerRow.values[3].StringValue == "GUARD") {
+					&& headerRow.values[2].StringValue == "imageId") {
 				return true;
 			}
 			else {
@@ -293,8 +291,7 @@ namespace GoogleSheets {
 		private static bool CheckImageSheetFormat(Sheet sheet) {
 			RowData headerRow = sheet.data[0].rowData[0];
 			if (headerRow.values[0].StringValue == "id"
-					&& headerRow.values[1].StringValue == "url"
-					&& headerRow.values[2].StringValue == "GUARD") {
+					&& headerRow.values[1].StringValue == "url") {
 				return true;
 			}
 			else {
