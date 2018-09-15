@@ -11,7 +11,7 @@ namespace GoogleSheets {
 		private const string _spreadsheetId = "1olhKo6JFItKpDU9Qd7X4cJgaAlFIChhB-P0rI48gNLs";
 		private const string _apiKey = "AIzaSyAzWqJRSu7Q3p3EfuwFYdtzQql7ygu1pv4";
 		private const int _majorFormatVersion = 3;
-		private const int _minorFormatVersion = 1;
+		private const int _minorFormatVersion = 2;
 		
 		private readonly Sprite defaultSprite;
 		
@@ -193,6 +193,33 @@ namespace GoogleSheets {
 					if (specialCardPrerequisites?.array != null) {
 						prerequisites.AddRange(specialCardPrerequisites.array);
 					}
+
+					IFollowupCard leftActionFollowup = null;
+					IFollowupCard rightActionFollowup = null;
+					if (cardRowData[i].values[16].IntValue > 0) {
+						if (cardRowData[i].values[15].StringValue == null) {
+							leftActionFollowup = new FollowupCard(
+									cardRowData[i].values[15].IntValue,
+									cardRowData[i].values[16].IntValue);
+						}
+						else {
+							leftActionFollowup = new FollowupSpecialCard(
+									cardRowData[i].values[15].StringValue,
+									cardRowData[i].values[16].IntValue);
+						}
+					}
+					if (cardRowData[i].values[18].IntValue > 0) {
+						if (cardRowData[i].values[17].StringValue == null) {
+							rightActionFollowup = new FollowupCard(
+									cardRowData[i].values[17].IntValue,
+									cardRowData[i].values[18].IntValue);
+						}
+						else {
+							rightActionFollowup = new FollowupSpecialCard(
+									cardRowData[i].values[17].StringValue,
+									cardRowData[i].values[18].IntValue);
+						}
+					}
 					
 					CardModel card = new CardModel(
 							cardRowData[i].values[2].GetStringValue(""),
@@ -203,15 +230,19 @@ namespace GoogleSheets {
 									cardRowData[i].values[4].IntValue,
 									cardRowData[i].values[5].IntValue,
 									cardRowData[i].values[6].IntValue,
-									cardRowData[i].values[7].IntValue),
+									cardRowData[i].values[7].IntValue,
+									leftActionFollowup),
 							new CardActionOutcome(
 									cardRowData[i].values[9].IntValue,
 									cardRowData[i].values[10].IntValue,
 									cardRowData[i].values[11].IntValue,
-									cardRowData[i].values[12].IntValue),
+									cardRowData[i].values[12].IntValue,
+									rightActionFollowup),
 							prerequisites);
+					
 					characters.TryGetValue(cardRowData[i].values[1].IntValue,
 							out card.character);
+					
 					cards.Add(id, card);
 				}
 			}
@@ -262,7 +293,11 @@ namespace GoogleSheets {
 					&& headerRow.values[11].StringValue == "rightActionHealth"
 					&& headerRow.values[12].StringValue == "rightActionHope"
 					&& headerRow.values[13].StringValue == "cardPrerequisites"
-					&& headerRow.values[14].StringValue == "specialCardPrerequisites") {
+					&& headerRow.values[14].StringValue == "specialCardPrerequisites"
+					&& headerRow.values[15].StringValue == "leftActionFollowupCardId"
+					&& headerRow.values[16].StringValue == "leftActionFollowupCardDelay"
+					&& headerRow.values[17].StringValue == "rightActionFollowupCardId"
+					&& headerRow.values[18].StringValue == "rightActionFollowupCardDelay") {
 				return true;
 			}
 			else {

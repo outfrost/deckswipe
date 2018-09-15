@@ -15,6 +15,7 @@ public class Game : MonoBehaviour {
 	private float daysPassedPreviously;
 	private float daysLastRun;
 	private int saveIntervalCounter;
+	private CardDrawQueue cardDrawQueue = new CardDrawQueue();
 	
 	private void Awake() {
 		// Listen for Escape key ('Back' on Android) to quit the game
@@ -62,13 +63,19 @@ public class Game : MonoBehaviour {
 			SpawnCard(cardStorage.SpecialCard("gameover_hope"));
 		}
 		else {
-			CardModel card = cardStorage.Random();
-			bool prerequisitesSatisfied = card.CheckPrerequisites(cardStorage);
-			while (!prerequisitesSatisfied) {
-				card = cardStorage.Random();
-				prerequisitesSatisfied = card.CheckPrerequisites(cardStorage);
+			IFollowupCard followup = cardDrawQueue.Next();
+			CardModel card = followup?.Fetch(cardStorage);
+			if (card != null) {
+				SpawnCard(card);
 			}
-			SpawnCard(card);
+			else {
+				bool prerequisitesSatisfied = false;
+				while (!prerequisitesSatisfied) {
+					card = cardStorage.Random();
+					prerequisitesSatisfied = card.CheckPrerequisites(cardStorage);
+				}
+				SpawnCard(card);
+			}
 		}
 		saveIntervalCounter = (saveIntervalCounter - 1) % _saveInterval;
 		if (saveIntervalCounter == 0) {
@@ -82,6 +89,10 @@ public class Game : MonoBehaviour {
 		ProgressDisplay.SetDaysSurvived(
 				(int)(progressStorage.Progress.daysPassed - daysPassedPreviously));
 		DrawNextCard();
+	}
+
+	public void AddFollowupCard(IFollowupCard followup) {
+		cardDrawQueue.Insert(followup);
 	}
 	
 	private async void CallbackWhenDoneLoading(Callback callback) {
