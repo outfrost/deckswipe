@@ -1,8 +1,10 @@
-﻿using Persistence;
+﻿using System.Collections.Generic;
+using Persistence;
 using UnityEngine;
 
 public class CardModel {
 	
+	public readonly List<ICardPrerequisite> prerequisites;
 	public readonly string cardText;
 	public readonly string leftSwipeText;
 	public readonly string rightSwipeText;
@@ -26,13 +28,15 @@ public class CardModel {
 			string rightSwipeText,
 			CharacterModel character,
 			CardActionOutcome leftOutcome,
-			CardActionOutcome rightOutcome) {
+			CardActionOutcome rightOutcome,
+			List<ICardPrerequisite> prerequisites) {
 		this.cardText = cardText;
 		this.leftSwipeText = leftSwipeText;
 		this.rightSwipeText = rightSwipeText;
 		this.character = character;
 		leftSwipeOutcome = leftOutcome;
 		rightSwipeOutcome = rightOutcome;
+		this.prerequisites = prerequisites;
 	}
 	
 	public void CardShown() {
@@ -47,6 +51,15 @@ public class CardModel {
 	public void PerformRightDecision(Game controller) {
 		rightSwipeOutcome.Perform(controller);
 		progress.Status |= CardStatus.RightActionTaken;
+	}
+	
+	public bool CheckPrerequisites(CardStorage cardStorage) {
+		foreach (ICardPrerequisite prerequisite in prerequisites) {
+			if (!prerequisite.IsSatisfied(cardStorage)) {
+				return false;
+			}
+		}
+		return true;
 	}
 	
 }

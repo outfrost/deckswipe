@@ -62,7 +62,13 @@ public class Game : MonoBehaviour {
 			SpawnCard(cardStorage.SpecialCard("gameover_hope"));
 		}
 		else {
-			SpawnCard(cardStorage.Random());
+			CardModel card = cardStorage.Random();
+			bool prerequisitesSatisfied = card.CheckPrerequisites(cardStorage);
+			while (!prerequisitesSatisfied) {
+				card = cardStorage.Random();
+				prerequisitesSatisfied = card.CheckPrerequisites(cardStorage);
+			}
+			SpawnCard(card);
 		}
 		saveIntervalCounter = (saveIntervalCounter - 1) % _saveInterval;
 		if (saveIntervalCounter == 0) {
