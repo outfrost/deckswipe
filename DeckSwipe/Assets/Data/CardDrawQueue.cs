@@ -17,22 +17,20 @@ public class CardDrawQueue {
 	
 	public void Insert(IFollowupCard followup) {
 		int i = 0;
-		while (i < queue.Count && queue[i].Delay <= followup.Delay) {
+		int delayBefore = 0;
+		while (i < queue.Count && (delayBefore < followup.Delay || queue[i].Delay == 1)) {
+			delayBefore += queue[i].Delay;
 			i++;
 		}
 		queue.Insert(i, followup.Clone());
 		
-		if (i > 0) {
-			queue[i].Delay -= queue[i - 1].Delay;
-			if (queue[i].Delay == 0) {
-				queue[i].Delay++;
-			}
+		queue[i].Delay -= delayBefore;
+		if (queue[i].Delay < 1) {
+			queue[i].Delay = 1;
 		}
-		if (i < queue.Count - 1) {
+		
+		if (i + 1 < queue.Count) {
 			queue[i + 1].Delay -= queue[i].Delay;
-			if (queue[i + 1].Delay == 0) {
-				queue[i + 1].Delay++;
-			}
 		}
 	}
 	
