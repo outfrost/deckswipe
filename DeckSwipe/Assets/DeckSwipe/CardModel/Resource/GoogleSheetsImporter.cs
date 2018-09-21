@@ -197,7 +197,7 @@ namespace DeckSwipe.CardModel.Resource {
 					if (specialCardPrerequisites?.array != null) {
 						prerequisites.AddRange(specialCardPrerequisites.array);
 					}
-
+					
 					IFollowupCard leftActionFollowup = null;
 					IFollowupCard rightActionFollowup = null;
 					if (cardRowData[i].values[16].IntValue > 0) {

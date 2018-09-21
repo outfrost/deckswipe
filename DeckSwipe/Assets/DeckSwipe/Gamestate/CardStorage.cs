@@ -7,39 +7,39 @@ using DeckSwipe.CardModel.Resource;
 using UnityEngine;
 
 namespace DeckSwipe.Gamestate {
-
+	
 	public class CardStorage {
-	
+		
 		private static readonly CharacterModel _defaultGameOverCharacter = new CharacterModel("", null);
-	
+		
 		private readonly Sprite defaultSprite;
-	
+		
 		public Dictionary<int, CardModel.CardModel> Cards { get; private set; }
 		public Dictionary<string, CardModel.CardModel> SpecialCards { get; private set; }
-	
+		
 		public Task CardCollectionImport { get; }
-	
+		
 		public CardStorage(Sprite defaultSprite) {
 			this.defaultSprite = defaultSprite;
 			CardCollectionImport = PopulateCollection();
 		}
-	
+		
 		public CardModel.CardModel Random() {
 			return Cards.ElementAt(UnityEngine.Random.Range(0, Cards.Count)).Value;
 		}
-	
+		
 		public CardModel.CardModel ForId(int id) {
 			CardModel.CardModel card;
 			Cards.TryGetValue(id, out card);
 			return card;
 		}
-	
+		
 		public CardModel.CardModel SpecialCard(string id) {
 			CardModel.CardModel card;
 			SpecialCards.TryGetValue(id, out card);
 			return card;
 		}
-	
+		
 		private async Task PopulateCollection() {
 			ImportedCards importedCards = await new GoogleSheetsImporter(defaultSprite).FetchCards();
 			Cards = importedCards.cards;
@@ -49,7 +49,7 @@ namespace DeckSwipe.Gamestate {
 			}
 			VerifySpecialCards();
 		}
-	
+		
 		private void PopulateFallback() {
 			Cards = new Dictionary<int, CardModel.CardModel>();
 			CharacterModel leadExplorer = new CharacterModel("Lead explorer", defaultSprite);
@@ -103,12 +103,12 @@ namespace DeckSwipe.Gamestate {
 					new CardActionOutcome(+2, -4, 0, -2),
 					new List<ICardPrerequisite>()));
 		}
-	
+		
 		private void VerifySpecialCards() {
 			if (SpecialCards == null) {
 				SpecialCards = new Dictionary<string, CardModel.CardModel>();
 			}
-		
+			
 			if (!SpecialCards.ContainsKey("gameover_coal")) {
 				SpecialCards.Add("gameover_coal", new CardModel.CardModel("The city runs out of coal to run the generator, and freezes over.", "", "",
 						_defaultGameOverCharacter,
@@ -138,7 +138,7 @@ namespace DeckSwipe.Gamestate {
 						null));
 			}
 		}
-	
+		
 	}
-
+	
 }

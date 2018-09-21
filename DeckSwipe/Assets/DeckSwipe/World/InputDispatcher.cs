@@ -3,13 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace DeckSwipe.World {
-
+	
 	public class InputDispatcher : MonoBehaviour {
-	
+		
 		public delegate void KeyDownHandler(KeyCode keyCode);
-	
+		
 		private readonly Dictionary<KeyCode, LinkedList<KeyDownHandler>> keyDownHandlers = new Dictionary<KeyCode, LinkedList<KeyDownHandler>>();
-	
+		
 		private void Update() {
 			foreach (var entry in keyDownHandlers) {
 				if (Input.GetKeyDown(entry.Key)) {
@@ -19,7 +19,7 @@ namespace DeckSwipe.World {
 				}
 			}
 		}
-	
+		
 		public void AddKeyDownHandler(KeyCode keyCode, KeyDownHandler handler) {
 			LinkedList<KeyDownHandler> list;
 			try {
@@ -29,10 +29,10 @@ namespace DeckSwipe.World {
 			catch (ArgumentException) {
 				list = keyDownHandlers[keyCode];
 			}
-		
+			
 			list.AddLast(handler);
 		}
-	
+		
 	}
-
+	
 }

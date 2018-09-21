@@ -6,26 +6,26 @@ using UnityEngine;
 using UnityEngine.UI;
 
 namespace DeckSwipe.World {
-
-	public class GameStartOverlay : MonoBehaviour {
 	
-		private enum OverlayState {
+	public class GameStartOverlay : MonoBehaviour {
 		
+		private enum OverlayState {
+			
 			Hidden,
 			FadingHiddenToBlack,
 			Black,
 			FadingBlackToVisible,
 			Visible,
 			FadingVisibleToHidden
-		
+			
 		}
-	
+		
 		private const float _fadeDuration = 0.5f;
-	
+		
 		private static readonly List<GameStartOverlay> _controlListeners = new List<GameStartOverlay>();
-	
+		
 		public static Callback FadeOutCallback { private get; set; }
-	
+		
 		public float overlayTimeout = 2.0f;
 		public float dayCounterRewindDuration = 1.0f;
 		public Image backgroundImage;
@@ -33,21 +33,21 @@ namespace DeckSwipe.World {
 		public TextMeshProUGUI currentTimeText;
 		public TextMeshProUGUI daysSurvivedLabel;
 		public TextMeshProUGUI daysSurvivedText;
-	
+		
 		private static float rewindStartDays;
-	
+		
 		private float fadeStartTime;
 		private OverlayState overlayState = OverlayState.Hidden;
-	
+		
 		private float rewindStartTime;
 		private bool rewindingDaysCounter;
-	
+		
 		private void Awake() {
 			if (!Util.IsPrefab(gameObject)) {
 				_controlListeners.Add(this);
 			}
 		}
-	
+		
 		private void Start() {
 			SetGraphicVisible(backgroundImage, false);
 			SetGraphicVisible(currentTimeText, false);
@@ -56,7 +56,7 @@ namespace DeckSwipe.World {
 			SetGraphicVisible(blackSlate, true);
 			overlayState = OverlayState.Black;
 		}
-	
+		
 		private void Update() {
 			float fadeProgress;
 			switch (overlayState) {
@@ -115,7 +115,7 @@ namespace DeckSwipe.World {
 					break;
 			}
 		}
-	
+		
 		public static void StartSequence(float daysPassed, float daysLastRun) {
 			rewindStartDays = daysLastRun;
 			for (int i = 0; i < _controlListeners.Count; i++) {
@@ -128,7 +128,7 @@ namespace DeckSwipe.World {
 				}
 			}
 		}
-	
+		
 		private void FadeIn() {
 			switch (overlayState) {
 				case OverlayState.Hidden:
@@ -142,13 +142,13 @@ namespace DeckSwipe.World {
 					break;
 			}
 		}
-	
+		
 		private void FadeToBlack() {
 			fadeStartTime = Time.time;
 			blackSlate.enabled = true;
 			overlayState = OverlayState.FadingHiddenToBlack;
 		}
-	
+		
 		private void FadeToVisible() {
 			fadeStartTime = Time.time;
 			SetGraphicVisible(backgroundImage, true);
@@ -157,23 +157,23 @@ namespace DeckSwipe.World {
 			SetGraphicVisible(daysSurvivedText, true);
 			overlayState = OverlayState.FadingBlackToVisible;
 		}
-	
+		
 		private void FadeOut() {
 			fadeStartTime = Time.time;
 			overlayState = OverlayState.FadingVisibleToHidden;
 			FadeOutCallback?.Invoke();
 		}
-	
+		
 		private void SetCurrentTimeText(float daysPassed) {
 			currentTimeText.text = ApproximateDate(daysPassed);
 		}
-	
+		
 		private string ApproximateDate(float daysPassed) {
 			int year = 1887 + (int)(daysPassed / 365.25f);
 			int month = (int)((daysPassed % 365.25f) / 30.4375f);
 			return MonthName(month) + " " + year;
 		}
-	
+		
 		private string MonthName(int monthIndex) {
 			switch (monthIndex) {
 				case 0:
@@ -204,27 +204,27 @@ namespace DeckSwipe.World {
 					return "";
 			}
 		}
-	
+		
 		private static void SetColorAlpha(Graphic image, float alpha) {
 			Color color = image.color;
 			color.a = alpha;
 			image.color = color;
 		}
-	
+		
 		private static void SetGraphicVisible(Graphic image, bool visible) {
 			image.enabled = visible;
 			SetColorAlpha(image, visible ? 1.0f : 0.0f);
 		}
-	
+		
 		private IEnumerator DelayCoroutine(Callback callback, float seconds) {
 			yield return new WaitForSeconds(seconds);
 			callback();
 		}
-	
+		
 		private void DelayForSeconds(Callback callback, float seconds) {
 			StartCoroutine(DelayCoroutine(callback, seconds));
 		}
-	
+		
 	}
-
+	
 }

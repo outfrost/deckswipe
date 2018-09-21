@@ -2,9 +2,9 @@
 using UnityEngine;
 
 namespace Outfrost.Debug {
-
-	public class VersionText : MonoBehaviour {
 	
+	public class VersionText : MonoBehaviour {
+		
 		void Start () {
 			GetComponent<TextMeshProUGUI>().SetText(Application.productName
 			                                        + " "
@@ -13,7 +13,7 @@ namespace Outfrost.Debug {
 					                                        ? ", build " + Application.buildGUID
 					                                        : ""));
 		}
-	
+		
 	}
-
+	
 }
