@@ -9,35 +9,32 @@ namespace DeckSwipe.World {
 		
 		private static readonly List<ProgressDisplay> _changeListeners = new List<ProgressDisplay>();
 		
-		private static int daysSurvived;
-		
 		public TextMeshProUGUI daysSurvivedText;
 		
 		private void Awake() {
 			if (!Util.IsPrefab(gameObject)) {
 				_changeListeners.Add(this);
-				UpdateProgressDisplay();
+				SetDisplay(0);
 			}
 		}
 		
 		public static void SetDaysSurvived(int days) {
-			daysSurvived = days;
-			UpdateAllProgressDisplays();
+			SetAllDisplays(days);
 		}
 		
-		private static void UpdateAllProgressDisplays() {
+		private static void SetAllDisplays(int days) {
 			for (int i = 0; i < _changeListeners.Count; i++) {
 				if (_changeListeners[i] == null) {
 					_changeListeners.RemoveAt(i);
 				}
 				else {
-					_changeListeners[i].UpdateProgressDisplay();
+					_changeListeners[i].SetDisplay(days);
 				}
 			}
 		}
 		
-		private void UpdateProgressDisplay() {
-			daysSurvivedText.text = daysSurvived.ToString();
+		private void SetDisplay(int days) {
+			daysSurvivedText.text = days.ToString();
 		}
 		
 	}

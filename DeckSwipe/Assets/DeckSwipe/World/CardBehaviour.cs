@@ -107,6 +107,7 @@ namespace DeckSwipe.World {
 					transform.eulerAngles = Vector3.Lerp(animationStartRotationAngles, snapRotationAngles, scaledProgress);
 					
 					// Display correct card elements based on whether it's facing the main camera
+					// TODO Extract into method
 					bool isFacingCamera = Util.IsFacingCamera(gameObject);
 					cardBackSpriteRenderer.enabled = !isFacingCamera;
 					cardFrontSpriteRenderer.enabled = isFacingCamera;

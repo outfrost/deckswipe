@@ -9,43 +9,38 @@ namespace DeckSwipe.World {
 		
 		private static readonly List<CardDescriptionDisplay> _changeListeners = new List<CardDescriptionDisplay>();
 		
-		private static string cardTextString = "";
-		private static string characterNameString = "";
-		
 		public TextMeshProUGUI cardText;
 		public TextMeshProUGUI characterNameText;
 		
 		private void Awake() {
 			if (!Util.IsPrefab(gameObject)) {
 				_changeListeners.Add(this);
-				UpdateTextDisplay();
+				ResetDescription();
 			}
 		}
 		
-		public static void SetDescription(string cardText, string characterName) {
-			cardTextString = cardText;
-			characterNameString = characterName;
-			UpdateAllTextDisplays();
+		public static void SetDescription(string cardCaption, string characterName) {
+			SetAllDisplays(cardCaption, characterName);
 		}
 		
 		public static void ResetDescription() {
 			SetDescription("", "");
 		}
 		
-		private static void UpdateAllTextDisplays() {
+		private static void SetAllDisplays(string cardCaption, string characterName) {
 			for (int i = 0; i < _changeListeners.Count; i++) {
 				if (_changeListeners[i] == null) {
 					_changeListeners.RemoveAt(i);
 				}
 				else {
-					_changeListeners[i].UpdateTextDisplay();
+					_changeListeners[i].SetDisplay(cardCaption, characterName);
 				}
 			}
 		}
 		
-		private void UpdateTextDisplay() {
-			cardText.text = cardTextString;
-			characterNameText.text = characterNameString;
+		private void SetDisplay(string cardCaption, string characterName) {
+			cardText.text = cardCaption;
+			characterNameText.text = characterName;
 		}
 		
 	}
