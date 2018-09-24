@@ -10,9 +10,13 @@ Created with Unity on Linux, primarily for the Android platform.
 
 ![Screen capture of the game running on Android](screencap-android.gif)
 
+## Development
+
+DeckSwipe has reached alpha stage. I (@outfrost) have currently suspended my works on the project due to other commitments. If anyone would like to take this opportunity to play around in an existing project, improve upon it and learn in the process, please feel free to fork and pull request.
+
 ## Builds
 
-Weekly builds are available in the GitHub Releases section.
+~~Weekly~~ builds are available in the GitHub Releases section.
 
 ## License
 
