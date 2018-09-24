@@ -2,28 +2,28 @@
 
 namespace DeckSwipe.CardModel {
 	
-	public class CardActionOutcome {
+	public class ActionOutcome {
 		
 		private readonly StatsModification statsModification;
-		private readonly IFollowupCard followupCard;
+		private readonly IFollowup followup;
 		
-		public CardActionOutcome() {
+		public ActionOutcome() {
 			statsModification = new StatsModification(0, 0, 0, 0);
 		}
 		
-		public CardActionOutcome(int coalMod, int foodMod, int healthMod, int hopeMod) {
+		public ActionOutcome(int coalMod, int foodMod, int healthMod, int hopeMod) {
 			statsModification = new StatsModification(coalMod, foodMod, healthMod, hopeMod);
 		}
 		
-		public CardActionOutcome(int coalMod, int foodMod, int healthMod, int hopeMod, IFollowupCard followupCard) {
+		public ActionOutcome(int coalMod, int foodMod, int healthMod, int hopeMod, IFollowup followup) {
 			statsModification = new StatsModification(coalMod, foodMod, healthMod, hopeMod);
-			this.followupCard = followupCard;
+			this.followup = followup;
 		}
 		
 		public virtual void Perform(Game controller) {
 			statsModification.Perform();
-			if (followupCard != null) {
-				controller.AddFollowupCard(followupCard);
+			if (followup != null) {
+				controller.AddFollowupCard(followup);
 			}
 			controller.CardActionPerformed();
 		}

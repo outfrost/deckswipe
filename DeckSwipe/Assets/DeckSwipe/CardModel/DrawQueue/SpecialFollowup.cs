@@ -2,7 +2,7 @@ using DeckSwipe.Gamestate;
 
 namespace DeckSwipe.CardModel.DrawQueue {
 	
-	public class FollowupSpecialCard : IFollowupCard {
+	public class SpecialFollowup : IFollowup {
 		
 		public string id;
 		public int delay;
@@ -12,16 +12,16 @@ namespace DeckSwipe.CardModel.DrawQueue {
 			set { delay = value; }
 		}
 		
-		public FollowupSpecialCard(string id, int delay) {
+		public SpecialFollowup(string id, int delay) {
 			this.id = id;
 			this.delay = delay;
 		}
 		
-		public IFollowupCard Clone() {
-			return new FollowupSpecialCard(id, delay);
+		public IFollowup Clone() {
+			return new SpecialFollowup(id, delay);
 		}
 		
-		public global::DeckSwipe.CardModel.CardModel Fetch(CardStorage cardStorage) {
+		public Card Fetch(CardStorage cardStorage) {
 			return cardStorage.SpecialCard(id);
 		}
 		

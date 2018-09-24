@@ -4,12 +4,12 @@ namespace DeckSwipe.CardModel.DrawQueue {
 	
 	public class CardDrawQueue {
 		
-		private readonly List<IFollowupCard> queue = new List<IFollowupCard>();
+		private readonly List<IFollowup> queue = new List<IFollowup>();
 		
-		public IFollowupCard Next() {
+		public IFollowup Next() {
 			if (queue.Count > 0) {
 				if (--queue[0].Delay == 0) {
-					IFollowupCard followup = queue[0];
+					IFollowup followup = queue[0];
 					queue.RemoveAt(0);
 					return followup;
 				}
@@ -17,7 +17,7 @@ namespace DeckSwipe.CardModel.DrawQueue {
 			return null;
 		}
 		
-		public void Insert(IFollowupCard followup) {
+		public void Insert(IFollowup followup) {
 			int i = 0;
 			int delayBefore = 0;
 			while (i < queue.Count && (delayBefore < followup.Delay || queue[i].Delay == 1)) {
@@ -34,6 +34,10 @@ namespace DeckSwipe.CardModel.DrawQueue {
 			if (i + 1 < queue.Count) {
 				queue[i + 1].Delay -= queue[i].Delay;
 			}
+		}
+		
+		public void Clear() {
+			queue.Clear();
 		}
 		
 	}

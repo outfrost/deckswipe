@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System.Collections;
+using System.IO;
 using TMPro;
 using UnityEngine;
 
@@ -44,6 +45,11 @@ namespace Outfrost {
 				}
 				return memoryStream.ToArray();
 			}
+		}
+		
+		public static IEnumerator DelayCoroutine(Callback callback, float seconds) {
+			yield return new WaitForSeconds(seconds);
+			callback();
 		}
 		
 	}

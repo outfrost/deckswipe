@@ -11,6 +11,7 @@ namespace DeckSwipe.World {
 		private readonly Dictionary<KeyCode, LinkedList<KeyDownHandler>> keyDownHandlers = new Dictionary<KeyCode, LinkedList<KeyDownHandler>>();
 		
 		private void Update() {
+			// Scan registered key inputs and invoke handlers
 			foreach (var entry in keyDownHandlers) {
 				if (Input.GetKeyDown(entry.Key)) {
 					foreach (KeyDownHandler handler in entry.Value) {

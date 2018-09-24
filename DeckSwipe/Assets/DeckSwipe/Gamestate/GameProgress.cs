@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using DeckSwipe.CardModel;
 
 namespace DeckSwipe.Gamestate {
 	
@@ -21,20 +22,20 @@ namespace DeckSwipe.Gamestate {
 		
 		public void AttachReferences(CardStorage cardStorage) {
 			foreach (CardProgress entry in cardProgress) {
-				CardModel.CardModel card = cardStorage.ForId(entry.id); 
+				Card card = cardStorage.ForId(entry.id); 
 				if (card != null) {
 					card.progress = entry;
 				}
 			}
 			foreach (SpecialCardProgress entry in specialCardProgress) {
-				CardModel.CardModel specialCard = cardStorage.SpecialCard(entry.id);
+				Card specialCard = cardStorage.SpecialCard(entry.id);
 				if (specialCard != null) {
 					specialCard.progress = entry;
 				}
 			}
 			
 			// Fill in the missing card progress entries
-			foreach (KeyValuePair<int, CardModel.CardModel> entry in cardStorage.Cards) {
+			foreach (KeyValuePair<int, Card> entry in cardStorage.Cards) {
 				if (entry.Value.progress == null) {
 					CardProgress progress = new CardProgress(
 							entry.Key, CardStatus.None);
@@ -42,7 +43,7 @@ namespace DeckSwipe.Gamestate {
 					entry.Value.progress = progress;
 				}
 			}
-			foreach (KeyValuePair<string, CardModel.CardModel> entry in cardStorage.SpecialCards) {
+			foreach (KeyValuePair<string, Card> entry in cardStorage.SpecialCards) {
 				if (entry.Value.progress == null) {
 					SpecialCardProgress progress = new SpecialCardProgress(
 							entry.Key, CardStatus.None);

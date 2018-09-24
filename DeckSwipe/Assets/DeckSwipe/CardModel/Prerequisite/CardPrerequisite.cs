@@ -15,7 +15,7 @@ namespace DeckSwipe.CardModel.Prerequisite {
 		}
 		
 		public bool IsSatisfied(CardStorage cardStorage) {
-			global::DeckSwipe.CardModel.CardModel card = cardStorage.ForId(id);
+			Card card = cardStorage.ForId(id);
 			return (card?.progress.Status & status) == status;
 		}
 		

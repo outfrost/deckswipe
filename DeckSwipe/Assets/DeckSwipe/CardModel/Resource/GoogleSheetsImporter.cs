@@ -161,7 +161,7 @@ namespace DeckSwipe.CardModel.Resource {
 			}
 			
 			// Parse Characters sheet
-			Dictionary<int, CharacterModel> characters = new Dictionary<int, CharacterModel>();
+			Dictionary<int, Character> characters = new Dictionary<int, Character>();
 			RowData[] characterRowData = characterSheet.data[0].rowData;
 			for (int i = 1; i < characterRowData.Length; i++) {
 				int id = characterRowData[i].values[0].IntValue;
@@ -169,7 +169,7 @@ namespace DeckSwipe.CardModel.Resource {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Images sheet");
 				}
 				else {
-					CharacterModel character = new CharacterModel(characterRowData[i].values[1].GetStringValue(""),
+					Character character = new Character(characterRowData[i].values[1].GetStringValue(""),
 							defaultSprite);
 					sprites.TryGetValue(characterRowData[i].values[2].IntValue,
 							out character.sprite);
@@ -178,7 +178,7 @@ namespace DeckSwipe.CardModel.Resource {
 			}
 			
 			// Parse Cards sheet
-			Dictionary<int, global::DeckSwipe.CardModel.CardModel> cards = new Dictionary<int, global::DeckSwipe.CardModel.CardModel>();
+			Dictionary<int, Card> cards = new Dictionary<int, Card>();
 			RowData[] cardRowData = cardSheet.data[0].rowData;
 			for (int i = 1; i < cardRowData.Length; i++) {
 				int id = cardRowData[i].values[0].IntValue;
@@ -198,45 +198,45 @@ namespace DeckSwipe.CardModel.Resource {
 						prerequisites.AddRange(specialCardPrerequisites.array);
 					}
 					
-					IFollowupCard leftActionFollowup = null;
-					IFollowupCard rightActionFollowup = null;
+					IFollowup leftActionFollowup = null;
+					IFollowup rightActionFollowup = null;
 					if (cardRowData[i].values[16].IntValue > 0) {
 						if (cardRowData[i].values[15].StringValue == null) {
-							leftActionFollowup = new FollowupCard(
+							leftActionFollowup = new Followup(
 									cardRowData[i].values[15].IntValue,
 									cardRowData[i].values[16].IntValue);
 						}
 						else {
-							leftActionFollowup = new FollowupSpecialCard(
+							leftActionFollowup = new SpecialFollowup(
 									cardRowData[i].values[15].StringValue,
 									cardRowData[i].values[16].IntValue);
 						}
 					}
 					if (cardRowData[i].values[18].IntValue > 0) {
 						if (cardRowData[i].values[17].StringValue == null) {
-							rightActionFollowup = new FollowupCard(
+							rightActionFollowup = new Followup(
 									cardRowData[i].values[17].IntValue,
 									cardRowData[i].values[18].IntValue);
 						}
 						else {
-							rightActionFollowup = new FollowupSpecialCard(
+							rightActionFollowup = new SpecialFollowup(
 									cardRowData[i].values[17].StringValue,
 									cardRowData[i].values[18].IntValue);
 						}
 					}
 					
-					global::DeckSwipe.CardModel.CardModel card = new global::DeckSwipe.CardModel.CardModel(
+					Card card = new Card(
 							cardRowData[i].values[2].GetStringValue(""),
 							cardRowData[i].values[3].GetStringValue(""),
 							cardRowData[i].values[8].GetStringValue(""),
 							null,
-							new CardActionOutcome(
+							new ActionOutcome(
 									cardRowData[i].values[4].IntValue,
 									cardRowData[i].values[5].IntValue,
 									cardRowData[i].values[6].IntValue,
 									cardRowData[i].values[7].IntValue,
 									leftActionFollowup),
-							new CardActionOutcome(
+							new ActionOutcome(
 									cardRowData[i].values[9].IntValue,
 									cardRowData[i].values[10].IntValue,
 									cardRowData[i].values[11].IntValue,
@@ -252,7 +252,7 @@ namespace DeckSwipe.CardModel.Resource {
 			}
 			
 			// Parse SpecialCards sheet
-			Dictionary<string, global::DeckSwipe.CardModel.CardModel> specialCards = new Dictionary<string, global::DeckSwipe.CardModel.CardModel>();
+			Dictionary<string, Card> specialCards = new Dictionary<string, Card>();
 			RowData[] specialCardRowData = specialCardSheet.data[0].rowData;
 			for (int i = 1; i < specialCardRowData.Length; i++) {
 				string id = specialCardRowData[i].values[0].StringValue;
@@ -263,13 +263,13 @@ namespace DeckSwipe.CardModel.Resource {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in SpecialCards sheet");
 				}
 				else {
-					global::DeckSwipe.CardModel.CardModel card = new global::DeckSwipe.CardModel.CardModel(
+					Card card = new Card(
 							specialCardRowData[i].values[2].GetStringValue(""),
 							specialCardRowData[i].values[3].GetStringValue(""),
 							specialCardRowData[i].values[8].GetStringValue(""),
 							null,
-							new GameOverCardOutcome(),
-							new GameOverCardOutcome(),
+							new GameOverOutcome(),
+							new GameOverOutcome(),
 							null);
 					characters.TryGetValue(specialCardRowData[i].values[1].IntValue,
 							out card.character);
@@ -304,12 +304,10 @@ namespace DeckSwipe.CardModel.Resource {
 					&& headerRow.values[18].StringValue == "rightActionFollowupCardDelay") {
 				return true;
 			}
-			else {
-				Debug.LogError("[GoogleSheetsImporter] Invalid card format encountered in "
-				               + sheet.properties.title
-				               + " sheet");
-				return false;
-			}
+			Debug.LogError("[GoogleSheetsImporter] Invalid card format encountered in "
+			               + sheet.properties.title
+			               + " sheet");
+			return false;
 		}
 		
 		private static bool CheckCharacterSheetFormat(Sheet sheet) {
@@ -319,12 +317,10 @@ namespace DeckSwipe.CardModel.Resource {
 					&& headerRow.values[2].StringValue == "imageId") {
 				return true;
 			}
-			else {
-				Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in "
-				               + sheet.properties.title
-				               + " sheet");
-				return false;
-			}
+			Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in "
+			               + sheet.properties.title
+			               + " sheet");
+			return false;
 		}
 		
 		private static bool CheckImageSheetFormat(Sheet sheet) {
@@ -333,12 +329,10 @@ namespace DeckSwipe.CardModel.Resource {
 					&& headerRow.values[1].StringValue == "url") {
 				return true;
 			}
-			else {
-				Debug.LogError("[GoogleSheetsImporter] Invalid image format encountered in "
-				               + sheet.properties.title
-				               + " sheet");
-				return false;
-			}
+			Debug.LogError("[GoogleSheetsImporter] Invalid image format encountered in "
+			               + sheet.properties.title
+			               + " sheet");
+			return false;
 		}
 		
 		private static bool RequireMetadata(string key, Dictionary<string, CellData> metadata) {

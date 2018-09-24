@@ -49,39 +49,37 @@ namespace DeckSwipe.World {
 		}
 		
 		private void Start() {
-			SetGraphicVisible(backgroundImage, false);
-			SetGraphicVisible(currentTimeText, false);
-			SetGraphicVisible(daysSurvivedLabel, false);
-			SetGraphicVisible(daysSurvivedText, false);
-			SetGraphicVisible(blackSlate, true);
+			SetOverlayVisible(false);
+			SetBlackSlateVisible(true);
 			overlayState = OverlayState.Black;
 		}
 		
 		private void Update() {
+			// Animate overlay by interpolating alpha values, manage fade states
 			float fadeProgress;
 			switch (overlayState) {
 				case OverlayState.FadingHiddenToBlack:
 					fadeProgress = (Time.time - fadeStartTime) / _fadeDuration;
 					if (fadeProgress > 1.0f) {
-						SetColorAlpha(blackSlate, 1.0f);
+						SetBlackSlateAlpha(1.0f);
 						overlayState = OverlayState.Black;
 						FadeToVisible();
 					}
 					else {
-						SetColorAlpha(blackSlate, Mathf.Clamp01(fadeProgress));
+						SetBlackSlateAlpha(Mathf.Clamp01(fadeProgress));
 					}
 					break;
 				case OverlayState.FadingBlackToVisible:
 					fadeProgress = (Time.time - fadeStartTime) / _fadeDuration;
 					if (fadeProgress > 1.0f) {
-						SetGraphicVisible(blackSlate, false);
+						SetBlackSlateVisible(false);
 						overlayState = OverlayState.Visible;
 						DelayForSeconds(FadeOut, overlayTimeout);
 						rewindStartTime = Time.time;
 						rewindingDaysCounter = true;
 					}
 					else {
-						SetColorAlpha(blackSlate, Mathf.Clamp01(1.0f - fadeProgress));
+						SetBlackSlateAlpha(Mathf.Clamp01(1.0f - fadeProgress));
 					}
 					break;
 				case OverlayState.Visible:
@@ -99,18 +97,11 @@ namespace DeckSwipe.World {
 				case OverlayState.FadingVisibleToHidden:
 					fadeProgress = (Time.time - fadeStartTime) / _fadeDuration;
 					if (fadeProgress > 1.0f) {
-						SetGraphicVisible(backgroundImage, false);
-						SetGraphicVisible(currentTimeText, false);
-						SetGraphicVisible(daysSurvivedLabel, false);
-						SetGraphicVisible(daysSurvivedText, false);
+						SetOverlayVisible(false);
 						overlayState = OverlayState.Hidden;
 					}
 					else {
-						float alpha = Mathf.Clamp01(1.0f - fadeProgress);
-						SetColorAlpha(backgroundImage, alpha);
-						SetColorAlpha(currentTimeText, alpha);
-						SetColorAlpha(daysSurvivedLabel, alpha);
-						SetColorAlpha(daysSurvivedText, alpha);
+						SetOverlayAlpha(Mathf.Clamp01(1.0f - fadeProgress));
 					}
 					break;
 			}
@@ -145,16 +136,13 @@ namespace DeckSwipe.World {
 		
 		private void FadeToBlack() {
 			fadeStartTime = Time.time;
-			blackSlate.enabled = true;
+			SetBlackSlateEnabled(true);
 			overlayState = OverlayState.FadingHiddenToBlack;
 		}
 		
 		private void FadeToVisible() {
 			fadeStartTime = Time.time;
-			SetGraphicVisible(backgroundImage, true);
-			SetGraphicVisible(currentTimeText, true);
-			SetGraphicVisible(daysSurvivedLabel, true);
-			SetGraphicVisible(daysSurvivedText, true);
+			SetOverlayVisible(true);
 			overlayState = OverlayState.FadingBlackToVisible;
 		}
 		
@@ -168,13 +156,13 @@ namespace DeckSwipe.World {
 			currentTimeText.text = ApproximateDate(daysPassed);
 		}
 		
-		private string ApproximateDate(float daysPassed) {
+		private static string ApproximateDate(float daysPassed) {
 			int year = 1887 + (int)(daysPassed / 365.25f);
 			int month = (int)((daysPassed % 365.25f) / 30.4375f);
 			return MonthName(month) + " " + year;
 		}
 		
-		private string MonthName(int monthIndex) {
+		private static string MonthName(int monthIndex) {
 			switch (monthIndex) {
 				case 0:
 					return "January";
@@ -211,18 +199,40 @@ namespace DeckSwipe.World {
 			image.color = color;
 		}
 		
-		private static void SetGraphicVisible(Graphic image, bool visible) {
-			image.enabled = visible;
-			SetColorAlpha(image, visible ? 1.0f : 0.0f);
+		private void SetOverlayEnabled(bool enabled) {
+			backgroundImage.enabled = enabled;
+			currentTimeText.enabled = enabled;
+			daysSurvivedLabel.enabled = enabled;
+			daysSurvivedText.enabled = enabled;
 		}
 		
-		private IEnumerator DelayCoroutine(Callback callback, float seconds) {
-			yield return new WaitForSeconds(seconds);
-			callback();
+		private void SetOverlayAlpha(float alpha) {
+			SetColorAlpha(backgroundImage, alpha);
+			SetColorAlpha(currentTimeText, alpha);
+			SetColorAlpha(daysSurvivedLabel, alpha);
+			SetColorAlpha(daysSurvivedText, alpha);
+		}
+		
+		private void SetOverlayVisible(bool visible) {
+			SetOverlayEnabled(visible);
+			SetOverlayAlpha(visible ? 1.0f : 0.0f);
+		}
+		
+		private void SetBlackSlateEnabled(bool enabled) {
+			blackSlate.enabled = enabled;
+		}
+		
+		private void SetBlackSlateAlpha(float alpha) {
+			SetColorAlpha(blackSlate, alpha);
+		}
+		
+		private void SetBlackSlateVisible(bool visible) {
+			SetBlackSlateEnabled(visible);
+			SetBlackSlateAlpha(visible ? 1.0f : 0.0f);
 		}
 		
 		private void DelayForSeconds(Callback callback, float seconds) {
-			StartCoroutine(DelayCoroutine(callback, seconds));
+			StartCoroutine(Util.DelayCoroutine(callback, seconds));
 		}
 		
 	}

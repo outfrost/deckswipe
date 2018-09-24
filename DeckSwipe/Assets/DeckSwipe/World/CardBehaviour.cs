@@ -1,4 +1,5 @@
-﻿using Outfrost;
+﻿using DeckSwipe.CardModel;
+using Outfrost;
 using TMPro;
 using UnityEngine;
 
@@ -27,7 +28,7 @@ namespace DeckSwipe.World {
 		public SpriteRenderer cardFrontSpriteRenderer;
 		public SpriteRenderer cardImageSpriteRenderer;
 		
-		private CardModel.CardModel card;
+		private Card card;
 		private Vector3 dragStartPosition;
 		private Vector3 dragStartPointerPosition;
 		private Vector3 animationStartPosition;
@@ -36,7 +37,7 @@ namespace DeckSwipe.World {
 		private AnimationState animationState = AnimationState.Idle;
 		private bool animationSuspended;
 		
-		public CardModel.CardModel Card {
+		public Card Card {
 			set {
 				card = value;
 				leftActionText.text = card.leftSwipeText;
@@ -58,12 +59,7 @@ namespace DeckSwipe.World {
 		public Game Controller { private get; set; }
 		
 		private void Awake() {
-			bool isFacingCamera = Util.IsFacingCamera(gameObject);
-			cardBackSpriteRenderer.enabled = !isFacingCamera;
-			cardFrontSpriteRenderer.enabled = isFacingCamera;
-			cardImageSpriteRenderer.enabled = isFacingCamera;
-			leftActionText.enabled = isFacingCamera;
-			rightActionText.enabled = isFacingCamera;
+			ShowVisibleSide();
 			
 			Util.SetTextAlpha(leftActionText, 0.0f);
 			Util.SetTextAlpha(rightActionText, 0.0f);
@@ -106,14 +102,7 @@ namespace DeckSwipe.World {
 					transform.position = Vector3.Lerp(animationStartPosition, snapPosition, scaledProgress);
 					transform.eulerAngles = Vector3.Lerp(animationStartRotationAngles, snapRotationAngles, scaledProgress);
 					
-					// Display correct card elements based on whether it's facing the main camera
-					// TODO Extract into method
-					bool isFacingCamera = Util.IsFacingCamera(gameObject);
-					cardBackSpriteRenderer.enabled = !isFacingCamera;
-					cardFrontSpriteRenderer.enabled = isFacingCamera;
-					cardImageSpriteRenderer.enabled = isFacingCamera;
-					leftActionText.enabled = isFacingCamera;
-					rightActionText.enabled = isFacingCamera;
+					ShowVisibleSide();
 				}
 				if (animationState != AnimationState.Revealing) {
 					float alphaCoord = (transform.position.x - snapPosition.x) / (swipeThreshold / 2);
@@ -169,6 +158,16 @@ namespace DeckSwipe.World {
 				}
 			}
 			animationSuspended = false;
+		}
+		
+		private void ShowVisibleSide() {
+			// Display correct card elements based on whether it's facing the main camera
+			bool isFacingCamera = Util.IsFacingCamera(gameObject);
+			cardBackSpriteRenderer.enabled = !isFacingCamera;
+			cardFrontSpriteRenderer.enabled = isFacingCamera;
+			cardImageSpriteRenderer.enabled = isFacingCamera;
+			leftActionText.enabled = isFacingCamera;
+			rightActionText.enabled = isFacingCamera;
 		}
 		
 		private float ScaleProgress(float animationProgress) {

@@ -5,17 +5,17 @@ using UnityEngine;
 
 namespace DeckSwipe.CardModel {
 	
-	public class CardModel {
+	public class Card {
 		
 		public readonly List<ICardPrerequisite> prerequisites;
 		public readonly string cardText;
 		public readonly string leftSwipeText;
 		public readonly string rightSwipeText;
-		public CharacterModel character;
+		public Character character;
 		public ICardProgress progress;
 		
-		private readonly CardActionOutcome leftSwipeOutcome;
-		private readonly CardActionOutcome rightSwipeOutcome;
+		private readonly ActionOutcome leftSwipeOutcome;
+		private readonly ActionOutcome rightSwipeOutcome;
 		
 		public string CharacterName {
 			get { return character != null ? character.name : ""; }
@@ -25,13 +25,13 @@ namespace DeckSwipe.CardModel {
 			get { return character?.sprite; }
 		}
 		
-		public CardModel(
+		public Card(
 				string cardText,
 				string leftSwipeText,
 				string rightSwipeText,
-				CharacterModel character,
-				CardActionOutcome leftOutcome,
-				CardActionOutcome rightOutcome,
+				Character character,
+				ActionOutcome leftOutcome,
+				ActionOutcome rightOutcome,
 				List<ICardPrerequisite> prerequisites) {
 			this.cardText = cardText;
 			this.leftSwipeText = leftSwipeText;

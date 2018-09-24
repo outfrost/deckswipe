@@ -1,4 +1,5 @@
-﻿using DeckSwipe.CardModel.DrawQueue;
+﻿using DeckSwipe.CardModel;
+using DeckSwipe.CardModel.DrawQueue;
 using DeckSwipe.Gamestate;
 using DeckSwipe.Gamestate.Persistence;
 using DeckSwipe.World;
@@ -46,6 +47,7 @@ namespace DeckSwipe {
 		public void RestartGame() {
 			progressStorage.Save();
 			daysLastRun = progressStorage.Progress.daysPassed - daysPassedPreviously;
+			cardDrawQueue.Clear();
 			StartGame();
 		}
 		
@@ -69,8 +71,8 @@ namespace DeckSwipe {
 				SpawnCard(cardStorage.SpecialCard("gameover_hope"));
 			}
 			else {
-				IFollowupCard followup = cardDrawQueue.Next();
-				CardModel.CardModel card = followup?.Fetch(cardStorage);
+				IFollowup followup = cardDrawQueue.Next();
+				Card card = followup?.Fetch(cardStorage);
 				if (card != null) {
 					SpawnCard(card);
 				}
@@ -97,7 +99,7 @@ namespace DeckSwipe {
 			DrawNextCard();
 		}
 		
-		public void AddFollowupCard(IFollowupCard followup) {
+		public void AddFollowupCard(IFollowup followup) {
 			cardDrawQueue.Insert(followup);
 		}
 		
@@ -106,7 +108,7 @@ namespace DeckSwipe {
 			callback();
 		}
 		
-		private void SpawnCard(CardModel.CardModel card) {
+		private void SpawnCard(Card card) {
 			CardBehaviour cardInstance = Instantiate(cardPrefab, spawnPosition,
 					Quaternion.Euler(0.0f, -180.0f, 0.0f));
 			cardInstance.Card = card;
