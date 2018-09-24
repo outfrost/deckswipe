@@ -4,9 +4,9 @@ namespace DeckSwipe.CardModel.Prerequisite {
 	
 	public interface ICardPrerequisite {
 		
-		CardStatus Status { get; set; }
+		CardStatus Status { get; }
 		
-		bool IsSatisfied(CardStorage cardStorage);
+		Card GetCard(CardStorage cardStorage);
 		
 	}
 	

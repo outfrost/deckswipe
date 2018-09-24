@@ -7,15 +7,18 @@ namespace DeckSwipe.CardModel {
 	
 	public class Card {
 		
-		public readonly List<ICardPrerequisite> prerequisites;
 		public readonly string cardText;
 		public readonly string leftSwipeText;
 		public readonly string rightSwipeText;
 		public Character character;
 		public ICardProgress progress;
 		
+		private readonly List<ICardPrerequisite> prerequisites;
 		private readonly ActionOutcome leftSwipeOutcome;
 		private readonly ActionOutcome rightSwipeOutcome;
+		
+		private Dictionary<Card, ICardPrerequisite> unsatisfiedPrerequisites;
+		private List<Card> dependentCards = new List<Card>();
 		
 		public string CharacterName {
 			get { return character != null ? character.name : ""; }
@@ -42,27 +45,72 @@ namespace DeckSwipe.CardModel {
 			this.prerequisites = prerequisites;
 		}
 		
-		public void CardShown() {
+		public void CardShown(Game controller) {
 			progress.Status |= CardStatus.CardShown;
+			foreach (Card card in dependentCards) {
+				card.CheckPrerequisite(this, controller.CardStorage);
+			}
 		}
 		
 		public void PerformLeftDecision(Game controller) {
-			leftSwipeOutcome.Perform(controller);
 			progress.Status |= CardStatus.LeftActionTaken;
+			foreach (Card card in dependentCards) {
+				card.CheckPrerequisite(this, controller.CardStorage);
+			}
+			leftSwipeOutcome.Perform(controller);
 		}
 		
 		public void PerformRightDecision(Game controller) {
-			rightSwipeOutcome.Perform(controller);
 			progress.Status |= CardStatus.RightActionTaken;
+			foreach (Card card in dependentCards) {
+				card.CheckPrerequisite(this, controller.CardStorage);
+			}
+			rightSwipeOutcome.Perform(controller);
 		}
 		
-		public bool CheckPrerequisites(CardStorage cardStorage) {
+		public void ResolvePrerequisites(CardStorage cardStorage) {
+			unsatisfiedPrerequisites = new Dictionary<Card, ICardPrerequisite>();
 			foreach (ICardPrerequisite prerequisite in prerequisites) {
-				if (!prerequisite.IsSatisfied(cardStorage)) {
-					return false;
+				Card card = prerequisite.GetCard(cardStorage);
+				if (card != null
+						&& (card.progress.Status & prerequisite.Status) != prerequisite.Status
+						&& !unsatisfiedPrerequisites.ContainsKey(card)) {
+					unsatisfiedPrerequisites.Add(card, prerequisite);
+					card.AddDependentCard(this);
 				}
 			}
-			return true;
+		}
+		
+		public bool PrerequisitesSatisfied() {
+			return unsatisfiedPrerequisites.Count == 0;
+		}
+		
+		private void CheckPrerequisite(Card dependency, CardStorage cardStorage) {
+			if (PrerequisitesSatisfied()
+					|| !unsatisfiedPrerequisites.ContainsKey(dependency)) {
+				dependency.RemoveDependentCard(this);
+				return;
+			}
+			
+			ICardPrerequisite prerequisite = unsatisfiedPrerequisites[dependency];
+			if ((dependency.progress.Status & prerequisite?.Status) == prerequisite?.Status) {
+				unsatisfiedPrerequisites.Remove(dependency);
+				dependency.RemoveDependentCard(this);
+			}
+			
+			if (PrerequisitesSatisfied()) {
+				// Duplicate-proof because we've verified that this card's
+				// prerequisites were not satisfied before
+				cardStorage.AddDrawableCard(this);
+			}
+		}
+		
+		private void AddDependentCard(Card card) {
+			dependentCards.Add(card);
+		}
+		
+		private void RemoveDependentCard(Card card) {
+			dependentCards.Remove(card);
 		}
 		
 	}

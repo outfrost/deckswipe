@@ -19,13 +19,15 @@ namespace DeckSwipe.Gamestate {
 		
 		public Task CardCollectionImport { get; }
 		
+		private List<Card> drawableCards = new List<Card>();
+		
 		public CardStorage(Sprite defaultSprite) {
 			this.defaultSprite = defaultSprite;
 			CardCollectionImport = PopulateCollection();
 		}
 		
 		public Card Random() {
-			return Cards.ElementAt(UnityEngine.Random.Range(0, Cards.Count)).Value;
+			return drawableCards[UnityEngine.Random.Range(0, drawableCards.Count)];
 		}
 		
 		public Card ForId(int id) {
@@ -38,6 +40,19 @@ namespace DeckSwipe.Gamestate {
 			Card card;
 			SpecialCards.TryGetValue(id, out card);
 			return card;
+		}
+		
+		public void ResolvePrerequisites() {
+			foreach (Card card in Cards.Values) {
+				card.ResolvePrerequisites(this);
+				if (card.PrerequisitesSatisfied()) {
+					AddDrawableCard(card);
+				}
+			}
+		}
+		
+		public void AddDrawableCard(Card card) {
+			drawableCards.Add(card);
 		}
 		
 		private async Task PopulateCollection() {

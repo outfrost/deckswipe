@@ -40,6 +40,7 @@ namespace DeckSwipe.Gamestate.Persistence {
 				Progress = new GameProgress();
 			}
 			Progress.AttachReferences(cardStorage);
+			cardStorage.ResolvePrerequisites();
 		}
 		
 		private async Task<GameProgress> LoadLocally() {

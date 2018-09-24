@@ -74,7 +74,7 @@ namespace DeckSwipe.World {
 			animationStartTime = Time.time;
 			animationState = AnimationState.Revealing;
 			
-			card.CardShown();
+			card.CardShown(Controller);
 		}
 		
 		private void Update() {

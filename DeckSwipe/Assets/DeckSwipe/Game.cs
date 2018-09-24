@@ -17,6 +17,10 @@ namespace DeckSwipe {
 		public Vector3 spawnPosition;
 		public Sprite defaultCharacterSprite;
 		
+		public CardStorage CardStorage {
+			get { return cardStorage; }
+		}
+		
 		private CardStorage cardStorage;
 		private ProgressStorage progressStorage;
 		private float daysPassedPreviously;
@@ -72,18 +76,8 @@ namespace DeckSwipe {
 			}
 			else {
 				IFollowup followup = cardDrawQueue.Next();
-				Card card = followup?.Fetch(cardStorage);
-				if (card != null) {
-					SpawnCard(card);
-				}
-				else {
-					bool prerequisitesSatisfied = false;
-					while (!prerequisitesSatisfied) {
-						card = cardStorage.Random();
-						prerequisitesSatisfied = card.CheckPrerequisites(cardStorage);
-					}
-					SpawnCard(card);
-				}
+				Card card = followup?.Fetch(cardStorage) ?? cardStorage.Random();
+				SpawnCard(card);
 			}
 			saveIntervalCounter = (saveIntervalCounter - 1) % _saveInterval;
 			if (saveIntervalCounter == 0) {
