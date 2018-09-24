@@ -1,6 +1,6 @@
 #!/usr/bin/python3
 
-# Fixes indentation to keep tabs on empty lines
+# Fixes indentation in C# sources to keep tabs on empty lines
 # Usage:
 # ./fix-indent.py [<filename>, [<filename>, ...]]
 
