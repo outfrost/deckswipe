@@ -9,8 +9,8 @@ namespace DeckSwipe.Gamestate {
 		
 		public float daysPassed;
 		public float longestRunDays;
-		public List<CardProgress> cardProgress;
-		public List<SpecialCardProgress> specialCardProgress;
+		public List<CardProgress> cardProgress = new List<CardProgress>();
+		public List<SpecialCardProgress> specialCardProgress = new List<SpecialCardProgress>();
 		
 		public void AddDays(float days, float daysPassedPreviously) {
 			daysPassed += days;
