@@ -9,30 +9,33 @@ using Outfrost.GoogleSheets;
 using UnityEngine;
 
 namespace DeckSwipe.CardModel.Resource {
-	
+
 	public class GoogleSheetsImporter {
-		
-		private const string _spreadsheetId = "1olhKo6JFItKpDU9Qd7X4cJgaAlFIChhB-P0rI48gNLs";
-		private const string _apiKey = "AIzaSyAzWqJRSu7Q3p3EfuwFYdtzQql7ygu1pv4";
+
 		private const int _majorFormatVersion = 3;
 		private const int _minorFormatVersion = 2;
-		
+
 		private readonly Sprite defaultSprite;
-		
+		private GoogleSheetsConfig config;
+		private GoogleSheetsSecrets secrets;
+
 		public GoogleSheetsImporter(Sprite defaultSprite) {
 			this.defaultSprite = defaultSprite;
 		}
-		
+
 		public async Task<ImportedCards> FetchCards() {
+			config = await GoogleSheetsConfig.Load();
+			secrets = await GoogleSheetsSecrets.Load();
+
 			// Fetch spreadsheet from Google Sheet API V4
-			Debug.Log("[GoogleSheetsImporter] Fetching cards from Google Sheet " + _spreadsheetId + " ...");
+			Debug.Log("[GoogleSheetsImporter] Fetching cards from Google Sheet " + config.spreadsheetId + " ...");
 			HttpWebResponse response;
 			try {
 				HttpWebRequest request = WebRequest.CreateHttp(
 						"https://sheets.googleapis.com/v4/spreadsheets/"
-						+ _spreadsheetId
+						+ config.spreadsheetId
 						+ "?includeGridData=true&key="
-						+ _apiKey);
+						+ secrets.apiKey);
 				response = (HttpWebResponse) await request.GetResponseAsync();
 			}
 			catch (WebException e) {
@@ -40,21 +43,21 @@ namespace DeckSwipe.CardModel.Resource {
 				return new ImportedCards();
 			}
 			Debug.Log("[GoogleSheetsImporter] " + (int)response.StatusCode + " " + response.StatusDescription);
-			
+
 			if (!response.ContentType.Contains("application/json")) {
 				Debug.LogError("[GoogleSheetsImporter] Google Sheets API returned unrecognised data format");
 				return new ImportedCards();
 			}
-			
+
 			Stream responseStream;
 			if ((responseStream = response.GetResponseStream()) == null) {
 				Debug.LogError("[GoogleSheetsImporter] Google Sheets API returned empty response");
 				return new ImportedCards();
 			}
-			
+
 			Spreadsheet spreadsheet = JsonUtility.FromJson<Spreadsheet>(
 					new StreamReader(responseStream).ReadToEnd());
-			
+
 			// Parse Metadata sheet
 			RowData[] metaRowData = spreadsheet.sheets[0].data[0].rowData;
 			Dictionary<string, CellData> metadata = new Dictionary<string, CellData>();
@@ -68,7 +71,7 @@ namespace DeckSwipe.CardModel.Resource {
 					}
 				}
 			}
-			
+
 			// Check sheet format version
 			if (!RequireMetadata("majorFormatVersion", metadata)) {
 				return new ImportedCards();
@@ -86,7 +89,7 @@ namespace DeckSwipe.CardModel.Resource {
 				Debug.LogError("[GoogleSheetsImporter] Incompatible sheet format minor version (required min: " + _minorFormatVersion + ", found: " + sheetMinorVersion + ")");
 				return new ImportedCards();
 			}
-			
+
 			// Get sheet indices from metadata
 			if (!RequireMetadata("cardSheetIndex", metadata)) {
 				return new ImportedCards();
@@ -104,7 +107,7 @@ namespace DeckSwipe.CardModel.Resource {
 			int specialCardSheetIndex = metadata["specialCardSheetIndex"].IntValue;
 			int characterSheetIndex = metadata["characterSheetIndex"].IntValue;
 			int imageSheetIndex = metadata["imageSheetIndex"].IntValue;
-			
+
 			// Sanity-check sheet formats
 			Sheet cardSheet = spreadsheet.sheets[cardSheetIndex];
 			if (!CheckCardSheetFormat(cardSheet)) {
@@ -122,7 +125,7 @@ namespace DeckSwipe.CardModel.Resource {
 			if (!CheckImageSheetFormat(imageSheet)) {
 				return new ImportedCards();
 			}
-			
+
 			// Parse Images sheet
 			Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
 			RowData[] imageRowData = imageSheet.data[0].rowData;
@@ -140,7 +143,7 @@ namespace DeckSwipe.CardModel.Resource {
 					HttpWebRequest imageRequest = WebRequest.CreateHttp(imageUrl);
 					HttpWebResponse imageResponse = (HttpWebResponse) await imageRequest.GetResponseAsync();
 					Debug.Log("[GoogleSheetsImporter] " + (int)imageResponse.StatusCode + " " + imageResponse.StatusDescription);
-					
+
 					Stream imageStream;
 					if ((imageStream = imageResponse.GetResponseStream()) == null) {
 						Debug.LogWarning("[GoogleSheetsImporter] Remote host returned no image in response");
@@ -159,7 +162,7 @@ namespace DeckSwipe.CardModel.Resource {
 					}
 				}
 			}
-			
+
 			// Parse Characters sheet
 			Dictionary<int, Character> characters = new Dictionary<int, Character>();
 			RowData[] characterRowData = characterSheet.data[0].rowData;
@@ -176,7 +179,7 @@ namespace DeckSwipe.CardModel.Resource {
 					characters.Add(id, character);
 				}
 			}
-			
+
 			// Parse Cards sheet
 			Dictionary<int, Card> cards = new Dictionary<int, Card>();
 			RowData[] cardRowData = cardSheet.data[0].rowData;
@@ -197,7 +200,7 @@ namespace DeckSwipe.CardModel.Resource {
 					if (specialCardPrerequisites?.array != null) {
 						prerequisites.AddRange(specialCardPrerequisites.array);
 					}
-					
+
 					IFollowup leftActionFollowup = null;
 					IFollowup rightActionFollowup = null;
 					if (cardRowData[i].values[16].IntValue > 0) {
@@ -224,7 +227,7 @@ namespace DeckSwipe.CardModel.Resource {
 									cardRowData[i].values[18].IntValue);
 						}
 					}
-					
+
 					Card card = new Card(
 							cardRowData[i].values[2].GetStringValue(""),
 							cardRowData[i].values[3].GetStringValue(""),
@@ -243,14 +246,14 @@ namespace DeckSwipe.CardModel.Resource {
 									cardRowData[i].values[12].IntValue,
 									rightActionFollowup),
 							prerequisites);
-					
+
 					characters.TryGetValue(cardRowData[i].values[1].IntValue,
 							out card.character);
-					
+
 					cards.Add(id, card);
 				}
 			}
-			
+
 			// Parse SpecialCards sheet
 			Dictionary<string, Card> specialCards = new Dictionary<string, Card>();
 			RowData[] specialCardRowData = specialCardSheet.data[0].rowData;
@@ -276,11 +279,11 @@ namespace DeckSwipe.CardModel.Resource {
 					specialCards.Add(id, card);
 				}
 			}
-			
+
 			Debug.Log("[GoogleSheetsImporter] Cards imported successfully");
 			return new ImportedCards(cards, specialCards);
 		}
-		
+
 		private static bool CheckCardSheetFormat(Sheet sheet) {
 			RowData headerRow = sheet.data[0].rowData[0];
 			if (headerRow.values[0].StringValue == "id"
@@ -309,7 +312,7 @@ namespace DeckSwipe.CardModel.Resource {
 			               + " sheet");
 			return false;
 		}
-		
+
 		private static bool CheckCharacterSheetFormat(Sheet sheet) {
 			RowData headerRow = sheet.data[0].rowData[0];
 			if (headerRow.values[0].StringValue == "id"
@@ -322,7 +325,7 @@ namespace DeckSwipe.CardModel.Resource {
 			               + " sheet");
 			return false;
 		}
-		
+
 		private static bool CheckImageSheetFormat(Sheet sheet) {
 			RowData headerRow = sheet.data[0].rowData[0];
 			if (headerRow.values[0].StringValue == "id"
@@ -334,7 +337,7 @@ namespace DeckSwipe.CardModel.Resource {
 			               + " sheet");
 			return false;
 		}
-		
+
 		private static bool RequireMetadata(string key, Dictionary<string, CellData> metadata) {
 			if (!metadata.ContainsKey(key)) {
 				Debug.LogError("[GoogleSheetsImporter] " + key + " not found in Metadata sheet");
@@ -342,7 +345,7 @@ namespace DeckSwipe.CardModel.Resource {
 			}
 			return true;
 		}
-		
+
 	}
-	
+
 }
