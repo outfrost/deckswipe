@@ -29,10 +29,18 @@ namespace DeckSwipe {
 		private CardDrawQueue cardDrawQueue = new CardDrawQueue();
 		
 		private void Awake() {
-			// Listen for Escape key ('Back' on Android) to quit the game
+			// Listen for Escape key ('Back' on Android) that suspends the game on Android or ends it on any other platform
+			#if UNITY_ANDROID
+			inputDispatcher.AddKeyDownHandler(KeyCode.Escape,
+					keyCode => {
+						AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
+						activity.Call<bool>("moveTaskToBack", true);
+					});
+			#else
 			inputDispatcher.AddKeyDownHandler(KeyCode.Escape,
 					keyCode => Application.Quit());
-			
+			#endif
+
 			cardStorage = new CardStorage(defaultCharacterSprite);
 			progressStorage = new ProgressStorage(cardStorage);
 			
