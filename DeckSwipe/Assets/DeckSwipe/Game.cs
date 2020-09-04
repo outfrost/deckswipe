@@ -29,7 +29,8 @@ namespace DeckSwipe {
 		private CardDrawQueue cardDrawQueue = new CardDrawQueue();
 		
 		private void Awake() {
-			// Listen for Escape key ('Back' on Android) that suspends the game on Android or ends it on any other platform
+			// Listen for Escape key ('Back' on Android) that suspends the game on Android
+			// or ends it on any other platform
 			#if UNITY_ANDROID
 			inputDispatcher.AddKeyUpHandler(KeyCode.Escape,
 					keyCode => {
