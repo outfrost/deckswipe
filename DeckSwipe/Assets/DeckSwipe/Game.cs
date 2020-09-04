@@ -33,7 +33,8 @@ namespace DeckSwipe {
 			#if UNITY_ANDROID
 			inputDispatcher.AddKeyDownHandler(KeyCode.Escape,
 					keyCode => {
-						AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer").GetStatic<AndroidJavaObject>("currentActivity");
+						AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer")
+							.GetStatic<AndroidJavaObject>("currentActivity");
 						activity.Call<bool>("moveTaskToBack", true);
 					});
 			#else
