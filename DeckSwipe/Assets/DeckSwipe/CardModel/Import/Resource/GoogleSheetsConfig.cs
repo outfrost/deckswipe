@@ -3,7 +3,7 @@ using System.IO;
 using System.Threading.Tasks;
 using UnityEngine;
 
-namespace DeckSwipe.CardModel.Resource {
+namespace DeckSwipe.CardModel.Import.Resource {
 
 	[Serializable]
 	public class GoogleSheetsConfig {

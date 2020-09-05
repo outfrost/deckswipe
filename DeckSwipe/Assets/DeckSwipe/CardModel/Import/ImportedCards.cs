@@ -1,6 +1,6 @@
 using System.Collections.Generic;
 
-namespace DeckSwipe.CardModel {
+namespace DeckSwipe.CardModel.Import {
 
 	public struct ImportedCards {
 

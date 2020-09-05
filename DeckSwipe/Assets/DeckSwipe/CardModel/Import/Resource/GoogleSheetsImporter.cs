@@ -8,7 +8,7 @@ using Outfrost;
 using Outfrost.GoogleSheets;
 using UnityEngine;
 
-namespace DeckSwipe.CardModel.Resource {
+namespace DeckSwipe.CardModel.Import.Resource {
 
 	public class GoogleSheetsImporter {
 

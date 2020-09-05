@@ -1,0 +1,40 @@
+{
+	"id": 8,
+	"characterId": 7,
+	"cardText": "Sample card 1",
+	"leftAction": {
+		"text": "Sample action 1L",
+		"statsModification": {
+			"coal": 4,
+			"food": -2,
+			"health": -4,
+			"hope": 0
+		},
+		"followup": {
+			"id": 9,
+			"delay": 1
+		},
+		"specialFollowup": null
+	},
+	"rightAction": {
+		"text": "Sample action 1R",
+		"statsModification": {
+			"coal": -2,
+			"food": 2,
+			"health": 4,
+			"hope": 0
+		},
+		"followup": null,
+		"specialFollowup": {
+			"id": "gameover_food",
+			"delay": 1
+		}
+	},
+	"cardPrerequisites": [
+		{
+			"id": 7,
+			"status": [ "CardShown" ]
+		}
+	],
+	"specialCardPrerequisites": []
+}

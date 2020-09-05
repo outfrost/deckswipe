@@ -2,8 +2,9 @@
 using System.Linq;
 using System.Threading.Tasks;
 using DeckSwipe.CardModel;
+using DeckSwipe.CardModel.Import;
+using DeckSwipe.CardModel.Import.Resource;
 using DeckSwipe.CardModel.Prerequisite;
-using DeckSwipe.CardModel.Resource;
 using UnityEngine;
 
 namespace DeckSwipe.Gamestate {
