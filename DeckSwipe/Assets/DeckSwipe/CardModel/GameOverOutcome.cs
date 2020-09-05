@@ -1,11 +1,11 @@
 ﻿namespace DeckSwipe.CardModel {
-	
-	public class GameOverOutcome : ActionOutcome {
-		
-		public override void Perform(Game controller) {
+
+	public class GameOverOutcome : IActionOutcome {
+
+		public void Perform(Game controller) {
 			controller.RestartGame();
 		}
-		
+
 	}
-	
+
 }

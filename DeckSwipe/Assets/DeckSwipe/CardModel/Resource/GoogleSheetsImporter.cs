@@ -255,7 +255,7 @@ namespace DeckSwipe.CardModel.Resource {
 			}
 
 			// Parse SpecialCards sheet
-			Dictionary<string, Card> specialCards = new Dictionary<string, Card>();
+			Dictionary<string, SpecialCard> specialCards = new Dictionary<string, SpecialCard>();
 			RowData[] specialCardRowData = specialCardSheet.data[0].rowData;
 			for (int i = 1; i < specialCardRowData.Length; i++) {
 				string id = specialCardRowData[i].values[0].StringValue;
@@ -266,14 +266,13 @@ namespace DeckSwipe.CardModel.Resource {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in SpecialCards sheet");
 				}
 				else {
-					Card card = new Card(
+					SpecialCard card = new SpecialCard(
 							specialCardRowData[i].values[2].GetStringValue(""),
 							specialCardRowData[i].values[3].GetStringValue(""),
 							specialCardRowData[i].values[8].GetStringValue(""),
 							null,
 							new GameOverOutcome(),
-							new GameOverOutcome(),
-							null);
+							new GameOverOutcome());
 					characters.TryGetValue(specialCardRowData[i].values[1].IntValue,
 							out card.character);
 					specialCards.Add(id, card);

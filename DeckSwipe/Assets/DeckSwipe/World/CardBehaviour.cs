@@ -4,20 +4,20 @@ using TMPro;
 using UnityEngine;
 
 namespace DeckSwipe.World {
-	
+
 	public class CardBehaviour : MonoBehaviour {
-		
+
 		private enum AnimationState {
-			
+
 			Idle,
 			Converging,
 			FlyingAway,
 			Revealing
-			
+
 		}
-		
+
 		private const float _animationDuration = 0.4f;
-		
+
 		public float swipeThreshold = 1.0f;
 		public Vector3 snapPosition;
 		public Vector3 snapRotationAngles;
@@ -27,8 +27,8 @@ namespace DeckSwipe.World {
 		public SpriteRenderer cardBackSpriteRenderer;
 		public SpriteRenderer cardFrontSpriteRenderer;
 		public SpriteRenderer cardImageSpriteRenderer;
-		
-		private Card card;
+
+		private ICard card;
 		private Vector3 dragStartPosition;
 		private Vector3 dragStartPointerPosition;
 		private Vector3 animationStartPosition;
@@ -36,47 +36,47 @@ namespace DeckSwipe.World {
 		private float animationStartTime;
 		private AnimationState animationState = AnimationState.Idle;
 		private bool animationSuspended;
-		
-		public Card Card {
+
+		public ICard Card {
 			set {
 				card = value;
-				leftActionText.text = card.leftSwipeText;
-				rightActionText.text = card.rightSwipeText;
+				leftActionText.text = card.LeftSwipeText;
+				rightActionText.text = card.RightSwipeText;
 				if (card.CardSprite != null) {
 					Vector2 targetSizeRatio = cardImageSpriteTargetSize / card.CardSprite.bounds.size;
 					float scaleFactor = Mathf.Min(targetSizeRatio.x, targetSizeRatio.y);
-					
+
 					Vector3 scale = cardImageSpriteRenderer.transform.localScale;
 					scale.x = scaleFactor;
 					scale.y = scaleFactor;
 					cardImageSpriteRenderer.transform.localScale = scale;
-					
+
 					cardImageSpriteRenderer.sprite = card.CardSprite;
 				}
 			}
 		}
-		
+
 		public Game Controller { private get; set; }
-		
+
 		private void Awake() {
 			ShowVisibleSide();
-			
+
 			Util.SetTextAlpha(leftActionText, 0.0f);
 			Util.SetTextAlpha(rightActionText, 0.0f);
 		}
-		
+
 		private void Start() {
-			// Rotate clockwise on reveal instead of anticlockwise 
+			// Rotate clockwise on reveal instead of anticlockwise
 			snapRotationAngles.y += 360.0f;
-			
+
 			animationStartPosition = transform.position;
 			animationStartRotationAngles = transform.eulerAngles;
 			animationStartTime = Time.time;
 			animationState = AnimationState.Revealing;
-			
+
 			card.CardShown(Controller);
 		}
-		
+
 		private void Update() {
 			// Animate card by interpolating translation and rotation, destroy swiped cards
 			if (animationState != AnimationState.Idle && !animationSuspended) {
@@ -85,12 +85,12 @@ namespace DeckSwipe.World {
 				if (scaledProgress > 1.0f || animationProgress > 1.0f) {
 					transform.position = snapPosition;
 					transform.eulerAngles = snapRotationAngles;
-					
+
 					if (animationState == AnimationState.Revealing) {
-						CardDescriptionDisplay.SetDescription(card.cardText, card.CharacterName);
+						CardDescriptionDisplay.SetDescription(card.CardText, card.CharacterName);
 						snapRotationAngles.y -= 360.0f;
 					}
-					
+
 					if (animationState == AnimationState.FlyingAway) {
 						Destroy(gameObject);
 					}
@@ -101,7 +101,7 @@ namespace DeckSwipe.World {
 				else {
 					transform.position = Vector3.Lerp(animationStartPosition, snapPosition, scaledProgress);
 					transform.eulerAngles = Vector3.Lerp(animationStartRotationAngles, snapRotationAngles, scaledProgress);
-					
+
 					ShowVisibleSide();
 				}
 				if (animationState != AnimationState.Revealing) {
@@ -111,23 +111,23 @@ namespace DeckSwipe.World {
 				}
 			}
 		}
-		
+
 		public void BeginDrag() {
 			animationSuspended = true;
 			dragStartPosition = transform.position;
 			dragStartPointerPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
 		}
-		
+
 		public void Drag() {
 			Vector3 displacement = Camera.main.ScreenToWorldPoint(Input.mousePosition) - dragStartPointerPosition;
 			displacement.z = 0.0f;
 			transform.position = dragStartPosition + displacement;
-			
+
 			float alphaCoord = (transform.position.x - snapPosition.x) / (swipeThreshold / 2);
 			Util.SetTextAlpha(leftActionText, -alphaCoord);
 			Util.SetTextAlpha(rightActionText, alphaCoord);
 		}
-		
+
 		public void EndDrag() {
 			animationStartPosition = transform.position;
 			animationStartRotationAngles = transform.eulerAngles;
@@ -159,7 +159,7 @@ namespace DeckSwipe.World {
 			}
 			animationSuspended = false;
 		}
-		
+
 		private void ShowVisibleSide() {
 			// Display correct card elements based on whether it's facing the main camera
 			bool isFacingCamera = Util.IsFacingCamera(gameObject);
@@ -169,7 +169,7 @@ namespace DeckSwipe.World {
 			leftActionText.enabled = isFacingCamera;
 			rightActionText.enabled = isFacingCamera;
 		}
-		
+
 		private float ScaleProgress(float animationProgress) {
 			switch (animationState) {
 				case AnimationState.Converging:
@@ -183,7 +183,7 @@ namespace DeckSwipe.World {
 					return animationProgress;
 			}
 		}
-		
+
 	}
-	
+
 }
