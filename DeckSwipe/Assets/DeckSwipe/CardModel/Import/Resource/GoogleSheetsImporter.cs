@@ -4,6 +4,7 @@ using System.Net;
 using System.Threading.Tasks;
 using DeckSwipe.CardModel.DrawQueue;
 using DeckSwipe.CardModel.Prerequisite;
+using DeckSwipe.Gamestate;
 using Outfrost;
 using Outfrost.GoogleSheets;
 using UnityEngine;
@@ -132,6 +133,10 @@ namespace DeckSwipe.CardModel.Import.Resource {
 			for (int i = 1; i < imageRowData.Length; i++) {
 				int id = imageRowData[i].values[0].IntValue;
 				string imageUrl = imageRowData[i].values[1].hyperlink;
+
+				ProtoImage proto = new ProtoImage(id, false, imageUrl);
+				await new JsonFile<ProtoImage>(Application.dataPath + "/Resources/Collection/Images/" + id.ToString() + ".json").Serialize(proto, true);
+
 				if (sprites.ContainsKey(id)) {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Images sheet");
 				}
@@ -177,6 +182,9 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					sprites.TryGetValue(characterRowData[i].values[2].IntValue,
 							out character.sprite);
 					characters.Add(id, character);
+
+					ProtoCharacter proto = new ProtoCharacter(id, character.name, characterRowData[i].values[2].IntValue);
+					await new JsonFile<ProtoCharacter>(Application.dataPath + "/Resources/Collection/Characters/" + proto.name + ".json").Serialize(proto, true);
 				}
 			}
 
@@ -189,6 +197,27 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Cards sheet");
 				}
 				else {
+					ProtoCard proto = new ProtoCard(
+						id,
+						cardRowData[i].values[1].IntValue,
+						cardRowData[i].values[2].GetStringValue(""),
+						new ProtoAction(),
+						new ProtoAction(),
+						new List<ProtoCardPrerequisite>(),
+						new List<ProtoSpecialCardPrerequisite>());
+					proto.leftAction.text = cardRowData[i].values[3].GetStringValue("");
+					proto.leftAction.statsModification = new StatsModification(
+						cardRowData[i].values[4].IntValue,
+						cardRowData[i].values[5].IntValue,
+						cardRowData[i].values[6].IntValue,
+						cardRowData[i].values[7].IntValue);
+					proto.rightAction.text = cardRowData[i].values[8].GetStringValue("");
+					proto.rightAction.statsModification = new StatsModification(
+						cardRowData[i].values[9].IntValue,
+						cardRowData[i].values[10].IntValue,
+						cardRowData[i].values[11].IntValue,
+						cardRowData[i].values[12].IntValue);
+
 					JsonArray<CardPrerequisite> cardPrerequisites =
 							JsonUtility.FromJson<JsonArray<CardPrerequisite>>(cardRowData[i].values[13].StringValue);
 					JsonArray<SpecialCardPrerequisite> specialCardPrerequisites =
@@ -196,9 +225,25 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					List<ICardPrerequisite> prerequisites = new List<ICardPrerequisite>();
 					if (cardPrerequisites?.array != null) {
 						prerequisites.AddRange(cardPrerequisites.array);
+						proto.cardPrerequisites = new List<CardPrerequisite>(cardPrerequisites.array)
+								.ConvertAll(cardPrerequisite => {
+									List<string> status = new List<string>();
+									if (cardPrerequisite.status.HasFlag(CardStatus.CardShown)) status.Add("CardShown");
+									if (cardPrerequisite.status.HasFlag(CardStatus.RightActionTaken)) status.Add("RightActionTaken");
+									if (cardPrerequisite.status.HasFlag(CardStatus.LeftActionTaken)) status.Add("LeftActionTaken");
+									return new ProtoCardPrerequisite(cardPrerequisite.id, status);
+								});
 					}
 					if (specialCardPrerequisites?.array != null) {
 						prerequisites.AddRange(specialCardPrerequisites.array);
+						proto.specialCardPrerequisites = new List<SpecialCardPrerequisite>(specialCardPrerequisites.array)
+								.ConvertAll(prerequisite => {
+									List<string> status = new List<string>();
+									if (prerequisite.status.HasFlag(CardStatus.CardShown)) status.Add("CardShown");
+									if (prerequisite.status.HasFlag(CardStatus.RightActionTaken)) status.Add("RightActionTaken");
+									if (prerequisite.status.HasFlag(CardStatus.LeftActionTaken)) status.Add("LeftActionTaken");
+									return new ProtoSpecialCardPrerequisite(prerequisite.id, status);
+								});
 					}
 
 					IFollowup leftActionFollowup = null;
@@ -208,9 +253,17 @@ namespace DeckSwipe.CardModel.Import.Resource {
 							leftActionFollowup = new Followup(
 									cardRowData[i].values[15].IntValue,
 									cardRowData[i].values[16].IntValue);
+
+							proto.leftAction.followup = new Followup(
+									cardRowData[i].values[15].IntValue,
+									cardRowData[i].values[16].IntValue);
 						}
 						else {
 							leftActionFollowup = new SpecialFollowup(
+									cardRowData[i].values[15].StringValue,
+									cardRowData[i].values[16].IntValue);
+
+							proto.leftAction.specialFollowup = new SpecialFollowup(
 									cardRowData[i].values[15].StringValue,
 									cardRowData[i].values[16].IntValue);
 						}
@@ -220,9 +273,17 @@ namespace DeckSwipe.CardModel.Import.Resource {
 							rightActionFollowup = new Followup(
 									cardRowData[i].values[17].IntValue,
 									cardRowData[i].values[18].IntValue);
+
+							proto.rightAction.followup = new Followup(
+									cardRowData[i].values[17].IntValue,
+									cardRowData[i].values[18].IntValue);
 						}
 						else {
 							rightActionFollowup = new SpecialFollowup(
+									cardRowData[i].values[17].StringValue,
+									cardRowData[i].values[18].IntValue);
+
+							proto.rightAction.specialFollowup = new SpecialFollowup(
 									cardRowData[i].values[17].StringValue,
 									cardRowData[i].values[18].IntValue);
 						}
@@ -251,6 +312,8 @@ namespace DeckSwipe.CardModel.Import.Resource {
 							out card.character);
 
 					cards.Add(id, card);
+
+					await new JsonFile<ProtoCard>(Application.dataPath + "/Resources/Collection/Cards/" + id + ".json").Serialize(proto, true);
 				}
 			}
 
@@ -266,6 +329,22 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in SpecialCards sheet");
 				}
 				else {
+					ProtoSpecialCard proto = new ProtoSpecialCard(
+						id,
+						cardRowData[i].values[1].IntValue,
+						cardRowData[i].values[2].GetStringValue(""),
+						new ProtoSpecialAction(
+							cardRowData[i].values[3].GetStringValue(""),
+							null,
+							null
+						),
+						new ProtoSpecialAction(
+							cardRowData[i].values[8].GetStringValue(""),
+							null,
+							null
+						));
+					await new JsonFile<ProtoSpecialCard>(Application.dataPath + "/Resources/Collection/SpecialCards/" + id + ".json").Serialize(proto, true);
+
 					SpecialCard card = new SpecialCard(
 							specialCardRowData[i].values[2].GetStringValue(""),
 							specialCardRowData[i].values[3].GetStringValue(""),

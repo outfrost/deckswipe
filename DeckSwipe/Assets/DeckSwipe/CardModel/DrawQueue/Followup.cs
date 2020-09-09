@@ -1,7 +1,9 @@
+using System;
 using DeckSwipe.Gamestate;
 
 namespace DeckSwipe.CardModel.DrawQueue {
 
+	[Serializable]
 	public class Followup : IFollowup {
 
 		public int id;
@@ -26,5 +28,5 @@ namespace DeckSwipe.CardModel.DrawQueue {
 		}
 
 	}
-	
+
 }

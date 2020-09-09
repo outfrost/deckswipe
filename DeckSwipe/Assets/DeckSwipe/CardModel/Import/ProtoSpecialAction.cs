@@ -10,6 +10,8 @@ namespace DeckSwipe.CardModel.Import {
 		public Followup followup;
 		public SpecialFollowup specialFollowup;
 
+		public ProtoSpecialAction() {}
+
 		public ProtoSpecialAction(
 				string text,
 				Followup followup,

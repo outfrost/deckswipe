@@ -7,15 +7,17 @@ namespace DeckSwipe.CardModel.Import {
 	[Serializable]
 	public class ProtoSpecialCard {
 
-		public int id;
-		public string characterId;
+		public string id;
+		public int characterId;
 		public string cardText;
 		public ProtoSpecialAction leftAction;
 		public ProtoSpecialAction rightAction;
 
+		public ProtoSpecialCard() {}
+
 		public ProtoSpecialCard(
-				int id,
-				string characterId,
+				string id,
+				int characterId,
 				string cardText,
 				ProtoSpecialAction leftAction,
 				ProtoSpecialAction rightAction) {
