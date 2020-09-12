@@ -1,0 +1,29 @@
+{
+    "id": 9,
+    "characterId": 8,
+    "cardText": "Cample card 2",
+    "leftAction": {
+        "text": "Sample action 2L",
+        "statsModification": {
+            "coal": -3,
+            "food": 0,
+            "health": 0,
+            "hope": 0
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "rightAction": {
+        "text": "Sample action 2R",
+        "statsModification": {
+            "coal": 0,
+            "food": -4,
+            "health": -2,
+            "hope": 4
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "cardPrerequisites": [],
+    "specialCardPrerequisites": []
+}

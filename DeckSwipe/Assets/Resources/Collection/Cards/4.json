@@ -1,0 +1,38 @@
+{
+    "id": 4,
+    "characterId": 3,
+    "cardText": "The scouts find 2 steam cores and a shipment of wood on board the ship. A crew had been trying to survive in the wreck but everybody's dead now.",
+    "leftAction": {
+        "text": "",
+        "statsModification": {
+            "coal": 2,
+            "food": 0,
+            "health": 2,
+            "hope": 6
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "rightAction": {
+        "text": "",
+        "statsModification": {
+            "coal": 2,
+            "food": 0,
+            "health": 2,
+            "hope": 6
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "cardPrerequisites": [
+        {
+            "id": -1,
+            "status": [
+                "CardShown",
+                "RightActionTaken",
+                "LeftActionTaken"
+            ]
+        }
+    ],
+    "specialCardPrerequisites": []
+}

@@ -1,0 +1,15 @@
+{
+    "id": "gameover_heat",
+    "characterId": -1,
+    "cardText": "The city runs out of heat and freezes over.",
+    "leftAction": {
+        "text": "",
+        "followup": [],
+        "specialFollowup": []
+    },
+    "rightAction": {
+        "text": "",
+        "followup": [],
+        "specialFollowup": []
+    }
+}

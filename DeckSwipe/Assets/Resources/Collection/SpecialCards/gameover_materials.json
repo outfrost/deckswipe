@@ -1,0 +1,15 @@
+{
+    "id": "gameover_materials",
+    "characterId": -1,
+    "cardText": "The city runs out of materials to sustain itself.",
+    "leftAction": {
+        "text": "",
+        "followup": [],
+        "specialFollowup": []
+    },
+    "rightAction": {
+        "text": "",
+        "followup": [],
+        "specialFollowup": []
+    }
+}
