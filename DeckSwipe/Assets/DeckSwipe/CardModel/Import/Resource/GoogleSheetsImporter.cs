@@ -135,7 +135,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 				string imageUrl = imageRowData[i].values[1].hyperlink;
 
 				ProtoImage proto = new ProtoImage(id, false, imageUrl);
-				await new JsonFile<ProtoImage>(Application.dataPath + "/Resources/Collection/Images/" + id.ToString() + ".json").Serialize(proto, true);
+				await new JsonFile<ProtoImage>(Application.dataPath + "/Resources/Collection/Images/" + id + ".json").Serialize(proto, true);
 
 				if (sprites.ContainsKey(id)) {
 					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Images sheet");
@@ -184,7 +184,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					characters.Add(id, character);
 
 					ProtoCharacter proto = new ProtoCharacter(id, character.name, characterRowData[i].values[2].IntValue);
-					await new JsonFile<ProtoCharacter>(Application.dataPath + "/Resources/Collection/Characters/" + proto.name + ".json").Serialize(proto, true);
+					await new JsonFile<ProtoCharacter>(Application.dataPath + "/Resources/Collection/Characters/" + id + ".json").Serialize(proto, true);
 				}
 			}
 
@@ -337,15 +337,15 @@ namespace DeckSwipe.CardModel.Import.Resource {
 				else {
 					ProtoSpecialCard proto = new ProtoSpecialCard(
 						id,
-						cardRowData[i].values[1].IntValue,
-						cardRowData[i].values[2].GetStringValue(""),
+						specialCardRowData[i].values[1].IntValue,
+						specialCardRowData[i].values[2].GetStringValue(""),
 						new ProtoSpecialAction(
-							cardRowData[i].values[3].GetStringValue(""),
+							specialCardRowData[i].values[3].GetStringValue(""),
 							null,
 							null
 						),
 						new ProtoSpecialAction(
-							cardRowData[i].values[8].GetStringValue(""),
+							specialCardRowData[i].values[8].GetStringValue(""),
 							null,
 							null
 						));
