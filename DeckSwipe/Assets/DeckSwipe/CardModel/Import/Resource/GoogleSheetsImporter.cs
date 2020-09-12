@@ -134,7 +134,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 				int id = imageRowData[i].values[0].IntValue;
 				string imageUrl = imageRowData[i].values[1].hyperlink;
 
-				ProtoImage proto = new ProtoImage(id, false, imageUrl);
+				ProtoImage proto = new ProtoImage(id, imageUrl);
 				await new JsonFile<ProtoImage>(Application.dataPath + "/Resources/Collection/Images/" + id + ".json").Serialize(proto, true);
 
 				if (sprites.ContainsKey(id)) {
@@ -174,7 +174,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 			for (int i = 1; i < characterRowData.Length; i++) {
 				int id = characterRowData[i].values[0].IntValue;
 				if (characters.ContainsKey(id)) {
-					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Images sheet");
+					Debug.LogWarning("[GoogleSheetsImporter] Duplicate id found in Characters sheet");
 				}
 				else {
 					Character character = new Character(characterRowData[i].values[1].GetStringValue(""),

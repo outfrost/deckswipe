@@ -20,6 +20,11 @@ namespace DeckSwipe.CardModel {
 			this.followup = followup;
 		}
 
+		public ActionOutcome(StatsModification statsModification, IFollowup followup) {
+			this.statsModification = statsModification;
+			this.followup = followup;
+		}
+
 		public void Perform(Game controller) {
 			statsModification.Perform();
 			if (followup != null) {

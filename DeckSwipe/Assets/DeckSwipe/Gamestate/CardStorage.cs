@@ -57,7 +57,8 @@ namespace DeckSwipe.Gamestate {
 		}
 
 		private async Task PopulateCollection() {
-			ImportedCards importedCards = await new GoogleSheetsImporter(defaultSprite).FetchCards();
+			//ImportedCards importedCards = await new GoogleSheetsImporter(defaultSprite).FetchCards();
+			ImportedCards importedCards = await new CollectionImporter(defaultSprite).Import();
 			Cards = importedCards.cards;
 			SpecialCards = importedCards.specialCards;
 			if (Cards == null || Cards.Count == 0) {
