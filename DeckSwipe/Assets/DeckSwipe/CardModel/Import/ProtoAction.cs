@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using DeckSwipe.CardModel.DrawQueue;
 
 namespace DeckSwipe.CardModel.Import {
@@ -8,16 +9,16 @@ namespace DeckSwipe.CardModel.Import {
 
 		public string text;
 		public StatsModification statsModification;
-		public Followup followup;
-		public SpecialFollowup specialFollowup;
+		public List<Followup> followup;
+		public List<SpecialFollowup> specialFollowup;
 
 		public ProtoAction() {}
 
 		public ProtoAction(
 				string text,
 				StatsModification statsModification,
-				Followup followup,
-				SpecialFollowup specialFollowup) {
+				List<Followup> followup,
+				List<SpecialFollowup> specialFollowup) {
 			this.text = text;
 			this.statsModification = statsModification;
 			this.followup = followup;

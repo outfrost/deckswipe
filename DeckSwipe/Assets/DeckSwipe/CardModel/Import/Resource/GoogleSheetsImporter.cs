@@ -248,24 +248,30 @@ namespace DeckSwipe.CardModel.Import.Resource {
 
 					IFollowup leftActionFollowup = null;
 					IFollowup rightActionFollowup = null;
+
+					proto.leftAction.followup = new List<Followup>();
+					proto.leftAction.specialFollowup = new List<SpecialFollowup>();
+					proto.rightAction.followup = new List<Followup>();
+					proto.rightAction.specialFollowup = new List<SpecialFollowup>();
+
 					if (cardRowData[i].values[16].IntValue > 0) {
 						if (cardRowData[i].values[15].StringValue == null) {
 							leftActionFollowup = new Followup(
 									cardRowData[i].values[15].IntValue,
 									cardRowData[i].values[16].IntValue);
 
-							proto.leftAction.followup = new Followup(
+							proto.leftAction.followup.Add(new Followup(
 									cardRowData[i].values[15].IntValue,
-									cardRowData[i].values[16].IntValue);
+									cardRowData[i].values[16].IntValue));
 						}
 						else {
 							leftActionFollowup = new SpecialFollowup(
 									cardRowData[i].values[15].StringValue,
 									cardRowData[i].values[16].IntValue);
 
-							proto.leftAction.specialFollowup = new SpecialFollowup(
+							proto.leftAction.specialFollowup.Add(new SpecialFollowup(
 									cardRowData[i].values[15].StringValue,
-									cardRowData[i].values[16].IntValue);
+									cardRowData[i].values[16].IntValue));
 						}
 					}
 					if (cardRowData[i].values[18].IntValue > 0) {
@@ -274,18 +280,18 @@ namespace DeckSwipe.CardModel.Import.Resource {
 									cardRowData[i].values[17].IntValue,
 									cardRowData[i].values[18].IntValue);
 
-							proto.rightAction.followup = new Followup(
+							proto.rightAction.followup.Add(new Followup(
 									cardRowData[i].values[17].IntValue,
-									cardRowData[i].values[18].IntValue);
+									cardRowData[i].values[18].IntValue));
 						}
 						else {
 							rightActionFollowup = new SpecialFollowup(
 									cardRowData[i].values[17].StringValue,
 									cardRowData[i].values[18].IntValue);
 
-							proto.rightAction.specialFollowup = new SpecialFollowup(
+							proto.rightAction.specialFollowup.Add(new SpecialFollowup(
 									cardRowData[i].values[17].StringValue,
-									cardRowData[i].values[18].IntValue);
+									cardRowData[i].values[18].IntValue));
 						}
 					}
 
