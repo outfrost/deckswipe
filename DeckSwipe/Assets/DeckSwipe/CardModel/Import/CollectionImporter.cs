@@ -19,7 +19,7 @@ namespace DeckSwipe.CardModel.Import {
 		public CollectionImporter(Sprite defaultSprite) => this.defaultSprite = defaultSprite;
 
 		public async Task<ImportedCards> Import() {
-			ProtoCollection collection = await new LocalCollection().Fetch();
+			ProtoCollection collection = LocalCollection.Fetch();
 
 			Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
 			foreach (ProtoImage image in collection.images) {

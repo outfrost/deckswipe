@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
@@ -7,63 +8,23 @@ using UnityEngine;
 
 namespace DeckSwipe.CardModel.Import.Resource {
 
-	public class LocalCollection {
+	public static class LocalCollection {
 
-		private readonly string _collectionPath = Application.dataPath + "/Resources/Collection";
-		private readonly string _cardsPath = Application.dataPath + "/Resources/Collection" + "/Cards";
-		private readonly string _specialCardsPath = Application.dataPath + "/Resources/Collection" + "/SpecialCards";
-		private readonly string _charactersPath = Application.dataPath + "/Resources/Collection" + "/Characters";
-		private readonly string _imagesPath = Application.dataPath + "/Resources/Collection" + "/Images";
+		private const string _cardsPath = "Collection/Cards";
+		private const string _specialCardsPath = "Collection/SpecialCards";
+		private const string _charactersPath = "Collection/Characters";
+		private const string _imagesPath = "Collection/Images";
 
-		public async Task<ProtoCollection> Fetch() {
-			List<ProtoCard> cards = new List<ProtoCard>();
-			List<ProtoSpecialCard> specialCards = new List<ProtoSpecialCard>();
-			List<ProtoCharacter> characters = new List<ProtoCharacter>();
-			List<ProtoImage> images = new List<ProtoImage>();
+		public static ProtoCollection Fetch() {
+			List<ProtoCard> cards = JsonResources.Load<ProtoCard>(_cardsPath);
+			List<ProtoSpecialCard> specialCards = JsonResources.Load<ProtoSpecialCard>(_specialCardsPath);
+			List<ProtoCharacter> characters = JsonResources.Load<ProtoCharacter>(_charactersPath);
+			List<ProtoImage> images = JsonResources.Load<ProtoImage>(_imagesPath);
 
-			var ioTasks = new List<Task>();
-
-			ioTasks.Add(Task.Run(async () => {
-				foreach (string path in Directory.EnumerateFiles(
-						_cardsPath, "*.json", SearchOption.AllDirectories)) {
-					ProtoCard card = await new JsonFile<ProtoCard>(path).Deserialize();
-					if (card != null) {
-						cards.Add(card);
-					}
-				}
-			}));
-
-			ioTasks.Add(Task.Run(async () => {
-				foreach (string path in Directory.EnumerateFiles(
-						_specialCardsPath, "*.json", SearchOption.AllDirectories)) {
-					ProtoSpecialCard specialCard = await new JsonFile<ProtoSpecialCard>(path).Deserialize();
-					if (specialCard != null) {
-						specialCards.Add(specialCard);
-					}
-				}
-			}));
-
-			ioTasks.Add(Task.Run(async () => {
-				foreach (string path in Directory.EnumerateFiles(
-						_charactersPath, "*.json", SearchOption.AllDirectories)) {
-					ProtoCharacter character = await new JsonFile<ProtoCharacter>(path).Deserialize();
-					if (character != null) {
-						characters.Add(character);
-					}
-				}
-			}));
-
-			ioTasks.Add(Task.Run(async () => {
-				foreach (string path in Directory.EnumerateFiles(
-						_imagesPath, "*.json", SearchOption.AllDirectories)) {
-					ProtoImage image = await new JsonFile<ProtoImage>(path).Deserialize();
-					if (image != null) {
-						images.Add(image);
-					}
-				}
-			}));
-
-			await Task.WhenAll(ioTasks);
+			Debug.Log("[LocalCollection] Loaded " + cards.Count + " cards");
+			Debug.Log("[LocalCollection] Loaded " + specialCards.Count + " special cards");
+			Debug.Log("[LocalCollection] Loaded " + characters.Count + " characters");
+			Debug.Log("[LocalCollection] Loaded " + images.Count + " images");
 
 			return new ProtoCollection(cards, specialCards, characters, images);
 		}
