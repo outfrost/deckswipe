@@ -104,7 +104,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 				throw new FormatException("Invalid sheet format");
 			}
 			Sheet specialCardSheet = spreadsheet.sheets[specialCardSheetIndex];
-			if (!CheckCardSheetFormat(specialCardSheet)) {
+			if (!CheckSpecialCardSheetFormat(specialCardSheet)) {
 				throw new FormatException("Invalid sheet format");
 			}
 			Sheet characterSheet = spreadsheet.sheets[characterSheetIndex];
@@ -220,35 +220,35 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					cardText);
 
 				proto.leftAction.text = specialCardRowData[i].values[3].GetStringValue("");
-				proto.rightAction.text = specialCardRowData[i].values[8].GetStringValue("");
+				proto.rightAction.text = specialCardRowData[i].values[4].GetStringValue("");
 
 				proto.leftAction.followup = new List<Followup>();
 				proto.leftAction.specialFollowup = new List<SpecialFollowup>();
 				proto.rightAction.followup = new List<Followup>();
 				proto.rightAction.specialFollowup = new List<SpecialFollowup>();
 
-				if (cardRowData[i].values[16].IntValue > 0) {
-					if (cardRowData[i].values[15].StringValue == null) {
+				if (cardRowData[i].values[6].IntValue > 0) {
+					if (cardRowData[i].values[5].StringValue == null) {
 						proto.leftAction.followup.Add(new Followup(
-								cardRowData[i].values[15].IntValue,
-								cardRowData[i].values[16].IntValue));
+								cardRowData[i].values[5].IntValue,
+								cardRowData[i].values[6].IntValue));
 					}
 					else {
 						proto.leftAction.specialFollowup.Add(new SpecialFollowup(
-								cardRowData[i].values[15].StringValue,
-								cardRowData[i].values[16].IntValue));
+								cardRowData[i].values[5].StringValue,
+								cardRowData[i].values[6].IntValue));
 					}
 				}
-				if (cardRowData[i].values[18].IntValue > 0) {
-					if (cardRowData[i].values[17].StringValue == null) {
+				if (cardRowData[i].values[8].IntValue > 0) {
+					if (cardRowData[i].values[7].StringValue == null) {
 						proto.rightAction.followup.Add(new Followup(
-								cardRowData[i].values[17].IntValue,
-								cardRowData[i].values[18].IntValue));
+								cardRowData[i].values[7].IntValue,
+								cardRowData[i].values[8].IntValue));
 					}
 					else {
 						proto.rightAction.specialFollowup.Add(new SpecialFollowup(
-								cardRowData[i].values[17].StringValue,
-								cardRowData[i].values[18].IntValue));
+								cardRowData[i].values[7].StringValue,
+								cardRowData[i].values[8].IntValue));
 					}
 				}
 
@@ -287,6 +287,25 @@ namespace DeckSwipe.CardModel.Import.Resource {
 				return true;
 			}
 			Debug.LogError("[GoogleSheetsImporter] Invalid card format encountered in "
+			               + sheet.properties.title
+			               + " sheet");
+			return false;
+		}
+
+		private static bool CheckSpecialCardSheetFormat(Sheet sheet) {
+			RowData headerRow = sheet.data[0].rowData[0];
+			if (headerRow.values[0].StringValue == "id"
+					&& headerRow.values[1].StringValue == "characterId"
+					&& headerRow.values[2].StringValue == "cardText"
+					&& headerRow.values[3].StringValue == "leftActionText"
+					&& headerRow.values[4].StringValue == "rightActionText"
+					&& headerRow.values[5].StringValue == "leftActionFollowupCardId"
+					&& headerRow.values[6].StringValue == "leftActionFollowupCardDelay"
+					&& headerRow.values[7].StringValue == "rightActionFollowupCardId"
+					&& headerRow.values[8].StringValue == "rightActionFollowupCardDelay") {
+				return true;
+			}
+			Debug.LogError("[GoogleSheetsImporter] Invalid special card format encountered in "
 			               + sheet.properties.title
 			               + " sheet");
 			return false;
