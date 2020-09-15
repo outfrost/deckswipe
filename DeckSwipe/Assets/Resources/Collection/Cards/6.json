@@ -1,0 +1,29 @@
+{
+    "id": 6,
+    "characterId": 5,
+    "cardText": "An automaton got stuck in a hothouse. What do we do with it?",
+    "leftAction": {
+        "text": "Disable the automaton",
+        "statsModification": {
+            "coal": -2,
+            "food": -2,
+            "health": 0,
+            "hope": -2
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "rightAction": {
+        "text": "Disable the hothouse",
+        "statsModification": {
+            "coal": 2,
+            "food": -4,
+            "health": -2,
+            "hope": -2
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "cardPrerequisites": [],
+    "specialCardPrerequisites": []
+}

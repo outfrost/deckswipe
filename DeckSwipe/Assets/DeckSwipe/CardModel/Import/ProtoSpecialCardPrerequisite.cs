@@ -9,6 +9,11 @@ namespace DeckSwipe.CardModel.Import {
 		public string id;
 		public List<string> status;
 
+		public ProtoSpecialCardPrerequisite(string id, List<string> status) {
+			this.id = id;
+			this.status = status;
+		}
+
 	}
 
 }

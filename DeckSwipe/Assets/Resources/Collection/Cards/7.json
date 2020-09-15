@@ -1,0 +1,29 @@
+{
+    "id": 7,
+    "characterId": 6,
+    "cardText": "Don't you think we should have a tea party after work hours?",
+    "leftAction": {
+        "text": "That's a great idea",
+        "statsModification": {
+            "coal": -2,
+            "food": 2,
+            "health": 2,
+            "hope": -4
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "rightAction": {
+        "text": "No, let's not",
+        "statsModification": {
+            "coal": 0,
+            "food": 0,
+            "health": -4,
+            "hope": 2
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "cardPrerequisites": [],
+    "specialCardPrerequisites": []
+}

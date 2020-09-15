@@ -1,0 +1,29 @@
+{
+    "id": 1,
+    "characterId": 1,
+    "cardText": "And this is yet another card that you may encounter in the game. Are you having fun thus far?",
+    "leftAction": {
+        "text": "No",
+        "statsModification": {
+            "coal": -2,
+            "food": -2,
+            "health": -2,
+            "hope": -2
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "rightAction": {
+        "text": "Yes",
+        "statsModification": {
+            "coal": 2,
+            "food": 2,
+            "health": 2,
+            "hope": 2
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "cardPrerequisites": [],
+    "specialCardPrerequisites": []
+}

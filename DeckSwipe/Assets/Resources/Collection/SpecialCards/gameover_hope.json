@@ -1,0 +1,15 @@
+{
+    "id": "gameover_hope",
+    "characterId": -1,
+    "cardText": "All hope among the people is lost.",
+    "leftAction": {
+        "text": "",
+        "followup": [],
+        "specialFollowup": []
+    },
+    "rightAction": {
+        "text": "",
+        "followup": [],
+        "specialFollowup": []
+    }
+}

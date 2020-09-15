@@ -1,0 +1,29 @@
+{
+    "id": 2,
+    "characterId": 2,
+    "cardText": "The hothouse is very cold. The crops are freezing up. What should we do?",
+    "leftAction": {
+        "text": "Turn on the heater in the hothouse",
+        "statsModification": {
+            "coal": 1,
+            "food": 1,
+            "health": 0,
+            "hope": -2
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "rightAction": {
+        "text": "Put the generator in overdrive",
+        "statsModification": {
+            "coal": 2,
+            "food": 2,
+            "health": -2,
+            "hope": -4
+        },
+        "followup": [],
+        "specialFollowup": []
+    },
+    "cardPrerequisites": [],
+    "specialCardPrerequisites": []
+}
