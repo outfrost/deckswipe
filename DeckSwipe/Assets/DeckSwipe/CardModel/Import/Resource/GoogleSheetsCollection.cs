@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace DeckSwipe.CardModel.Import.Resource {
 
-	public class GoogleSheetsImporter {
+	public class GoogleSheetsCollection {
 
 		private const int _majorFormatVersion = 4;
 		private const int _minorFormatVersion = 0;
@@ -24,7 +24,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 			secrets = await GoogleSheetsSecrets.Load();
 
 			// Fetch spreadsheet from Google Sheet API V4
-			Debug.Log("[GoogleSheetsImporter] Fetching cards from Google Sheet " + config.spreadsheetId + " ...");
+			Debug.Log("[GoogleSheetsCollection] Fetching cards from Google Sheet " + config.spreadsheetId + " ...");
 			HttpWebRequest request = WebRequest.CreateHttp(
 					"https://sheets.googleapis.com/v4/spreadsheets/"
 					+ config.spreadsheetId
@@ -54,7 +54,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 			foreach (RowData row in metaRowData) {
 				if (row.values[0].StringValue != null) {
 					if (metadata.ContainsKey(row.values[0].StringValue)) {
-						Debug.LogWarning("[GoogleSheetsImporter] Duplicate key found in Metadata sheet");
+						Debug.LogWarning("[GoogleSheetsCollection] Duplicate key found in Metadata sheet");
 					}
 					else {
 						metadata.Add(row.values[0].StringValue, row.values[1]);
@@ -255,10 +255,10 @@ namespace DeckSwipe.CardModel.Import.Resource {
 				specialCards.Add(proto);
 			}
 
-			Debug.Log("[GoogleSheetsImporter] Loaded " + cards.Count + " cards");
-			Debug.Log("[GoogleSheetsImporter] Loaded " + specialCards.Count + " special cards");
-			Debug.Log("[GoogleSheetsImporter] Loaded " + characters.Count + " characters");
-			Debug.Log("[GoogleSheetsImporter] Loaded " + images.Count + " images");
+			Debug.Log("[GoogleSheetsCollection] Loaded " + cards.Count + " cards");
+			Debug.Log("[GoogleSheetsCollection] Loaded " + specialCards.Count + " special cards");
+			Debug.Log("[GoogleSheetsCollection] Loaded " + characters.Count + " characters");
+			Debug.Log("[GoogleSheetsCollection] Loaded " + images.Count + " images");
 
 			return new ProtoCollection(cards, specialCards, characters, images);
 		}
@@ -286,7 +286,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					&& headerRow.values[18].StringValue == "rightActionFollowupCardDelay") {
 				return true;
 			}
-			Debug.LogError("[GoogleSheetsImporter] Invalid card format encountered in "
+			Debug.LogError("[GoogleSheetsCollection] Invalid card format encountered in "
 			               + sheet.properties.title
 			               + " sheet");
 			return false;
@@ -305,7 +305,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					&& headerRow.values[8].StringValue == "rightActionFollowupCardDelay") {
 				return true;
 			}
-			Debug.LogError("[GoogleSheetsImporter] Invalid special card format encountered in "
+			Debug.LogError("[GoogleSheetsCollection] Invalid special card format encountered in "
 			               + sheet.properties.title
 			               + " sheet");
 			return false;
@@ -318,7 +318,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					&& headerRow.values[2].StringValue == "imageId") {
 				return true;
 			}
-			Debug.LogError("[GoogleSheetsImporter] Invalid character format encountered in "
+			Debug.LogError("[GoogleSheetsCollection] Invalid character format encountered in "
 			               + sheet.properties.title
 			               + " sheet");
 			return false;
@@ -330,7 +330,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 					&& headerRow.values[1].StringValue == "url") {
 				return true;
 			}
-			Debug.LogError("[GoogleSheetsImporter] Invalid image format encountered in "
+			Debug.LogError("[GoogleSheetsCollection] Invalid image format encountered in "
 			               + sheet.properties.title
 			               + " sheet");
 			return false;
@@ -338,7 +338,7 @@ namespace DeckSwipe.CardModel.Import.Resource {
 
 		private static bool RequireMetadata(string key, Dictionary<string, CellData> metadata) {
 			if (!metadata.ContainsKey(key)) {
-				Debug.LogError("[GoogleSheetsImporter] " + key + " not found in Metadata sheet");
+				Debug.LogError("[GoogleSheetsCollection] " + key + " not found in Metadata sheet");
 				return false;
 			}
 			return true;
