@@ -14,6 +14,7 @@ namespace DeckSwipe.Gamestate {
 		private static readonly Character _defaultGameOverCharacter = new Character("", null);
 
 		private readonly Sprite defaultSprite;
+		private readonly bool loadRemoteCollectionFirst;
 
 		public Dictionary<int, Card> Cards { get; private set; }
 		public Dictionary<string, SpecialCard> SpecialCards { get; private set; }
@@ -22,8 +23,9 @@ namespace DeckSwipe.Gamestate {
 
 		private List<Card> drawableCards = new List<Card>();
 
-		public CardStorage(Sprite defaultSprite) {
+		public CardStorage(Sprite defaultSprite, bool loadRemoteCollectionFirst) {
 			this.defaultSprite = defaultSprite;
+			this.loadRemoteCollectionFirst = loadRemoteCollectionFirst;
 			CardCollectionImport = PopulateCollection();
 		}
 
@@ -57,8 +59,8 @@ namespace DeckSwipe.Gamestate {
 		}
 
 		private async Task PopulateCollection() {
-			//ImportedCards importedCards = await new GoogleSheetsImporter(defaultSprite).FetchCards();
-			ImportedCards importedCards = await new CollectionImporter(defaultSprite).Import();
+			ImportedCards importedCards =
+					await new CollectionImporter(defaultSprite, loadRemoteCollectionFirst).Import();
 			Cards = importedCards.cards;
 			SpecialCards = importedCards.specialCards;
 			if (Cards == null || Cards.Count == 0) {

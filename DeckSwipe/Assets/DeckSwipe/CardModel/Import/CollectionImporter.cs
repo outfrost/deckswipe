@@ -15,11 +15,41 @@ namespace DeckSwipe.CardModel.Import {
 	public class CollectionImporter {
 
 		private readonly Sprite defaultSprite;
+		private readonly bool remoteCollectionFirst;
 
-		public CollectionImporter(Sprite defaultSprite) => this.defaultSprite = defaultSprite;
+		public CollectionImporter(Sprite defaultSprite, bool remoteCollectionFirst) {
+			this.defaultSprite = defaultSprite;
+			this.remoteCollectionFirst = remoteCollectionFirst;
+		}
 
 		public async Task<ImportedCards> Import() {
-			ProtoCollection collection = LocalCollection.Fetch();
+			ProtoCollection collection;
+			if (remoteCollectionFirst) {
+				try {
+					collection = await new GoogleSheetsImporter().Fetch();
+				}
+				catch (Exception e) when (e is WebException || e is FormatException) {
+					Debug.LogError("[CollectionImporter] Import from Google Sheets failed: " + e.Message);
+					Debug.LogWarning("[CollectionImporter] Trying local collection...");
+					collection = LocalCollection.Fetch();
+					if (collection.cards.Count == 0) {
+						Debug.LogWarning("[CollectionImporter] Import from local collection returned 0 cards");
+					}
+				}
+			}
+			else {
+				collection = LocalCollection.Fetch();
+				if (collection.cards.Count == 0) {
+					Debug.LogWarning("[CollectionImporter] Import from local collection returned 0 cards, "
+							+ "trying Google Sheets...");
+					try {
+						collection = await new GoogleSheetsImporter().Fetch();
+					}
+					catch (Exception e) when (e is WebException || e is FormatException) {
+						Debug.LogError("[CollectionImporter] Import from Google Sheets failed: " + e.Message);
+					}
+				}
+			}
 
 			Dictionary<int, Sprite> sprites = new Dictionary<int, Sprite>();
 			foreach (ProtoImage image in collection.images) {
@@ -33,23 +63,43 @@ namespace DeckSwipe.CardModel.Import {
 				}
 
 				Debug.Log("[CollectionImporter] Fetching image from " + image.url + " ...");
-				HttpWebRequest imageRequest = WebRequest.CreateHttp(image.url);
-				HttpWebResponse imageResponse = (HttpWebResponse) await imageRequest.GetResponseAsync();
+				HttpWebResponse imageResponse;
+				try {
+					HttpWebRequest imageRequest = WebRequest.CreateHttp(image.url);
+					imageResponse = (HttpWebResponse) await imageRequest.GetResponseAsync();
+				}
+				catch (WebException e) {
+					Debug.LogError("[CollectionImporter] Request failed: " + e.Message);
+					continue;
+				}
+
 				if (imageResponse.StatusCode != HttpStatusCode.OK) {
-					Debug.LogWarning("[CollectionImporter] " + image.url + ": " + (int)imageResponse.StatusCode + " " + imageResponse.StatusDescription);
+					Debug.LogWarning(
+							"[CollectionImporter] "
+							+ image.url
+							+ ": "
+							+ (int)imageResponse.StatusCode
+							+ " "
+							+ imageResponse.StatusDescription);
 					continue;
 				}
 
 				Stream imageStream;
 				if ((imageStream = imageResponse.GetResponseStream()) == null) {
-					Debug.LogWarning("[CollectionImporter] Remote host returned no image in response (URL: " + image.url + ")");
+					Debug.LogWarning(
+							"[CollectionImporter] Remote host returned no image in response (URL: "
+							+ image.url
+							+ ")");
 					continue;
 				}
 
 				byte[] imageData = Util.BytesFromStream(imageStream);
 				Texture2D texture = new Texture2D(1, 1);
 				if (!texture.LoadImage(imageData)) {
-					Debug.LogWarning("[CollectionImporter] Could not create sprite texture from image (URL: " + image.url + ")");
+					Debug.LogWarning(
+							"[CollectionImporter] Could not create sprite texture from image (URL: "
+							+ image.url
+							+ ")");
 					continue;
 				}
 
@@ -82,18 +132,27 @@ namespace DeckSwipe.CardModel.Import {
 				ProtoAction leftAction = protoCard.leftAction;
 				if (leftAction.followup != null && leftAction.followup.Count > 0) {
 					if (leftAction.followup.Count > 1) {
-						Debug.LogWarning("[CollectionImporter] Card (id: " + protoCard.id + ") left action has more than one Followup");
+						Debug.LogWarning(
+								"[CollectionImporter] Card (id: "
+								+ protoCard.id
+								+ ") left action has more than one Followup");
 						continue;
 					}
 					leftActionFollowup = leftAction.followup[0];
 				}
 				if (leftAction.specialFollowup != null && leftAction.specialFollowup.Count > 0) {
 					if (leftAction.specialFollowup.Count > 1) {
-						Debug.LogWarning("[CollectionImporter] Card (id: " + protoCard.id + ") left action has more than one SpecialFollowup");
+						Debug.LogWarning(
+								"[CollectionImporter] Card (id: "
+								+ protoCard.id
+								+ ") left action has more than one SpecialFollowup");
 						continue;
 					}
 					if (leftActionFollowup != null) {
-						Debug.LogWarning("[CollectionImporter] Card (id: " + protoCard.id + ") left action has both types of followups");
+						Debug.LogWarning(
+								"[CollectionImporter] Card (id: "
+								+ protoCard.id
+								+ ") left action has both types of followups");
 						continue;
 					}
 					leftActionFollowup = leftAction.specialFollowup[0];
@@ -103,18 +162,27 @@ namespace DeckSwipe.CardModel.Import {
 				ProtoAction rightAction = protoCard.rightAction;
 				if (rightAction.followup != null && rightAction.followup.Count > 0) {
 					if (rightAction.followup.Count > 1) {
-						Debug.LogWarning("[CollectionImporter] Card (id: " + protoCard.id + ") right action has more than one Followup");
+						Debug.LogWarning(
+								"[CollectionImporter] Card (id: "
+								+ protoCard.id
+								+ ") right action has more than one Followup");
 						continue;
 					}
 					rightActionFollowup = rightAction.followup[0];
 				}
 				if (rightAction.specialFollowup != null && rightAction.specialFollowup.Count > 0) {
 					if (rightAction.specialFollowup.Count > 1) {
-						Debug.LogWarning("[CollectionImporter] Card (id: " + protoCard.id + ") right action has more than one SpecialFollowup");
+						Debug.LogWarning(
+								"[CollectionImporter] Card (id: "
+								+ protoCard.id
+								+ ") right action has more than one SpecialFollowup");
 						continue;
 					}
 					if (rightActionFollowup != null) {
-						Debug.LogWarning("[CollectionImporter] Card (id: " + protoCard.id + ") right action has both types of followups");
+						Debug.LogWarning(
+								"[CollectionImporter] Card (id: "
+								+ protoCard.id
+								+ ") right action has both types of followups");
 						continue;
 					}
 					rightActionFollowup = rightAction.specialFollowup[0];
@@ -178,6 +246,10 @@ namespace DeckSwipe.CardModel.Import {
 
 			Dictionary<string, SpecialCard> specialCards = new Dictionary<string, SpecialCard>();
 			foreach (ProtoSpecialCard protoSpecialCard in collection.specialCards) {
+				if (protoSpecialCard.id == null) {
+					Debug.LogWarning("[CollectionImporter] Null id found in SpecialCards");
+					continue;
+				}
 				if (specialCards.ContainsKey(protoSpecialCard.id)) {
 					Debug.LogWarning("[CollectionImporter] Duplicate id found in SpecialCards");
 					continue;
@@ -187,18 +259,27 @@ namespace DeckSwipe.CardModel.Import {
 				ProtoSpecialAction leftAction = protoSpecialCard.leftAction;
 				if (leftAction.followup != null && leftAction.followup.Count > 0) {
 					if (leftAction.followup.Count > 1) {
-						Debug.LogWarning("[CollectionImporter] SpecialCard (id: " + protoSpecialCard.id + ") left action has more than one Followup");
+						Debug.LogWarning(
+								"[CollectionImporter] SpecialCard (id: "
+								+ protoSpecialCard.id
+								+ ") left action has more than one Followup");
 						continue;
 					}
 					leftActionFollowup = leftAction.followup[0];
 				}
 				if (leftAction.specialFollowup != null && leftAction.specialFollowup.Count > 0) {
 					if (leftAction.specialFollowup.Count > 1) {
-						Debug.LogWarning("[CollectionImporter] SpecialCard (id: " + protoSpecialCard.id + ") left action has more than one SpecialFollowup");
+						Debug.LogWarning(
+								"[CollectionImporter] SpecialCard (id: "
+								+ protoSpecialCard.id
+								+ ") left action has more than one SpecialFollowup");
 						continue;
 					}
 					if (leftActionFollowup != null) {
-						Debug.LogWarning("[CollectionImporter] SpecialCard (id: " + protoSpecialCard.id + ") left action has both types of followups");
+						Debug.LogWarning(
+								"[CollectionImporter] SpecialCard (id: "
+								+ protoSpecialCard.id
+								+ ") left action has both types of followups");
 						continue;
 					}
 					leftActionFollowup = leftAction.specialFollowup[0];
@@ -208,18 +289,27 @@ namespace DeckSwipe.CardModel.Import {
 				ProtoSpecialAction rightAction = protoSpecialCard.rightAction;
 				if (rightAction.followup != null && rightAction.followup.Count > 0) {
 					if (rightAction.followup.Count > 1) {
-						Debug.LogWarning("[CollectionImporter] SpecialCard (id: " + protoSpecialCard.id + ") right action has more than one Followup");
+						Debug.LogWarning(
+								"[CollectionImporter] SpecialCard (id: "
+								+ protoSpecialCard.id
+								+ ") right action has more than one Followup");
 						continue;
 					}
 					rightActionFollowup = rightAction.followup[0];
 				}
 				if (rightAction.specialFollowup != null && rightAction.specialFollowup.Count > 0) {
 					if (rightAction.specialFollowup.Count > 1) {
-						Debug.LogWarning("[CollectionImporter] SpecialCard (id: " + protoSpecialCard.id + ") right action has more than one SpecialFollowup");
+						Debug.LogWarning(
+								"[CollectionImporter] SpecialCard (id: "
+								+ protoSpecialCard.id
+								+ ") right action has more than one SpecialFollowup");
 						continue;
 					}
 					if (rightActionFollowup != null) {
-						Debug.LogWarning("[CollectionImporter] SpecialCard (id: " + protoSpecialCard.id + ") right action has both types of followups");
+						Debug.LogWarning(
+								"[CollectionImporter] SpecialCard (id: "
+								+ protoSpecialCard.id
+								+ ") right action has both types of followups");
 						continue;
 					}
 					rightActionFollowup = rightAction.specialFollowup[0];

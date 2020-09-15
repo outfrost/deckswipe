@@ -32,7 +32,19 @@ namespace DeckSwipe.CardModel.Import {
 			this.rightAction = rightAction;
 			this.cardPrerequisites = cardPrerequisites;
 			this.specialCardPrerequisites = specialCardPrerequisites;
+		}
 
+		public ProtoCard(
+				int id,
+				int characterId,
+				string cardText) {
+			this.id = id;
+			this.characterId = characterId;
+			this.cardText = cardText;
+			leftAction = new ProtoAction();
+			rightAction = new ProtoAction();
+			cardPrerequisites = new List<ProtoCardPrerequisite>();
+			specialCardPrerequisites = new List<ProtoSpecialCardPrerequisite>();
 		}
 
 	}

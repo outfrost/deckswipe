@@ -28,6 +28,17 @@ namespace DeckSwipe.CardModel.Import {
 			this.rightAction = rightAction;
 		}
 
+		public ProtoSpecialCard(
+				string id,
+				int characterId,
+				string cardText) {
+			this.id = id;
+			this.characterId = characterId;
+			this.cardText = cardText;
+			leftAction = new ProtoSpecialAction();
+			rightAction = new ProtoSpecialAction();
+		}
+
 	}
 
 }
