@@ -124,7 +124,7 @@ PlayerSettings:
     16:10: 1
     16:9: 1
     Others: 1
-  bundleVersion: 0.4.0.1
+  bundleVersion: 0.5.0
   preloadedAssets: []
   metroInputSource: 0
   wsaTransparentSwapchain: 0
@@ -169,9 +169,10 @@ PlayerSettings:
   androidMaxAspectRatio: 2.1
   applicationIdentifier:
     Android: me.outfrost.deckswipe.android
-    Standalone: com.Company.ProductName
-  buildNumber: {}
-  AndroidBundleVersionCode: 13
+    Standalone: me.outfrost.deckswipe.desktop
+  buildNumber:
+    Standalone: 14
+  AndroidBundleVersionCode: 14
   AndroidMinSdkVersion: 19
   AndroidTargetSdkVersion: 0
   AndroidPreferredInstallLocation: 0
