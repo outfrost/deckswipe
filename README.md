@@ -10,13 +10,17 @@ Created with Unity on Linux, primarily for the Android platform.
 
 ![Screen capture of the game running on Android](screencap-android.gif)
 
-## Development
+## Contributing
 
-DeckSwipe has reached alpha stage. I (@outfrost) have currently suspended my works on the project due to other commitments. If anyone would like to take this opportunity to play around in an existing project, improve upon it and learn in the process, please feel free to fork and pull request.
+Issues and PRs are welcome, for all kinds of contributions. Changes accepted in PRs will be released under the license terms listed further below. When working on a time-consuming contribution, it's best to discuss it in issues first, to make sure it won't collide with something else.
+
+### Hacktoberfest
+
+I encourage contributing during Hacktoberfest! Have a look at issues tagged 'Hacktoberfest' to get started. If you take the time to work on one of them, be sure to comment in the appropriate issue thread.
 
 ## Builds
 
-~~Weekly~~ builds are available in the GitHub Releases section.
+Binary builds for Android, Linux and Windows are available under Releases.
 
 ## License
 
@@ -24,7 +28,7 @@ All content published in this repository, be it software, in source code or bina
 
 * **TextMesh Pro**
 	
-	Bundled with Unity 2018.2 and distributed on Unity3D license terms
+	Bundled with Unity and distributed on Unity license terms
 	
 	https://unity3d.com/legal
 	
