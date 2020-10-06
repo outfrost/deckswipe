@@ -12,7 +12,6 @@ namespace DeckSwipe {
 
 		private const int _saveInterval = 8;
 
-		public InputDispatcher inputDispatcher;
 		public CardBehaviour cardPrefab;
 		public Vector3 spawnPosition;
 		public Sprite defaultCharacterSprite;
@@ -30,20 +29,6 @@ namespace DeckSwipe {
 		private CardDrawQueue cardDrawQueue = new CardDrawQueue();
 
 		private void Awake() {
-			// Listen for Escape key ('Back' on Android) that suspends the game on Android
-			// or ends it on any other platform
-			#if UNITY_ANDROID
-			inputDispatcher.AddKeyUpHandler(KeyCode.Escape,
-					keyCode => {
-						AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer")
-							.GetStatic<AndroidJavaObject>("currentActivity");
-						activity.Call<bool>("moveTaskToBack", true);
-					});
-			#else
-			inputDispatcher.AddKeyDownHandler(KeyCode.Escape,
-					keyCode => Application.Quit());
-			#endif
-
 			cardStorage = new CardStorage(defaultCharacterSprite, loadRemoteCollectionFirst);
 			progressStorage = new ProgressStorage(cardStorage);
 
@@ -64,6 +49,18 @@ namespace DeckSwipe {
 			daysLastRun = progressStorage.Progress.daysPassed - daysPassedPreviously;
 			cardDrawQueue.Clear();
 			StartGame();
+		}
+
+		public void ExitGame()
+		{
+			//Suspends game on Android or ends it on any other platform
+			#if UNITY_ANDROID
+				AndroidJavaObject activity = new AndroidJavaClass("com.unity3d.player.UnityPlayer")
+					.GetStatic<AndroidJavaObject>("currentActivity");
+				activity.Call<bool>("moveTaskToBack", true);
+			#else
+				Application.Quit();
+			#endif
 		}
 
 		private void StartGameplayLoop() {
