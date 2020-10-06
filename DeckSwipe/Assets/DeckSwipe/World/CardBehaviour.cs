@@ -2,6 +2,7 @@
 using Outfrost;
 using TMPro;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 namespace DeckSwipe.World {
 
@@ -112,14 +113,17 @@ namespace DeckSwipe.World {
 			}
 		}
 
-		public void BeginDrag() {
+		public void BeginDrag(BaseEventData baseEventData)
+		{
+			Vector2 pointerPosition = ((PointerEventData) baseEventData).position;
 			animationSuspended = true;
 			dragStartPosition = transform.position;
-			dragStartPointerPosition = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+			dragStartPointerPosition = Camera.main.ScreenToWorldPoint(pointerPosition);
 		}
 
-		public void Drag() {
-			Vector3 displacement = Camera.main.ScreenToWorldPoint(Input.mousePosition) - dragStartPointerPosition;
+		public void Drag(BaseEventData baseEventData) {
+			Vector2 pointerPosition = ((PointerEventData) baseEventData).position;
+			Vector3 displacement = Camera.main.ScreenToWorldPoint(pointerPosition) - dragStartPointerPosition;
 			displacement.z = 0.0f;
 			transform.position = dragStartPosition + displacement;
 
