@@ -1,4 +1,5 @@
 ﻿using DeckSwipe.CardModel;
+using DeckSwipe.Gamestate;
 using Outfrost;
 using TMPro;
 using UnityEngine;
@@ -36,6 +37,7 @@ namespace DeckSwipe.World {
 		private float animationStartTime;
 		private AnimationState animationState = AnimationState.Idle;
 		private bool animationSuspended;
+		private bool actionPreviewSuspended;
 
 		public ICard Card {
 			set {
@@ -63,6 +65,8 @@ namespace DeckSwipe.World {
 
 			Util.SetTextAlpha(leftActionText, 0.0f);
 			Util.SetTextAlpha(rightActionText, 0.0f);
+			Stats.UpdateActionPreviewAlpha(0f, 0f);
+			actionPreviewSuspended = false;
 		}
 
 		private void Start() {
@@ -75,6 +79,7 @@ namespace DeckSwipe.World {
 			animationState = AnimationState.Revealing;
 
 			card.CardShown(Controller);
+			card.UpdateActionPreview();
 		}
 
 		private void Update() {
@@ -108,6 +113,9 @@ namespace DeckSwipe.World {
 					float alphaCoord = (transform.position.x - snapPosition.x) / (swipeThreshold / 2);
 					Util.SetTextAlpha(leftActionText, Mathf.Clamp01(-alphaCoord));
 					Util.SetTextAlpha(rightActionText, Mathf.Clamp01(alphaCoord));
+					if (!actionPreviewSuspended) {
+						Stats.UpdateActionPreviewAlpha(-alphaCoord, alphaCoord);
+					}
 				}
 			}
 		}
@@ -126,6 +134,7 @@ namespace DeckSwipe.World {
 			float alphaCoord = (transform.position.x - snapPosition.x) / (swipeThreshold / 2);
 			Util.SetTextAlpha(leftActionText, -alphaCoord);
 			Util.SetTextAlpha(rightActionText, alphaCoord);
+			Stats.UpdateActionPreviewAlpha(-alphaCoord, alphaCoord);
 		}
 
 		public void EndDrag() {
@@ -142,6 +151,7 @@ namespace DeckSwipe.World {
 					snapRotationAngles = transform.eulerAngles;
 					animationState = AnimationState.FlyingAway;
 					CardDescriptionDisplay.ResetDescription();
+					actionPreviewSuspended = true;
 				}
 				else if (transform.position.x > snapPosition.x + swipeThreshold) {
 					card.PerformRightDecision(Controller);
@@ -152,6 +162,7 @@ namespace DeckSwipe.World {
 					snapRotationAngles = transform.eulerAngles;
 					animationState = AnimationState.FlyingAway;
 					CardDescriptionDisplay.ResetDescription();
+					actionPreviewSuspended = true;
 				}
 				else if (animationState == AnimationState.Idle) {
 					animationState = AnimationState.Converging;
