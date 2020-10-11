@@ -964,6 +964,7 @@ GameObject:
   - component: {fileID: 7824086927073026455}
   - component: {fileID: 3355882050232628502}
   - component: {fileID: 74505033964700608}
+  - component: {fileID: 6333620122111483018}
   m_Layer: 5
   m_Name: Food Bar Top
   m_TagString: Untagged
@@ -1027,6 +1028,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &6333620122111483018
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1774904455951557044}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &1881256701468698615
 GameObject:
   m_ObjectHideFlags: 0
@@ -1077,8 +1090,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cfc2a4c388b0ab4b89e8aeef9efc953, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftPreview: {fileID: 1667351762725072299}
-  rightPreview: {fileID: 1748707411194690154}
+  leftPreviewGroup: {fileID: 2681775337490067926}
+  rightPreviewGroup: {fileID: 7578824448602592089}
+  leftPreview: {fileID: 6333620122111483018}
+  rightPreview: {fileID: 5880586883589769436}
   leftTopImage: {fileID: 74505033964700608}
   leftBottomImage: {fileID: 6341984850546930551}
   rightTopImage: {fileID: 5551288599915745611}
@@ -1094,6 +1109,7 @@ GameObject:
   - component: {fileID: 4387013472955592717}
   - component: {fileID: 38686905525204677}
   - component: {fileID: 3456131404536997464}
+  - component: {fileID: 5890456340321292067}
   m_Layer: 5
   m_Name: Health Bar Top
   m_TagString: Untagged
@@ -1157,6 +1173,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &5890456340321292067
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2350891022114452119}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &2681775337490067926
 GameObject:
   m_ObjectHideFlags: 0
@@ -1166,7 +1194,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5456665834949584404}
-  - component: {fileID: 1667351762725072299}
   m_Layer: 5
   m_Name: Food Bar Left Action Preview
   m_TagString: Untagged
@@ -1195,18 +1222,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 72, y: 72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &1667351762725072299
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2681775337490067926}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &3268386747881261831
 GameObject:
   m_ObjectHideFlags: 0
@@ -1216,7 +1231,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2994293919965114011}
-  - component: {fileID: 6640935560707029380}
   m_Layer: 5
   m_Name: Coal Bar Left Action Preview
   m_TagString: Untagged
@@ -1245,18 +1259,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 72, y: 72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &6640935560707029380
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3268386747881261831}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &3311228474358878069
 GameObject:
   m_ObjectHideFlags: 0
@@ -1307,8 +1309,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cfc2a4c388b0ab4b89e8aeef9efc953, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftPreview: {fileID: 6640935560707029380}
-  rightPreview: {fileID: 5241823617161275129}
+  leftPreviewGroup: {fileID: 3268386747881261831}
+  rightPreviewGroup: {fileID: 4391474099447833033}
+  leftPreview: {fileID: 8166813202928543969}
+  rightPreview: {fileID: 3556819183094239031}
   leftTopImage: {fileID: 7525952681305321630}
   leftBottomImage: {fileID: 8518524044091752096}
   rightTopImage: {fileID: 8198548796357469511}
@@ -1398,6 +1402,7 @@ GameObject:
   - component: {fileID: 7345985746625806499}
   - component: {fileID: 3854659271391471973}
   - component: {fileID: 5551288599915745611}
+  - component: {fileID: 5880586883589769436}
   m_Layer: 5
   m_Name: Food Bar Top
   m_TagString: Untagged
@@ -1461,6 +1466,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &5880586883589769436
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 3987181121334581660}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &4029734362348717161
 GameObject:
   m_ObjectHideFlags: 0
@@ -1470,7 +1487,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6482509665340821568}
-  - component: {fileID: 857093151015535863}
   m_Layer: 5
   m_Name: Hope Bar Right Action Preview
   m_TagString: Untagged
@@ -1497,20 +1513,8 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 72, y: 72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &857093151015535863
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4029734362348717161}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &4391474099447833033
 GameObject:
   m_ObjectHideFlags: 0
@@ -1520,7 +1524,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6960190667096957252}
-  - component: {fileID: 5241823617161275129}
   m_Layer: 5
   m_Name: Coal Bar Right Action Preview
   m_TagString: Untagged
@@ -1549,18 +1552,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 72, y: 72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &5241823617161275129
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4391474099447833033}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &4519717006390182255
 GameObject:
   m_ObjectHideFlags: 0
@@ -1942,6 +1933,7 @@ GameObject:
   - component: {fileID: 5069094146783582337}
   - component: {fileID: 958172430404537108}
   - component: {fileID: 4454337109163520811}
+  - component: {fileID: 6554589124693346795}
   m_Layer: 5
   m_Name: Health Bar Top
   m_TagString: Untagged
@@ -2005,6 +1997,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &6554589124693346795
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5910384177826265443}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6256855590470796010
 GameObject:
   m_ObjectHideFlags: 0
@@ -2014,7 +2018,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1808190377928211145}
-  - component: {fileID: 8798967542701379943}
   m_Layer: 5
   m_Name: Health Bar Right Action Preview
   m_TagString: Untagged
@@ -2043,18 +2046,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 72, y: 72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &8798967542701379943
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6256855590470796010}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &6308060422838436564
 GameObject:
   m_ObjectHideFlags: 0
@@ -2066,6 +2057,7 @@ GameObject:
   - component: {fileID: 7097152952041491795}
   - component: {fileID: 7915355354696054860}
   - component: {fileID: 7525952681305321630}
+  - component: {fileID: 8166813202928543969}
   m_Layer: 5
   m_Name: Coal Bar Top
   m_TagString: Untagged
@@ -2129,6 +2121,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &8166813202928543969
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6308060422838436564}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &6981490722527014195
 GameObject:
   m_ObjectHideFlags: 0
@@ -2138,7 +2142,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1918417292102962061}
-  - component: {fileID: 1386897217254279434}
   m_Layer: 5
   m_Name: Health Bar Left Action Preview
   m_TagString: Untagged
@@ -2167,18 +2170,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 72, y: 72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &1386897217254279434
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6981490722527014195}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &7132497053865913609
 GameObject:
   m_ObjectHideFlags: 0
@@ -2229,8 +2220,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cfc2a4c388b0ab4b89e8aeef9efc953, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftPreview: {fileID: 1234270580316744217}
-  rightPreview: {fileID: 857093151015535863}
+  leftPreviewGroup: {fileID: 7984970683107093756}
+  rightPreviewGroup: {fileID: 4029734362348717161}
+  leftPreview: {fileID: 8297073282174879871}
+  rightPreview: {fileID: 5868973992358855475}
   leftTopImage: {fileID: 5033266637964475418}
   leftBottomImage: {fileID: 1847271944889372169}
   rightTopImage: {fileID: 4144195578223971815}
@@ -2246,6 +2239,7 @@ GameObject:
   - component: {fileID: 5208054391180229779}
   - component: {fileID: 4476655374319875594}
   - component: {fileID: 5033266637964475418}
+  - component: {fileID: 8297073282174879871}
   m_Layer: 5
   m_Name: Hope Bar Top
   m_TagString: Untagged
@@ -2309,6 +2303,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &8297073282174879871
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7334638570414205994}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7541694807931967805
 GameObject:
   m_ObjectHideFlags: 0
@@ -2320,6 +2326,7 @@ GameObject:
   - component: {fileID: 8969704827604401216}
   - component: {fileID: 5090960032041527413}
   - component: {fileID: 4144195578223971815}
+  - component: {fileID: 5868973992358855475}
   m_Layer: 5
   m_Name: Hope Bar Top
   m_TagString: Untagged
@@ -2383,6 +2390,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &5868973992358855475
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7541694807931967805}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7559700056500779261
 GameObject:
   m_ObjectHideFlags: 0
@@ -2394,6 +2413,7 @@ GameObject:
   - component: {fileID: 4697058106658466500}
   - component: {fileID: 7200140544137799805}
   - component: {fileID: 8198548796357469511}
+  - component: {fileID: 3556819183094239031}
   m_Layer: 5
   m_Name: Coal Bar Top
   m_TagString: Untagged
@@ -2457,6 +2477,18 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!225 &3556819183094239031
+CanvasGroup:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7559700056500779261}
+  m_Enabled: 1
+  m_Alpha: 1
+  m_Interactable: 1
+  m_BlocksRaycasts: 1
+  m_IgnoreParentGroups: 0
 --- !u!1 &7578824448602592089
 GameObject:
   m_ObjectHideFlags: 0
@@ -2466,7 +2498,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4633497262965569475}
-  - component: {fileID: 1748707411194690154}
   m_Layer: 5
   m_Name: Food Bar Right Action Preview
   m_TagString: Untagged
@@ -2495,18 +2526,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 72, y: 72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &1748707411194690154
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7578824448602592089}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &7984970683107093756
 GameObject:
   m_ObjectHideFlags: 0
@@ -2516,7 +2535,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7216222249028231633}
-  - component: {fileID: 1234270580316744217}
   m_Layer: 5
   m_Name: Hope Bar Left Action Preview
   m_TagString: Untagged
@@ -2543,20 +2561,8 @@ RectTransform:
   m_AnchorMin: {x: 0.5, y: 0.5}
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
-  m_SizeDelta: {x: 100, y: 100}
+  m_SizeDelta: {x: 72, y: 72}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!225 &1234270580316744217
-CanvasGroup:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7984970683107093756}
-  m_Enabled: 1
-  m_Alpha: 1
-  m_Interactable: 1
-  m_BlocksRaycasts: 1
-  m_IgnoreParentGroups: 0
 --- !u!1 &8526679826381810068
 GameObject:
   m_ObjectHideFlags: 0
@@ -2607,8 +2613,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1cfc2a4c388b0ab4b89e8aeef9efc953, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  leftPreview: {fileID: 1386897217254279434}
-  rightPreview: {fileID: 8798967542701379943}
+  leftPreviewGroup: {fileID: 6981490722527014195}
+  rightPreviewGroup: {fileID: 6256855590470796010}
+  leftPreview: {fileID: 5890456340321292067}
+  rightPreview: {fileID: 6554589124693346795}
   leftTopImage: {fileID: 3456131404536997464}
   leftBottomImage: {fileID: 8408702434318223004}
   rightTopImage: {fileID: 4454337109163520811}
