@@ -5,7 +5,6 @@ namespace DeckSwipe.CardModel {
 	public interface IActionOutcome {
 
 		void Perform(Game controller);
-
 	}
 
 }

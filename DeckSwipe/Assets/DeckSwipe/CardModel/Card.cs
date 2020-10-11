@@ -65,6 +65,10 @@ namespace DeckSwipe.CardModel {
 			leftSwipeOutcome.Perform(controller);
 		}
 
+		public void UpdateActionPreview() {
+			Stats.ApplyActionPreview(leftSwipeOutcome.GetStatsModification(), rightSwipeOutcome.GetStatsModification());
+		}
+
 		public void PerformRightDecision(Game controller) {
 			progress.Status |= CardStatus.RightActionTaken;
 			foreach (Card card in dependentCards) {

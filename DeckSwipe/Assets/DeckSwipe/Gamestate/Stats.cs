@@ -19,6 +19,8 @@ namespace DeckSwipe.Gamestate {
 		public static int Food { get; private set; }
 		public static int Health { get; private set; }
 		public static int Hope { get; private set; }
+		public static StatsModification leftActionModification { get; private set; }
+		public static StatsModification rightActionModification { get; private set; }
 		
 		public static float CoalPercentage => (float) Coal / _maxStatValue;
 		public static float FoodPercentage => (float) Food / _maxStatValue;
@@ -31,6 +33,27 @@ namespace DeckSwipe.Gamestate {
 			Health = ClampValue(Health + mod.health);
 			Hope = ClampValue(Hope + mod.hope);
 			TriggerAllListeners();
+		}
+
+		public static void ApplyActionPreview(StatsModification leftOutcome, StatsModification rightOutcome) {
+			leftActionModification = leftOutcome;
+			rightActionModification = rightOutcome;
+			TriggerAllListeners();
+		}
+
+		public static void UpdateActionPreviewAlpha(float leftAlpha, float rightAlpha)
+        {
+			for (int i = 0; i < _changeListeners.Count; i++)
+			{
+				if (_changeListeners[i] == null)
+				{
+					_changeListeners.RemoveAt(i);
+				}
+				else
+				{
+					_changeListeners[i].TriggerUpdateActionPreviewAlpha(leftAlpha, rightAlpha);
+				}
+			}
 		}
 		
 		public static void ResetStats() {
@@ -52,6 +75,7 @@ namespace DeckSwipe.Gamestate {
 				}
 				else {
 					_changeListeners[i].TriggerUpdate();
+					_changeListeners[i].TriggerActionPreviewUpdate();
 				}
 			}
 		}
@@ -63,6 +87,11 @@ namespace DeckSwipe.Gamestate {
 		private static int ClampValue(int value) {
 			return Mathf.Clamp(value, 0, _maxStatValue);
 		}
+
+		public static int MaxStatValue()
+        {
+			return _maxStatValue;
+        }
 		
 	}
 	

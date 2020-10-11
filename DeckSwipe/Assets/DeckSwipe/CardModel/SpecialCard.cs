@@ -69,6 +69,11 @@ namespace DeckSwipe.CardModel {
 			rightSwipeOutcome.Perform(controller);
 		}
 
+		public void UpdateActionPreview()
+		{
+			Stats.ApplyActionPreview(new StatsModification(0,0,0,0), new StatsModification(0,0,0,0));
+		}
+
 		public void AddDependentCard(Card card) {
 			dependentCards.Add(card);
 		}
