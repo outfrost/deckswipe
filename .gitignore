@@ -4,7 +4,11 @@
 /*/[Bb]uild/
 /*/[Bb]uilds/
 /*/[Ll]ogs/
+/*/[Uu]ser[Ss]ettings/
 /*/[Mm]emory[Cc]aptures/
+
+# Recordings can get excessive in size
+/*/[Rr]ecordings/
 
 # Asset meta data should only be ignored when the corresponding asset is also ignored
 !/*/[Aa]ssets/**/*.meta
