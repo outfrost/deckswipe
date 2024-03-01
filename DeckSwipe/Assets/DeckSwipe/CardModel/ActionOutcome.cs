@@ -33,6 +33,10 @@ namespace DeckSwipe.CardModel {
 			controller.CardActionPerformed();
 		}
 
+		public StatsModification GetStatsModification()
+        {
+			return statsModification;
+        }
 	}
 
 }
